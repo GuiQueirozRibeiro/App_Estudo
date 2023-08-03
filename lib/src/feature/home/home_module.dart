@@ -1,6 +1,6 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
-import 'view/page/home_page.dart';
+import 'view/page/navegation.dart';
 
 class HomeModule extends Module {
   @override
@@ -8,6 +8,6 @@ class HomeModule extends Module {
 
   @override
   void routes(r) {
-    r.child('/', child: (_) => const HomePage());
+    r.child('/', child: (_) => const NavegationPage());
   }
 }

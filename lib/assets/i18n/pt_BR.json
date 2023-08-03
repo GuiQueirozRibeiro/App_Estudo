@@ -1,0 +1,53 @@
+{
+    "app_name" : "Estudo",
+    
+    "onboard_title1" : "bla bla bla",
+    "onboard_sub_title1" : "bla bla bla",
+    "onboard_title2" : "bla bla bla",
+    "onboard_sub_title2" : "bla bla bla",
+    "onboard_title3" : "bla bla bla",
+    "onboard_sub_title3" : "bla bla bla",
+
+    "login_title": "Conta de login",
+    "sign_up_title": "Criação de conta",
+
+    "login": "ENTRAR",
+    "sign_up": "CADASTRAR",
+    "sign_in": "CRIAR",
+
+    "without_account": "Não tem uma conta ? ",
+    "with_account": "Já tem uma conta ? ",
+    "forgot_password" : "Esqueceu a senha ? ",
+    "reset_password": "Redefinir senha",
+
+    "name_field" : "Nome",
+    "email_field" : "E-mail",
+    "password_field" : "Senha",
+
+    "name_required" : "Nome é obrigatório!",
+    "name_invalid" : "Nome deve ter pelo menos 3 caracteres",
+
+    "email_required" : "E-mail é obrigatório!",
+    "email_invalid" : "Por favor, coloque um e-mail válido",
+
+    "password_required" : "Senha é obrigatória!",
+    "password_invalid" : "Senha inválida. Mínimo de 8 caracteres: 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial",
+
+    "confirm_password": "Confirme a Senha",
+    "passwords_do_not_match": "Senhas informadas não conferem",
+
+    "age_field": "Idade",
+    "age_invalid": "Por favor, insira uma idade válida",
+    "age_requirement": "Você precisa ser maior de idade",
+
+    "error_occurred": "Ocorreu um erro!",
+    "unexpected_error": "Ocorreu um erro inesperado!",
+
+    "skip" : "Pular",
+    "next" : "Proximo",
+    "done" : "Pronto",
+    "back": "Voltar",
+    "save": "Salvar",
+    "continue": "Continuar",
+    "send": "Enviar"
+}

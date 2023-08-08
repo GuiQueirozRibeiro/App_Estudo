@@ -5,15 +5,9 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView.builder(
-        itemCount: 25,
-        itemBuilder: (ctx, i) => Column(
-          children: [
-            Image.asset('lib/assets/images/user.png'),
-            const Divider(),
-          ],
-        ),
+    return const Scaffold(
+      body: Center(
+        child: Text('Search Page'),
       ),
     );
   }

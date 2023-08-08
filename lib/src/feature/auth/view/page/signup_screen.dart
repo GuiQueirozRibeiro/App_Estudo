@@ -1,11 +1,13 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../common/widgets/custom_button.dart';
 import '../../../../common/widgets/custom_text_field.dart';
-import '../../../../common/exceptions/auth_exception.dart';
+import '../widget/auth.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({Key? key}) : super(key: key);
@@ -18,6 +20,7 @@ class SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _passwordController = TextEditingController();
+  late final File _image;
 
   bool _isLoading = false;
   final Map<String, String> _authData = {
@@ -59,19 +62,19 @@ class SignupScreenState extends State<SignupScreen> {
     setState(() => _isLoading = true);
 
     _formKey.currentState?.save();
-    final FirebaseAuth auth = FirebaseAuth.instance;
 
-    try {
-      await auth.createUserWithEmailAndPassword(
-        email: _authData['email']!,
-        password: _authData['password']!,
-      );
+    final Auth auth = Provider.of(context, listen: false);
+    final errorMessage = await auth.signup(
+      _nameController.text,
+      _authData['email']!,
+      _authData['password']!,
+      _image,
+    );
 
+    if (errorMessage != null) {
+      _showErrorDialog(errorMessage);
+    } else {
       Modular.to.navigate('/home/');
-    } on AuthException catch (error) {
-      _showErrorDialog(error.toString());
-    } catch (error) {
-      _showErrorDialog(error.toString());
     }
 
     setState(() => _isLoading = false);

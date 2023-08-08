@@ -78,13 +78,14 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       });
 
       _showSuccessDialog();
-    } on AuthException catch (error) {
-      _showErrorDialog(error.toString());
-      setState(() => _isLoading = false);
+    } on FirebaseAuthException catch (error) {
+      final authException = AuthException.fromFirebaseAuthException(error);
+      _showErrorDialog(authException.toString());
     } catch (error) {
       _showErrorDialog('unexpected_error'.i18n());
-      setState(() => _isLoading = false);
     }
+
+    setState(() => _isLoading = false);
   }
 
   bool isValidEmail(String email) {

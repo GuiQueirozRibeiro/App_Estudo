@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'home_page.dart';
@@ -6,15 +6,17 @@ import 'search_page.dart';
 import 'profile_page.dart';
 
 class NavegationPage extends StatefulWidget {
-  const NavegationPage({Key? key}) : super(key: key);
+  const NavegationPage({super.key});
 
   @override
   NavegationPageState createState() => NavegationPageState();
 }
 
-class NavegationPageState extends State<NavegationPage> {
-  late PageController pageViewController;
+class NavegationPageState extends State<NavegationPage>
+    with TickerProviderStateMixin {
   int currentPageIndex = 0;
+  late PageController _pageViewController;
+  late AnimationController _animationController;
 
   final List<Widget> _pages = const [
     HomePage(),
@@ -23,97 +25,61 @@ class NavegationPageState extends State<NavegationPage> {
   ];
 
   final List<Widget> _icons = const [
-    Icon(Icons.home),
-    Icon(Icons.search),
-    Icon(Icons.person),
+    Icon(Icons.home, size: 30),
+    Icon(Icons.search, size: 30),
+    Icon(Icons.person, size: 30),
   ];
 
   @override
   void initState() {
     super.initState();
-    pageViewController = PageController();
-    pageViewController.addListener(() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _pageViewController = PageController();
+    _pageViewController.addListener(() {
       setState(() {
-        currentPageIndex = pageViewController.page?.round() ?? 0;
+        currentPageIndex = _pageViewController.page?.round() ?? 0;
       });
     });
   }
 
   @override
   void dispose() {
-    pageViewController.dispose();
+    _animationController.dispose();
+    _pageViewController.dispose();
     super.dispose();
   }
 
-  Widget _buildBottomNavigation(Size size) {
-    return Align(
-      alignment: FractionalOffset.bottomCenter,
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: 10.0,
-            sigmaY: 10.0,
-          ),
-          child: SizedBox(
-            height: size.height * 0.075,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: _icons
-                  .asMap()
-                  .entries
-                  .map(
-                      (entry) => _buildIconButton(entry.key, entry.value, size))
-                  .toList(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildIconButton(int index, Widget icon, Size size) {
-    final isActive = currentPageIndex == index;
-    final colorScheme = Theme.of(context).colorScheme;
-    final iconColor = isActive ? colorScheme.secondary : colorScheme.tertiary;
-
-    return Expanded(
-      child: IconButton(
-        icon: icon,
-        iconSize: size.height * 0.035,
-        onPressed: () => pageViewController.animateToPage(
-          index,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.ease,
-        ),
-        color: iconColor,
-      ),
-    );
+  void _onTap(int index) {
+    if (currentPageIndex != index) {
+      _pageViewController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 10.0,
-              sigmaY: 10.0,
-            ),
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.transparent,
-              ),
-            ),
-          ),
-          PageView(
-            controller: pageViewController,
-            children: _pages,
-          ),
-          _buildBottomNavigation(size)
-        ],
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text('Estudo'),
+      ),
+      body: PageView(
+        controller: _pageViewController,
+        children: _pages,
+      ),
+      bottomNavigationBar: CurvedNavigationBar(
+        index: currentPageIndex,
+        backgroundColor: Colors.transparent,
+        color: Theme.of(context).colorScheme.primary,
+        height: 60,
+        items: _icons,
+        onTap: _onTap,
       ),
     );
   }

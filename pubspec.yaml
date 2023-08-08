@@ -25,10 +25,12 @@ dependencies:
   image_picker: ^1.0.1
   path_provider: ^2.0.15
   path: ^1.8.3
+  curved_navigation_bar: ^1.0.3
 
   flutter_localizations:
     sdk: flutter
-  mobx: ^2.2.0
+  cloud_firestore: ^4.8.4
+  firebase_storage: ^11.2.5
 
 dev_dependencies:
   flutter_test:

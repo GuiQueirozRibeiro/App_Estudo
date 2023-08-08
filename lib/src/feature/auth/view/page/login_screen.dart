@@ -1,12 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 import 'dart:async';
 
 import '../../../../common/widgets/custom_button.dart';
 import '../../../../common/widgets/custom_text_field.dart';
-import '../../../../common/exceptions/auth_exception.dart';
+import '../widget/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({
@@ -62,19 +62,16 @@ class LoginScreenState extends State<LoginScreen> {
 
     _formKey.currentState?.save();
 
-    final FirebaseAuth auth = FirebaseAuth.instance;
+    final Auth auth = Provider.of(context, listen: false);
+    final errorMessage = await auth.login(
+      _authData['email']!,
+      _authData['password']!,
+    );
 
-    try {
-      await auth.signInWithEmailAndPassword(
-        email: _authData['email']!,
-        password: _authData['password']!,
-      );
-
+    if (errorMessage != null) {
+      _showErrorDialog(errorMessage);
+    } else {
       Modular.to.navigate('/home/');
-    } on AuthException catch (error) {
-      _showErrorDialog(error.toString());
-    } catch (error) {
-      _showErrorDialog(error.toString());
     }
 
     setState(() => _isLoading = false);

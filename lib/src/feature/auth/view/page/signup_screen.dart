@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 
 import '../../../../common/widgets/custom_button.dart';
 import '../../../../common/widgets/custom_text_field.dart';
+import '../../../../common/widgets/image_input.dart';
+import '../../../core/models/auth_form_data.dart';
 import '../widget/auth.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -18,26 +20,17 @@ class SignupScreen extends StatefulWidget {
 
 class SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  late final File _image;
+  final _formData = AuthFormData();
 
   bool _isLoading = false;
-  final Map<String, String> _authData = {
-    'email': '',
-    'password': '',
-  };
-
-  @override
-  void dispose() {
-    super.dispose();
-    _nameController.dispose();
-    _passwordController.dispose();
-  }
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void _handleImagePick(File image) {
+    _formData.image = image;
   }
 
   bool isValidEmail(String email) {
@@ -63,12 +56,13 @@ class SignupScreenState extends State<SignupScreen> {
 
     _formKey.currentState?.save();
 
-    final Auth auth = Provider.of(context, listen: false);
+    Auth auth = Provider.of(context, listen: false);
+
     final errorMessage = await auth.signup(
-      _nameController.text,
-      _authData['email']!,
-      _authData['password']!,
-      _image,
+      _formData.name,
+      _formData.email,
+      _formData.password,
+      _formData.image!,
     );
 
     if (errorMessage != null) {
@@ -117,9 +111,10 @@ class SignupScreenState extends State<SignupScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      'lib/assets/images/snap_icon.png',
-                      height: screenSize.height * 0.2,
+                      'lib/assets/images/logo.png',
+                      height: screenSize.height * 0.1,
                     ),
+                    SizedBox(height: screenSize.height * 0.02),
                     Text(
                       'sign_up_title'.i18n(),
                       style: TextStyle(
@@ -129,78 +124,100 @@ class SignupScreenState extends State<SignupScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: screenSize.height * 0.06),
+                    SizedBox(height: screenSize.height * 0.01),
                     Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          CustomTextField(
-                            text: 'name_field'.i18n(),
-                            isForm: false,
-                            keyboardType: TextInputType.emailAddress,
-                            controller: _nameController,
-                            textInputAction: TextInputAction.next,
-                            onSaved: (name) => _authData['name'] = name ?? '',
-                            validator: (name) {
-                              if (name!.isEmpty) {
-                                return 'name_required'.i18n();
-                              }
-                              if (name.length < 3) {
-                                return 'name_invalid'.i18n();
-                              }
-                              return null;
-                            },
+                          ImageInput(_handleImagePick),
+                          SizedBox(height: screenSize.height * 0.016),
+                          Card(
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: CustomTextField(
+                              key: const ValueKey('name'),
+                              initialValue: _formData.name,
+                              onChanged: (name) => _formData.name = name!,
+                              text: 'name_field'.i18n(),
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              validator: (name) {
+                                if (name!.isEmpty) {
+                                  return 'name_required'.i18n();
+                                }
+                                if (name.trim().length < 5) {
+                                  return 'name_invalid'.i18n();
+                                }
+                                return null;
+                              },
+                            ),
                           ),
                           SizedBox(height: screenSize.height * 0.016),
-                          CustomTextField(
-                            text: 'email_field'.i18n(),
-                            isForm: false,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            onSaved: (email) =>
-                                _authData['email'] = email ?? '',
-                            validator: (email) {
-                              if (email!.isEmpty) {
-                                return 'email_required'.i18n();
-                              } else if (!isValidEmail(email)) {
-                                return 'email_invalid'.i18n();
-                              }
-                              return null;
-                            },
+                          Card(
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: CustomTextField(
+                              key: const ValueKey('email'),
+                              initialValue: _formData.email,
+                              text: 'email_field'.i18n(),
+                              keyboardType: TextInputType.emailAddress,
+                              textInputAction: TextInputAction.next,
+                              validator: (email) {
+                                if (email!.isEmpty) {
+                                  return 'email_required'.i18n();
+                                }
+                                return null;
+                              },
+                            ),
                           ),
                           SizedBox(height: screenSize.height * 0.016),
-                          CustomTextField(
-                            text: 'password_field'.i18n(),
-                            isForm: false,
-                            obscureText: true,
-                            controller: _passwordController,
-                            textInputAction: TextInputAction.next,
-                            onSaved: (password) =>
-                                _authData['password'] = password ?? '',
-                            validator: (password) {
-                              if (password!.isEmpty) {
-                                return 'password_required'.i18n();
-                              } else if (!isValidPassword(password)) {
-                                return 'password_invalid'.i18n();
-                              }
-                              return null;
-                            },
+                          Card(
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: CustomTextField(
+                              valueKey: const ValueKey('password'),
+                              initialValue: _formData.password,
+                              onChanged: (password) =>
+                                  _formData.password = password!,
+                              text: 'password_field'.i18n(),
+                              textInputAction: TextInputAction.next,
+                              obscureText: true,
+                              validator: (password) {
+                                if (password!.isEmpty) {
+                                  return 'password_required'.i18n();
+                                }
+                                return null;
+                              },
+                            ),
                           ),
                           SizedBox(height: screenSize.height * 0.016),
-                          CustomTextField(
-                            text: 'confirm_password'.i18n(),
-                            isForm: false,
-                            obscureText: true,
-                            validator: (password) {
-                              if (password != _passwordController.text) {
-                                return 'passwords_do_not_match'.i18n();
-                              }
-                              return null;
-                            },
-                            onFieldSubmitted: (_) {
-                              _submit();
-                            },
+                          Card(
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: CustomTextField(
+                              onChanged: (password) =>
+                                  _formData.password = password!,
+                              text: 'confirm_password'.i18n(),
+                              obscureText: true,
+                              validator: (password) {
+                                if (password != _formData.password) {
+                                  return 'passwords_do_not_match'.i18n();
+                                }
+                                return null;
+                              },
+                              onFieldSubmitted: (_) {
+                                _submit();
+                              },
+                            ),
                           ),
                         ],
                       ),

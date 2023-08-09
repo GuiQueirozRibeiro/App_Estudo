@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
-import '../../../../common/exceptions/auth_exception.dart';
 import '../../../../common/widgets/custom_button.dart';
 import '../../../../common/widgets/custom_text_field.dart';
+import '../../../core/models/auth_form_data.dart';
+import '../widget/auth.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -15,8 +16,8 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _formData = AuthFormData();
   bool _isLoading = false;
   bool _isEmailSent = false;
 
@@ -66,23 +67,21 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     _formKey.currentState?.save();
 
-    final FirebaseAuth auth = FirebaseAuth.instance;
-    try {
-      await auth.sendPasswordResetEmail(
-        email: _emailController.text,
-      );
+    Auth auth = Provider.of(context, listen: false);
 
+    final errorMessage = await auth.resetPassword(
+      _formData.email,
+    );
+
+    if (errorMessage != null) {
+      _showErrorDialog(errorMessage);
+    } else {
       setState(() {
         _isEmailSent = true;
         _isLoading = false;
       });
 
       _showSuccessDialog();
-    } on FirebaseAuthException catch (error) {
-      final authException = AuthException.fromFirebaseAuthException(error);
-      _showErrorDialog(authException.toString());
-    } catch (error) {
-      _showErrorDialog('unexpected_error'.i18n());
     }
 
     setState(() => _isLoading = false);
@@ -92,12 +91,6 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     RegExp emailRegExp = RegExp(
         r'^[a-zA-Z0-9.!#$%&*+\=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$');
     return emailRegExp.hasMatch(email);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _emailController.dispose();
   }
 
   @override
@@ -120,9 +113,10 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: Column(
                   children: [
                     Image.asset(
-                      'lib/assets/images/snap_icon.png',
-                      height: screenSize.height * 0.2,
+                      'lib/assets/images/logo.png',
+                      height: screenSize.height * 0.1,
                     ),
+                    SizedBox(height: screenSize.height * 0.02),
                     Text(
                       'reset_password'.i18n(),
                       style: TextStyle(
@@ -138,22 +132,29 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          CustomTextField(
-                            text: 'email_field'.i18n(),
-                            isForm: false,
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (email) {
-                              if (email!.isEmpty) {
-                                return 'email_required'.i18n();
-                              } else if (!isValidEmail(email)) {
-                                return 'email_invalid'.i18n();
-                              }
-                              return null;
-                            },
-                            onFieldSubmitted: (_) {
-                              _submit();
-                            },
+                          Card(
+                            elevation: 20,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: CustomTextField(
+                              valueKey: const ValueKey('email'),
+                              initialValue: _formData.email,
+                              text: 'email_field'.i18n(),
+                              keyboardType: TextInputType.emailAddress,
+                              onChanged: (email) => _formData.email = email!,
+                              validator: (email) {
+                                if (email!.isEmpty) {
+                                  return 'email_required'.i18n();
+                                } else if (!isValidEmail(email)) {
+                                  return 'email_invalid'.i18n();
+                                }
+                                return null;
+                              },
+                              onFieldSubmitted: (_) {
+                                _submit();
+                              },
+                            ),
                           ),
                         ],
                       ),

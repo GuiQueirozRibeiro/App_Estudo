@@ -6,6 +6,7 @@ import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import 'feature/auth/view/widget/auth.dart';
+import 'feature/core/services/notification/chat_notification_service.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -14,8 +15,15 @@ class AppWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     LocalJsonLocalization.delegate.directories = ['lib/assets/i18n'];
 
-    return ChangeNotifierProvider(
-      create: (_) => Auth(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => ChatNotificationService(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => Auth(),
+        )
+      ],
       child: MaterialApp.router(
         theme: ThemeData(
             fontFamily: 'Lato',

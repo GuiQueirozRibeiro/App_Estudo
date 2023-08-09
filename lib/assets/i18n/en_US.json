@@ -43,6 +43,10 @@
     "error_occurred": "An error occurred!",
     "unexpected_error": "Unexpected error",
 
+    "take_photo": "Take Photo",
+    "gallery": "Gallery",
+    "no_image": "No image!",
+
     "skip" : "Skip",
     "next" : "Next",
     "done" : "Done",

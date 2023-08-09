@@ -6,6 +6,7 @@ import 'dart:async';
 
 import '../../../../common/widgets/custom_button.dart';
 import '../../../../common/widgets/custom_text_field.dart';
+import '../../../core/models/auth_form_data.dart';
 import '../widget/auth.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,22 +19,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final _formData = AuthFormData();
   bool _isLoading = false;
-
-  final Map<String, String> _authData = {
-    'email': '',
-    'password': '',
-  };
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   void _showErrorDialog(String msg) {
     showDialog(
@@ -62,10 +50,11 @@ class LoginScreenState extends State<LoginScreen> {
 
     _formKey.currentState?.save();
 
-    final Auth auth = Provider.of(context, listen: false);
+    Auth auth = Provider.of(context, listen: false);
+
     final errorMessage = await auth.login(
-      _authData['email']!,
-      _authData['password']!,
+      _formData.email,
+      _formData.password,
     );
 
     if (errorMessage != null) {
@@ -98,9 +87,10 @@ class LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Image.asset(
-                      'lib/assets/images/snap_icon.png',
-                      height: screenSize.height * 0.2,
+                      'lib/assets/images/logo.png',
+                      height: screenSize.height * 0.1,
                     ),
+                    SizedBox(height: screenSize.height * 0.02),
                     Text(
                       'login_title'.i18n(),
                       style: TextStyle(
@@ -122,19 +112,17 @@ class LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: CustomTextField(
+                              key: const ValueKey('email'),
+                              initialValue: _formData.email,
                               text: 'email_field'.i18n(),
-                              isForm: false,
-                              controller: _emailController,
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
-                              validator: (value) {
-                                if (value!.isEmpty) {
+                              validator: (email) {
+                                if (email!.isEmpty) {
                                   return 'email_required'.i18n();
                                 }
                                 return null;
                               },
-                              onSaved: (email) =>
-                                  _authData['email'] = email ?? '',
                             ),
                           ),
                           SizedBox(height: screenSize.height * 0.016),
@@ -144,18 +132,18 @@ class LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: CustomTextField(
+                              valueKey: const ValueKey('password'),
+                              initialValue: _formData.password,
+                              onChanged: (password) =>
+                                  _formData.password = password!,
                               text: 'password_field'.i18n(),
-                              isForm: false,
-                              controller: _passwordController,
                               obscureText: true,
-                              validator: (value) {
-                                if (value!.isEmpty) {
+                              validator: (password) {
+                                if (password!.isEmpty) {
                                   return 'password_required'.i18n();
                                 }
                                 return null;
                               },
-                              onSaved: (password) =>
-                                  _authData['password'] = password ?? '',
                               onFieldSubmitted: (_) {
                                 _submit();
                               },

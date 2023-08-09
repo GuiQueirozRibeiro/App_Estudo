@@ -6,9 +6,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../../../../common/exceptions/auth_exception.dart';
+import '../../../core/models/chat_user.dart';
 
 class Auth with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  ChatUser? _currentUser;
   User? _user;
 
   User? get user => _user;
@@ -22,9 +24,18 @@ class Auth with ChangeNotifier {
         password: password,
       );
 
-      final imageUrl = await uploadImageToFirebaseStorage(image);
+      if (userCredential.user != null) {
+        final imageName = '${userCredential.user!.uid}.jpg';
+        final imageUrl = await _uploadUserImage(image, imageName);
 
-      await updateUserProfile(name, imageUrl);
+        await userCredential.user?.updateDisplayName(name);
+        await userCredential.user?.updatePhotoURL(imageUrl);
+
+        await login(email, password);
+
+        _currentUser = _toChatUser(userCredential.user!, name, imageUrl);
+        await _saveChatUser(_currentUser!);
+      }
 
       _user = userCredential.user;
       notifyListeners();
@@ -96,26 +107,32 @@ class Auth with ChangeNotifier {
     return null;
   }
 
-  Future<String> uploadImageToFirebaseStorage(File image) async {
+  Future<String?> _uploadUserImage(File? image, String imageName) async {
+    if (image == null) return null;
+
     final storage = FirebaseStorage.instance;
-    final ref =
-        storage.ref().child('user_images/${_auth.currentUser!.uid}/image.jpg');
-    await ref.putFile(image);
-    final imageUrl = await ref.getDownloadURL();
-    return imageUrl;
+    final imageRef = storage.ref().child('user_images').child(imageName);
+    await imageRef.putFile(image).whenComplete(() {});
+    return await imageRef.getDownloadURL();
   }
 
-  Future<void> updateUserProfile(String name, String photoUrl) async {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'name': name,
-          'photoUrl': photoUrl,
-        }, SetOptions(merge: true));
-      }
-    } catch (error) {
-      return;
-    }
+  Future<void> _saveChatUser(ChatUser user) async {
+    final store = FirebaseFirestore.instance;
+    final docRef = store.collection('users').doc(user.id);
+
+    return docRef.set({
+      'name': user.name,
+      'email': user.email,
+      'imageUrl': user.imageUrl,
+    });
+  }
+
+  static ChatUser _toChatUser(User user, [String? name, String? imageUrl]) {
+    return ChatUser(
+      id: user.uid,
+      name: name ?? user.displayName ?? user.email!.split('@')[0],
+      email: user.email!,
+      imageUrl: imageUrl ?? user.photoURL ?? 'lib/assets/images/avatar.png',
+    );
   }
 }

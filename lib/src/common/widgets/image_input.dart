@@ -7,16 +7,11 @@ import 'package:localization/localization.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as syspaths;
 
-// ignore: must_be_immutable
 class ImageInput extends StatefulWidget {
-  final Function(String) onSelectImage;
-  final bool isProfile;
-  File? _image;
+  final void Function(File image) onImagePick;
 
-  ImageInput(
-    this.onSelectImage,
-    this._image, {
-    this.isProfile = false,
+  const ImageInput(
+    this.onImagePick, {
     Key? key,
   }) : super(key: key);
 
@@ -25,6 +20,7 @@ class ImageInput extends StatefulWidget {
 }
 
 class ImageInputState extends State<ImageInput> {
+  File? _image;
   Future<String> saveImage(File image) async {
     final appDir = await syspaths.getApplicationDocumentsDirectory();
     final fileName = path.basename(image.path);
@@ -39,14 +35,11 @@ class ImageInputState extends State<ImageInput> {
       maxWidth: 600,
     ) as XFile;
 
-    final image = File(imageFile.path);
-    final imagePath = await saveImage(image);
-
     setState(() {
-      widget._image = image;
+      _image = File(imageFile.path);
     });
 
-    widget.onSelectImage(imagePath);
+    widget.onImagePick(_image!);
   }
 
   Future<void> pickImage() async {
@@ -58,14 +51,11 @@ class ImageInputState extends State<ImageInput> {
     );
 
     if (pickedImage != null) {
-      final image = File(pickedImage.path);
-      final imagePath = await saveImage(image);
-
       setState(() {
-        widget._image = image;
+        _image = File(pickedImage.path);
       });
 
-      widget.onSelectImage(imagePath);
+      widget.onImagePick(_image!);
     }
   }
 
@@ -73,7 +63,6 @@ class ImageInputState extends State<ImageInput> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -82,11 +71,17 @@ class ImageInputState extends State<ImageInput> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.secondary,
+                  ),
                   icon: const Icon(Icons.camera_alt),
                   label: Text('take_photo'.i18n()),
                   onPressed: _takePicture,
                 ),
                 TextButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.secondary,
+                  ),
                   icon: const Icon(Icons.photo),
                   label: Text('gallery'.i18n()),
                   onPressed: pickImage,
@@ -96,40 +91,27 @@ class ImageInputState extends State<ImageInput> {
             Stack(
               children: [
                 Container(
-                  width: widget.isProfile ? 100 : 180,
-                  height: widget.isProfile ? 100 : 150,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
                     border: Border.all(
                       width: 1,
-                      color: Theme.of(context).colorScheme.outline,
+                      color: Theme.of(context).colorScheme.tertiary,
                     ),
-                    shape:
-                        widget.isProfile ? BoxShape.circle : BoxShape.rectangle,
-                    borderRadius:
-                        !widget.isProfile ? BorderRadius.circular(10) : null,
+                    shape: BoxShape.circle,
                   ),
-                  child: widget.isProfile
-                      ? ClipOval(
-                          child: widget._image != null
-                              ? Image.file(
-                                  widget._image!,
-                                  fit: BoxFit.cover,
-                                )
-                              : Center(
-                                  child: Text(
-                                  'no_image'.i18n(),
-                                  textAlign: TextAlign.center,
-                                )),
-                        )
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: widget._image != null
-                              ? Image.file(
-                                  widget._image!,
-                                  fit: BoxFit.cover,
-                                )
-                              : Center(child: Text('no_image'.i18n())),
-                        ),
+                  child: ClipOval(
+                    child: _image != null
+                        ? Image.file(
+                            _image!,
+                            fit: BoxFit.cover,
+                          )
+                        : Center(
+                            child: Text(
+                            'no_image'.i18n(),
+                            textAlign: TextAlign.center,
+                          )),
+                  ),
                 ),
                 Positioned(
                   top: 0,
@@ -137,7 +119,7 @@ class ImageInputState extends State<ImageInput> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        widget._image = null;
+                        _image = null;
                       });
                     },
                     child: Container(
@@ -145,9 +127,9 @@ class ImageInputState extends State<ImageInput> {
                         shape: BoxShape.circle,
                         color: Colors.red,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.close,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.tertiary,
                       ),
                     ),
                   ),

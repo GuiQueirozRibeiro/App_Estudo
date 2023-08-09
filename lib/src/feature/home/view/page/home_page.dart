@@ -23,8 +23,8 @@ class NavegationPageState extends State<NavegationPage>
   ];
 
   final List<Widget> _icons = const [
-    Icon(Icons.chat, size: 30),
-    Icon(Icons.notifications, size: 30),
+    Icon(Icons.chat, size: 30, color: Colors.white),
+    Icon(Icons.notifications, size: 30, color: Colors.white),
   ];
 
   @override
@@ -62,10 +62,6 @@ class NavegationPageState extends State<NavegationPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Estudo'),
-      ),
       body: PageView(
         controller: _pageViewController,
         children: _pages,

@@ -14,6 +14,7 @@ class Auth with ChangeNotifier {
   User? _user;
 
   User? get user => _user;
+  ChatUser? get currentUser => _currentUser;
 
   Future<String?> signup(
       String name, String email, String password, File image) async {

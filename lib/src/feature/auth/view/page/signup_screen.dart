@@ -48,7 +48,7 @@ class SignupScreenState extends State<SignupScreen> {
   Future<void> _submit() async {
     final isValid = _formKey.currentState?.validate() ?? false;
 
-    if (!isValid) {
+    if (!isValid || _formData.image == null) {
       return;
     }
 
@@ -124,7 +124,7 @@ class SignupScreenState extends State<SignupScreen> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: screenSize.height * 0.01),
+                    SizedBox(height: screenSize.height * 0.06),
                     Form(
                       key: _formKey,
                       child: Column(
@@ -164,6 +164,7 @@ class SignupScreenState extends State<SignupScreen> {
                             child: CustomTextField(
                               key: const ValueKey('email'),
                               initialValue: _formData.email,
+                              onChanged: (email) => _formData.email = email!,
                               text: 'email_field'.i18n(),
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
@@ -197,28 +198,6 @@ class SignupScreenState extends State<SignupScreen> {
                               },
                             ),
                           ),
-                          SizedBox(height: screenSize.height * 0.016),
-                          Card(
-                            elevation: 20,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: CustomTextField(
-                              onChanged: (password) =>
-                                  _formData.password = password!,
-                              text: 'confirm_password'.i18n(),
-                              obscureText: true,
-                              validator: (password) {
-                                if (password != _formData.password) {
-                                  return 'passwords_do_not_match'.i18n();
-                                }
-                                return null;
-                              },
-                              onFieldSubmitted: (_) {
-                                _submit();
-                              },
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -232,7 +211,7 @@ class SignupScreenState extends State<SignupScreen> {
                             onPressed: _submit,
                             buttonText: 'sign_in'.i18n(),
                           ),
-                    SizedBox(height: screenSize.height * 0.08),
+                    SizedBox(height: screenSize.height * 0.1),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -253,7 +232,6 @@ class SignupScreenState extends State<SignupScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: screenSize.height * 0.02),
                   ],
                 ),
               ),

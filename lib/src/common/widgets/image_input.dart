@@ -72,7 +72,7 @@ class ImageInputState extends State<ImageInput> {
               children: [
                 TextButton.icon(
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.secondary,
+                    foregroundColor: Theme.of(context).colorScheme.tertiary,
                   ),
                   icon: const Icon(Icons.camera_alt),
                   label: Text('take_photo'.i18n()),
@@ -80,7 +80,7 @@ class ImageInputState extends State<ImageInput> {
                 ),
                 TextButton.icon(
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Theme.of(context).colorScheme.secondary,
+                    foregroundColor: Theme.of(context).colorScheme.tertiary,
                   ),
                   icon: const Icon(Icons.photo),
                   label: Text('gallery'.i18n()),
@@ -108,9 +108,13 @@ class ImageInputState extends State<ImageInput> {
                           )
                         : Center(
                             child: Text(
-                            'no_image'.i18n(),
-                            textAlign: TextAlign.center,
-                          )),
+                              'no_image'.i18n(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.tertiary,
+                              ),
+                            ),
+                          ),
                   ),
                 ),
                 Positioned(

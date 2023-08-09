@@ -15,6 +15,9 @@
     "sign_up": "CADASTRAR",
     "sign_in": "CRIAR",
 
+    "success_email_send": "E-mail enviado com sucesso",
+    "forgot_password_mensage": "Verifique o e-mail enviado para prosseguir com a recuperação de senha",
+
     "without_account": "Não tem uma conta ? ",
     "with_account": "Já tem uma conta ? ",
     "forgot_password" : "Esqueceu a senha ? ",
@@ -33,15 +36,15 @@
     "password_required" : "Senha é obrigatória!",
     "password_invalid" : "Senha inválida. Mínimo de 8 caracteres: 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial",
 
-    "confirm_password": "Confirme a Senha",
-    "passwords_do_not_match": "Senhas informadas não conferem",
-
-    "age_field": "Idade",
-    "age_invalid": "Por favor, insira uma idade válida",
-    "age_requirement": "Você precisa ser maior de idade",
-
     "error_occurred": "Ocorreu um erro!",
     "unexpected_error": "Ocorreu um erro inesperado!",
+    "email_exists": "E-mail já cadastrado",
+    "email_not_found": "E-mail não encontrado",
+    "user_disabled": "A conta do usuário foi desabilitada",
+    "user_not_found": "Usuário não encontrado",
+    "invalid_password": "Senha informada não confere",
+    "authentication_error": "Ocorreu um erro no processo de autenticação!",
+    "gif_error": "Erro ao carregar o GIF",
 
     "take_photo": "Tirar Foto",
     "gallery": "Galeria",
@@ -53,5 +56,14 @@
     "back": "Voltar",
     "save": "Salvar",
     "continue": "Continuar",
-    "send": "Enviar"
+    "send": "Enviar",
+    "yes": "Sim",
+    "no": "Não",
+    "error": "Erro",
+    "ok": "Ok",
+    "are_you_sure": "Tem Certeza?",
+
+    "delete_account": "Excluir conta",
+    "logout_account": "Sair da conta"
+
 }

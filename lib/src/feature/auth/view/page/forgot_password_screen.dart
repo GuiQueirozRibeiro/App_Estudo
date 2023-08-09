@@ -140,9 +140,9 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             child: CustomTextField(
                               valueKey: const ValueKey('email'),
                               initialValue: _formData.email,
+                              onChanged: (email) => _formData.email = email!,
                               text: 'email_field'.i18n(),
                               keyboardType: TextInputType.emailAddress,
-                              onChanged: (email) => _formData.email = email!,
                               validator: (email) {
                                 if (email!.isEmpty) {
                                   return 'email_required'.i18n();

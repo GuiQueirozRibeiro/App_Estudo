@@ -114,6 +114,7 @@ class LoginScreenState extends State<LoginScreen> {
                             child: CustomTextField(
                               key: const ValueKey('email'),
                               initialValue: _formData.email,
+                              onChanged: (email) => _formData.email = email!,
                               text: 'email_field'.i18n(),
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
@@ -178,7 +179,7 @@ class LoginScreenState extends State<LoginScreen> {
                             buttonText: 'login'.i18n(),
                             onPressed: _submit,
                           ),
-                    SizedBox(height: screenSize.height * 0.12),
+                    SizedBox(height: screenSize.height * 0.2),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -199,7 +200,6 @@ class LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: screenSize.height * 0.04),
                   ],
                 ),
               ),

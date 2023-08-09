@@ -33,15 +33,15 @@
     "password_required" : "Password is required!",
     "password_invalid" : "Invalid password. Minimum 8 characters: 1 uppercase, 1 lowercase, 1 number, and 1 special character",
 
-    "confirm_password": "Confirm Password",
-    "passwords_do_not_match": "Passwords do not match",
-
-    "age_field": "Age",
-    "age_invalid": "Please enter a valid age",
-    "age_requirement": "You need to be of legal age",
-
     "error_occurred": "An error occurred!",
     "unexpected_error": "Unexpected error",
+    "email_exists": "E-mail already registered",
+    "email_not_found": "E-mail not found",
+    "user_disabled": "The user account has been disabled",
+    "user_not_found": "User not found",
+    "invalid_password": "Invalid password",
+    "authentication_error": "An error occurred during the authentication process!",
+    "gif_error": "Failed to load GIF",
 
     "take_photo": "Take Photo",
     "gallery": "Gallery",
@@ -53,5 +53,13 @@
     "back": "Back",
     "save": "Save",
     "continue": "Continue",
-    "send": "Send"
+    "send": "Send",
+    "yes": "Yes",
+    "no": "No",
+    "error": "Error",
+    "ok": "Ok",
+    "are_you_sure": "Are you sure?",
+
+    "delete_account": "Delete account",
+    "logout_account": "Logout account"
 }

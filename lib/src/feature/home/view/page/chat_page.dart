@@ -1,45 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 
 import '../../../auth/view/widget/auth.dart';
 import '../widget/messages.dart';
 import '../widget/new_message.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  Future<void> _showConfirmationDialog() async {
+    final authProvider = Provider.of<Auth>(context, listen: false);
+    bool confirmed = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('logout_account'.i18n()),
+          content: Text('are_you_sure'.i18n()),
+          actions: [
+            TextButton(
+              child: Text('no'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('yes'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed) {
+      authProvider.logout();
+      Modular.to.navigate('/auth/');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Estudo Chat'),
+        centerTitle: true,
         actions: [
-          DropdownButtonHideUnderline(
-            child: DropdownButton(
-              icon: Icon(
-                Icons.more_vert,
-                color: Theme.of(context).primaryIconTheme.color,
-              ),
-              items: const [
-                DropdownMenuItem(
-                  value: 'logout',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.exit_to_app,
-                        color: Colors.black87,
-                      ),
-                      SizedBox(width: 10),
-                      Text('Sair'),
-                    ],
-                  ),
-                ),
-              ],
-              onChanged: (value) {
-                if (value == 'logout') {
-                  Auth().logout();
-                }
-              },
-            ),
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: () => _showConfirmationDialog(),
           ),
         ],
       ),

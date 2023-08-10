@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../models/chat_message.dart';
-import '../../models/chat_user.dart';
+import '../repository/chat_message.dart';
+import '../repository/chat_user.dart';
 import 'chat_service.dart';
 
 class ChatFirebaseService implements ChatService {
@@ -63,7 +63,6 @@ class ChatFirebaseService implements ChatService {
     };
   }
 
-  // Map<String, dynamic> => ChatMessage
   ChatMessage _fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> doc,
     SnapshotOptions? options,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-import '../../models/chat_notification.dart';
+import '../repository/chat_notification.dart';
 
 class ChatNotificationService with ChangeNotifier {
   final List<ChatNotification> _items = [];

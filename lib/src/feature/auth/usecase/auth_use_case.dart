@@ -2,14 +2,15 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-import '../../../../common/exceptions/auth_exception.dart';
-import '../../../core/models/chat_user.dart';
+import '../../../common/exceptions/auth_exception.dart';
+import '../../home/repository/chat_user.dart';
+import '../../home/usecase/chat_use_case.dart';
 
-class Auth with ChangeNotifier {
+class AuthUseCase with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  ChatUseCase? _chatUseCase;
   ChatUser? _currentUser;
   User? _user;
 
@@ -34,8 +35,9 @@ class Auth with ChangeNotifier {
 
         await login(email, password);
 
-        _currentUser = _toChatUser(userCredential.user!, name, imageUrl);
-        await _saveChatUser(_currentUser!);
+        _currentUser =
+            ChatUseCase.toChatUser(userCredential.user!, name, imageUrl);
+        await _chatUseCase!.saveChatUser(_currentUser!);
       }
 
       _user = userCredential.user;
@@ -115,25 +117,5 @@ class Auth with ChangeNotifier {
     final imageRef = storage.ref().child('user_images').child(imageName);
     await imageRef.putFile(image).whenComplete(() {});
     return await imageRef.getDownloadURL();
-  }
-
-  Future<void> _saveChatUser(ChatUser user) async {
-    final store = FirebaseFirestore.instance;
-    final docRef = store.collection('users').doc(user.id);
-
-    return docRef.set({
-      'name': user.name,
-      'email': user.email,
-      'imageUrl': user.imageUrl,
-    });
-  }
-
-  static ChatUser _toChatUser(User user, [String? name, String? imageUrl]) {
-    return ChatUser(
-      id: user.uid,
-      name: name ?? user.displayName ?? user.email!.split('@')[0],
-      email: user.email!,
-      imageUrl: imageUrl ?? user.photoURL ?? 'lib/assets/images/avatar.png',
-    );
   }
 }

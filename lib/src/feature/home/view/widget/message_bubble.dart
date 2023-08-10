@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import '../../../core/models/chat_message.dart';
+import '../../repository/chat_message.dart';
 
 class MessageBubble extends StatelessWidget {
   static const _defaultImage = 'assets/images/avatar.png';

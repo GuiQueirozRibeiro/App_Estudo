@@ -1,5 +1,5 @@
-import '../../models/chat_message.dart';
-import '../../models/chat_user.dart';
+import '../repository/chat_message.dart';
+import '../repository/chat_user.dart';
 import 'chat_firebase_service.dart';
 
 abstract class ChatService {

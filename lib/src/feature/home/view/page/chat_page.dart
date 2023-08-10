@@ -3,7 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
-import '../../../auth/view/widget/auth.dart';
+import '../../../auth/usecase/auth_use_case.dart';
 import '../widget/messages.dart';
 import '../widget/new_message.dart';
 
@@ -16,7 +16,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   Future<void> _showConfirmationDialog() async {
-    final authProvider = Provider.of<Auth>(context, listen: false);
+    final authProvider = Provider.of<AuthUseCase>(context, listen: false);
     bool confirmed = await showDialog(
       context: context,
       builder: (BuildContext context) {

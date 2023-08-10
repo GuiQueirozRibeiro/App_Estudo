@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class CustomTextField extends StatelessWidget {
   final ValueKey? valueKey;
@@ -7,35 +6,34 @@ class CustomTextField extends StatelessWidget {
   final int maxLines;
   final String text;
   final String? initialValue;
-  final FocusNode? focusNode;
-  final List<TextInputFormatter>? inputFormatters;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
   final FormFieldValidator<String>? validator;
   final FormFieldSetter<String>? onChanged;
   final void Function(String)? onFieldSubmitted;
+  final IconData? icon;
+  final VoidCallback? onIconPressed;
 
   const CustomTextField({
     Key? key,
     required this.text,
     this.valueKey,
-    this.focusNode,
     this.maxLines = 1,
     this.obscureText = false,
     this.initialValue,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
-    this.inputFormatters,
     this.validator,
     this.onChanged,
     this.onFieldSubmitted,
+    this.icon,
+    this.onIconPressed,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       key: valueKey,
-      focusNode: focusNode,
       decoration: InputDecoration(
         hintText: text,
         errorMaxLines: 3,
@@ -62,12 +60,15 @@ class CustomTextField extends StatelessWidget {
           vertical: 16.0,
           horizontal: 12.0,
         ),
+        suffixIcon: IconButton(
+          icon: Icon(icon),
+          onPressed: onIconPressed,
+        ),
       ),
       maxLines: maxLines,
       obscureText: obscureText,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
-      inputFormatters: inputFormatters,
       validator: validator,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,

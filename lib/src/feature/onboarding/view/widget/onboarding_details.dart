@@ -36,8 +36,6 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
     super.dispose();
   }
 
-  void loadGifs() {}
-
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;

@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../../../../common/widgets/custom_button.dart';
 import '../../../../common/widgets/custom_text_field.dart';
-import '../../../core/models/auth_form_data.dart';
-import '../widget/auth.dart';
+import '../../repository/auth_form_data.dart';
+import '../../viewmodel/auth_view_model.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -18,43 +18,6 @@ class ForgotPasswordScreen extends StatefulWidget {
 class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _formData = AuthFormData();
-  bool _isLoading = false;
-  bool _isEmailSent = false;
-
-  void _showErrorDialog(String msg) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('error_occurred'.i18n()),
-        content: Text(msg),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('close'.i18n()),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('success_email_send'.i18n()),
-        content: Text('forgot_password_mensage'.i18n()),
-        actions: [
-          ElevatedButton(
-            child: Text('ok'.i18n()),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Modular.to.pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
 
   Future<void> _submit() async {
     final isValid = _formKey.currentState?.validate() ?? false;
@@ -63,28 +26,13 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    setState(() => _isLoading = true);
-
     _formKey.currentState?.save();
 
-    Auth auth = Provider.of(context, listen: false);
+    AuthViewModel authViewModel = Provider.of(context, listen: false);
 
-    final errorMessage = await auth.resetPassword(
+    await authViewModel.resetPassword(
       _formData.email,
     );
-
-    if (errorMessage != null) {
-      _showErrorDialog(errorMessage);
-    } else {
-      setState(() {
-        _isEmailSent = true;
-        _isLoading = false;
-      });
-
-      _showSuccessDialog();
-    }
-
-    setState(() => _isLoading = false);
   }
 
   bool isValidEmail(String email) {
@@ -160,16 +108,19 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                     ),
                     SizedBox(height: screenSize.height * 0.06),
-                    _isLoading
-                        ? CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.outline,
-                          )
-                        : CustomButton(
-                            size: screenSize,
-                            onPressed:
-                                _isEmailSent ? _showSuccessDialog : _submit,
-                            buttonText: 'send'.i18n(),
-                          ),
+                    Consumer<AuthViewModel>(
+                      builder: (context, authViewModel, child) {
+                        return authViewModel.isLoading
+                            ? CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.outline,
+                              )
+                            : CustomButton(
+                                size: screenSize,
+                                onPressed: _submit,
+                                buttonText: 'send'.i18n(),
+                              );
+                      },
+                    ),
                     SizedBox(height: screenSize.height * 0.12),
                     CustomButton(
                       size: screenSize,

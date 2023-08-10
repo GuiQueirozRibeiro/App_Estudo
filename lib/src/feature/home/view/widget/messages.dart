@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../auth/view/widget/auth.dart';
-import '../../../core/models/chat_message.dart';
-import '../../../core/services/chat/chat_service.dart';
+import '../../../auth/usecase/auth_use_case.dart';
+import '../../repository/chat_message.dart';
+import '../../usecase/chat_service.dart';
 import 'message_bubble.dart';
 
 class Messages extends StatelessWidget {
@@ -11,7 +11,7 @@ class Messages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Auth auth = Provider.of(context, listen: false);
+    AuthUseCase auth = Provider.of(context, listen: false);
     final currentUser = auth.user;
     return StreamBuilder<List<ChatMessage>>(
       stream: ChatService().messagesStream(),

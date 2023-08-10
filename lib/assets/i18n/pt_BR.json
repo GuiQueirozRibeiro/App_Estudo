@@ -28,7 +28,7 @@
     "password_field" : "Senha",
 
     "name_required" : "Nome é obrigatório!",
-    "name_invalid" : "Nome deve ter pelo menos 3 caracteres",
+    "name_invalid" : "Nome deve ter pelo menos 5 caracteres",
 
     "email_required" : "E-mail é obrigatório!",
     "email_invalid" : "Por favor, coloque um e-mail válido",

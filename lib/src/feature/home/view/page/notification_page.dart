@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/services/notification/chat_notification_service.dart';
+import '../../usecase/chat_notification_service.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
@@ -13,7 +13,7 @@ class NotificationPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Minhas Notificações'),
+        title: const Text('Notificações'),
         centerTitle: true,
       ),
       body: ListView.builder(

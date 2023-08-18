@@ -36,7 +36,7 @@ class AppWidget extends StatelessWidget {
             fontFamily: 'Lato',
             colorScheme: ColorScheme.fromSwatch().copyWith(
               primary: const Color(0xFF0096C7),
-              secondary: Colors.orange.shade700,
+              secondary: Colors.green.shade700,
               tertiary: Colors.white,
               outline: Colors.grey,
             )),

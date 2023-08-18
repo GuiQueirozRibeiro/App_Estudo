@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../repository/chat_message.dart';
 
 class MessageBubble extends StatelessWidget {
-  static const _defaultImage = 'assets/images/avatar.png';
+  static const _defaultImage = 'lib/assets/images/avatar.png';
   final ChatMessage message;
   final bool belongsToCurrentUser;
 
@@ -44,8 +44,8 @@ class MessageBubble extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 color: belongsToCurrentUser
-                    ? Colors.grey.shade300
-                    : Theme.of(context).primaryColor,
+                    ? Theme.of(context).colorScheme.tertiary
+                    : Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(12),
                   topRight: const Radius.circular(12),

@@ -16,18 +16,19 @@ class _NewMessageState extends State<NewMessage> {
   String _message = '';
 
   Future<void> _sendMessage() async {
-    AuthUseCase auth = Provider.of(context, listen: false);
+    AuthUseCase auth = Provider.of<AuthUseCase>(context, listen: false);
     final user = auth.currentUser;
 
     if (user != null) {
       await ChatService().save(_message, user);
+      _message = '';
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(16.0),
       child: CustomTextField(
         text: 'Enviar mensagem...',
         onChanged: (msg) => setState(() => _message = msg!),

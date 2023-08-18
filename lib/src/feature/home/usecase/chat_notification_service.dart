@@ -24,7 +24,6 @@ class ChatNotificationService with ChangeNotifier {
     notifyListeners();
   }
 
-  // Push Notification
   Future<void> init() async {
     await _configureTerminated();
     await _configureForeground();

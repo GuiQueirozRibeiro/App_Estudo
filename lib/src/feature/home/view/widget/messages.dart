@@ -11,8 +11,8 @@ class Messages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AuthUseCase auth = Provider.of(context, listen: false);
-    final currentUser = auth.user;
+    AuthUseCase auth = Provider.of<AuthUseCase>(context, listen: false);
+    final currentUser = auth.currentUser;
     return StreamBuilder<List<ChatMessage>>(
       stream: ChatService().messagesStream(),
       builder: (ctx, snapshot) {
@@ -28,7 +28,7 @@ class Messages extends StatelessWidget {
             itemBuilder: (ctx, i) => MessageBubble(
               key: ValueKey(msgs[i].id),
               message: msgs[i],
-              belongsToCurrentUser: currentUser?.uid == msgs[i].userId,
+              belongsToCurrentUser: currentUser?.id == msgs[i].userId,
             ),
           );
         }

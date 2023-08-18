@@ -17,7 +17,7 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> signup(
-      String email, String name, String password, File image) async {
+      String name, String email, String password, File image) async {
     try {
       _isLoading = true;
       notifyListeners();

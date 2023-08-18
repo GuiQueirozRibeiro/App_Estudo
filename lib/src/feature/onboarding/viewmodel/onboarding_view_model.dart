@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../auth/usecase/auth_use_case.dart';
+import '../../home/repository/chat_user.dart';
 import '../view/widget/onboarding_details.dart';
 
 class OnboardingViewModel {
+  late AuthUseCase auth;
   late SharedPreferences prefs;
 
   int currentPage = 0;
@@ -36,15 +40,22 @@ class OnboardingViewModel {
   ];
 
   void init(BuildContext context) async {
-    await checkOnboardingStatus();
+    await checkOnboardingStatus(context);
   }
 
-  Future<void> checkOnboardingStatus() async {
+  Future<void> checkOnboardingStatus(BuildContext context) async {
+    auth = Provider.of<AuthUseCase>(context, listen: false);
     prefs = await SharedPreferences.getInstance();
     bool onboardingCompleted = prefs.getBool('onboardingCompleted') ?? false;
 
     if (onboardingCompleted) {
-      await Modular.to.pushReplacementNamed('/auth/');
+      auth.userChanges.listen((ChatUser? user) {
+        if (user != null) {
+          Modular.to.pushReplacementNamed('/home/');
+        } else {
+          Modular.to.pushReplacementNamed('/auth/');
+        }
+      });
     }
     isLoading = false;
   }

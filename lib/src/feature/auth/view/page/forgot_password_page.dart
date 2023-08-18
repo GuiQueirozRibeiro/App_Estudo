@@ -8,14 +8,14 @@ import '../../../../common/widgets/custom_text_field.dart';
 import '../../repository/auth_form_data.dart';
 import '../../viewmodel/auth_view_model.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({Key? key}) : super(key: key);
 
   @override
-  ForgotPasswordScreenState createState() => ForgotPasswordScreenState();
+  ForgotPasswordPageState createState() => ForgotPasswordPageState();
 }
 
-class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _formData = AuthFormData();
 
@@ -28,7 +28,8 @@ class ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     _formKey.currentState?.save();
 
-    AuthViewModel authViewModel = Provider.of(context, listen: false);
+    AuthViewModel authViewModel =
+        Provider.of<AuthViewModel>(context, listen: false);
 
     await authViewModel.resetPassword(
       _formData.email,

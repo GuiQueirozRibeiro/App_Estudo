@@ -16,14 +16,16 @@ class NotificationPage extends StatelessWidget {
         title: const Text('Notificações'),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: service.itemsCount,
-        itemBuilder: (ctx, i) => ListTile(
-          title: Text(items[i].title),
-          subtitle: Text(items[i].body),
-          onTap: () => service.remove(i),
-        ),
-      ),
+      body: service.itemsCount != 0
+          ? ListView.builder(
+              itemCount: service.itemsCount,
+              itemBuilder: (ctx, i) => ListTile(
+                title: Text(items[i].title),
+                subtitle: Text(items[i].body),
+                onTap: () => service.remove(i),
+              ),
+            )
+          : const Center(child: Text('Sem dados')),
     );
   }
 }

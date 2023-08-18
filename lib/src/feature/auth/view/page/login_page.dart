@@ -9,16 +9,16 @@ import '../../../../common/widgets/custom_text_field.dart';
 import '../../repository/auth_form_data.dart';
 import '../../viewmodel/auth_view_model.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({
+class LoginPage extends StatefulWidget {
+  const LoginPage({
     Key? key,
   }) : super(key: key);
 
   @override
-  LoginScreenState createState() => LoginScreenState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _formData = AuthFormData();
 
@@ -31,7 +31,8 @@ class LoginScreenState extends State<LoginScreen> {
 
     _formKey.currentState?.save();
 
-    AuthViewModel authViewModel = Provider.of(context, listen: false);
+    AuthViewModel authViewModel =
+        Provider.of<AuthViewModel>(context, listen: false);
 
     await authViewModel.login(
       _formData.email,

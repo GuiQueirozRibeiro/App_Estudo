@@ -11,14 +11,14 @@ import '../../../../common/widgets/image_input.dart';
 import '../../repository/auth_form_data.dart';
 import '../../viewmodel/auth_view_model.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({Key? key}) : super(key: key);
+class SignupPage extends StatefulWidget {
+  const SignupPage({Key? key}) : super(key: key);
 
   @override
-  SignupScreenState createState() => SignupScreenState();
+  SignupPageState createState() => SignupPageState();
 }
 
-class SignupScreenState extends State<SignupScreen> {
+class SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   final _formData = AuthFormData();
 
@@ -52,7 +52,8 @@ class SignupScreenState extends State<SignupScreen> {
 
     _formKey.currentState?.save();
 
-    AuthViewModel authViewModel = Provider.of(context, listen: false);
+    AuthViewModel authViewModel =
+        Provider.of<AuthViewModel>(context, listen: false);
 
     await authViewModel.signup(
       _formData.name,

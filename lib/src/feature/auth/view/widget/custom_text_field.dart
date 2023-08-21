@@ -11,8 +11,6 @@ class CustomTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final FormFieldSetter<String>? onChanged;
   final void Function(String)? onFieldSubmitted;
-  final IconData? icon;
-  final VoidCallback? onIconPressed;
 
   const CustomTextField({
     Key? key,
@@ -26,8 +24,6 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.onChanged,
     this.onFieldSubmitted,
-    this.icon,
-    this.onIconPressed,
   }) : super(key: key);
 
   @override
@@ -43,14 +39,14 @@ class CustomTextField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
+            color: Theme.of(context).colorScheme.outlineVariant,
             width: 1.0,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
           borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).colorScheme.primary,
             width: 2.0,
           ),
         ),
@@ -59,10 +55,6 @@ class CustomTextField extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16.0,
           horizontal: 12.0,
-        ),
-        suffixIcon: IconButton(
-          icon: Icon(icon),
-          onPressed: onIconPressed,
         ),
       ),
       maxLines: maxLines,

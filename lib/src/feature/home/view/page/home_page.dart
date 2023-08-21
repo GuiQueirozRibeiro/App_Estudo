@@ -2,7 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'chat_page.dart';
-import 'notification_page.dart';
+import 'profile_page.dart';
 
 class NavegationPage extends StatefulWidget {
   const NavegationPage({super.key});
@@ -19,12 +19,12 @@ class NavegationPageState extends State<NavegationPage>
 
   final List<Widget> _pages = const [
     ChatPage(),
-    NotificationPage(),
+    ProfilePage(),
   ];
 
   final List<Widget> _icons = const [
     Icon(Icons.chat, size: 30, color: Colors.white),
-    Icon(Icons.notifications, size: 30, color: Colors.white),
+    Icon(Icons.home, size: 30, color: Colors.white),
   ];
 
   @override

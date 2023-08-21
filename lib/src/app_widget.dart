@@ -5,9 +5,8 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
-import 'feature/auth/usecase/auth_use_case.dart';
 import 'feature/auth/viewmodel/auth_view_model.dart';
-import 'feature/home/usecase/chat_notification_service.dart';
+import 'feature/onboarding/viewmodel/onboarding_view_model.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -19,27 +18,23 @@ class AppWidget extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => ChatNotificationService(),
+          create: (_) => OnboardingViewModel(),
         ),
         ChangeNotifierProvider(
-          create: (_) => AuthUseCase(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AuthViewModel(
-            AuthUseCase(),
-            context,
-          ),
+          create: (_) => AuthViewModel(),
         ),
       ],
       child: MaterialApp.router(
         theme: ThemeData(
-            fontFamily: 'Lato',
-            colorScheme: ColorScheme.fromSwatch().copyWith(
-              primary: const Color(0xFF0096C7),
-              secondary: Colors.green.shade700,
-              tertiary: Colors.white,
-              outline: Colors.grey,
-            )),
+          fontFamily: 'Lato',
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            primary: const Color(0xFF0096C7),
+            secondary: const Color(0xFF012b5d),
+            tertiary: Colors.white,
+            outline: Colors.black,
+            outlineVariant: Colors.grey,
+          ),
+        ),
         debugShowCheckedModeBanner: false,
         scrollBehavior: AppScrollBehavior(),
         title: 'app_name'.i18n(),

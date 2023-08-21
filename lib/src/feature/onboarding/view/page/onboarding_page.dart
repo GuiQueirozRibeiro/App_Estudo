@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../common/widgets/custom_button.dart';
 import '../../viewmodel/onboarding_view_model.dart';
 
 class OnBoardingScreen extends StatefulWidget {
@@ -17,124 +19,79 @@ class OnBoardingScreenState extends State<OnBoardingScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = Modular.get<OnboardingViewModel>();
+    _viewModel = Provider.of<OnboardingViewModel>(context, listen: false);
     _viewModel.init(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _viewModel.isLoading
-          ? Center(
+      body: Consumer<OnboardingViewModel>(
+        builder: (context, viewModel, child) {
+          if (viewModel.isLoading) {
+            return Center(
               child: CircularProgressIndicator(
-                color: Theme.of(context).colorScheme.outline,
+                color: Theme.of(context).colorScheme.outlineVariant,
               ),
-            )
-          : Container(
+            );
+          } else {
+            return Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: PageView.builder(
-                      controller: _viewModel.pageController,
-                      itemCount: _viewModel.pages.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return _viewModel
-                            .pages[index % _viewModel.pages.length];
-                      },
-                      onPageChanged: (int page) {
-                        _viewModel.currentPage = page;
-                      },
-                    ),
-                  ),
+                  _viewModel.buildPageView(context),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: _viewModel.buildPageIndicators(context),
+                    children: viewModel.buildPageIndicators(context),
                   ),
-                  SizedBox(height: _viewModel.screenHeight * 0.03),
+                  SizedBox(height: viewModel.screen.height * 0.03),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: _viewModel.screenWidth * 0.04,
-                      vertical: _viewModel.screenHeight * 0.02,
+                      horizontal: viewModel.screen.width * 0.04,
+                      vertical: viewModel.screen.height * 0.02,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            elevation: 20,
-                          ),
+                        CustomButton(
+                          size: viewModel.screen,
+                          buttonText: 'back'.i18n(),
                           onPressed: () {
-                            _viewModel.goToPreviousPage();
+                            viewModel.goToPreviousPage();
                           },
-                          child: Text(
-                            'back'.i18n(),
-                            style: TextStyle(
-                              fontSize: _viewModel.screenWidth * 0.05,
-                              color: Theme.of(context).colorScheme.tertiary,
-                            ),
-                          ),
                         ),
-                        if (_viewModel.currentPage != 2)
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              elevation: 20,
-                            ),
+                        if (viewModel.currentPage != 2)
+                          CustomButton(
                             onPressed: () {
-                              _viewModel.prefs
+                              viewModel.prefs
                                   .setBool('onboardingCompleted', true);
                               Modular.to.navigate('/auth/');
                             },
-                            child: Text(
-                              'skip'.i18n(),
-                              style: TextStyle(
-                                fontSize: _viewModel.screenWidth * 0.05,
-                                color: Theme.of(context).colorScheme.tertiary,
-                              ),
-                            ),
+                            buttonText: 'skip'.i18n(),
+                            size: viewModel.screen,
                           ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            elevation: 20,
-                          ),
+                        CustomButton(
+                          size: viewModel.screen,
+                          buttonText: viewModel.currentPage ==
+                                  viewModel.pages.length - 1
+                              ? 'Done'.i18n()
+                              : 'Next'.i18n(),
                           onPressed: () {
-                            _viewModel.goToNextPage();
+                            viewModel.goToNextPage();
                           },
-                          child: Text(
-                            _viewModel.currentPage ==
-                                    _viewModel.pages.length - 1
-                                ? 'Done'.i18n()
-                                : 'Next'.i18n(),
-                            style: TextStyle(
-                              fontSize: _viewModel.screenWidth * 0.05,
-                              color: Theme.of(context).colorScheme.tertiary,
-                            ),
-                          ),
-                        ),
+                        )
                       ],
                     ),
                   ),
                 ],
               ),
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }

@@ -1,124 +1,86 @@
-import 'dart:io';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
-import 'package:localization/localization.dart';
 
 import '../../../common/exceptions/auth_exception.dart';
-import '../usecase/auth_use_case.dart';
+import '../../home/repository/user_model.dart';
 
 class AuthViewModel extends ChangeNotifier {
-  final AuthUseCase _authUseCase;
-  final BuildContext context;
-
-  AuthViewModel(this._authUseCase, this.context);
-
   bool _isLoading = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  static UserModel? _currentUser;
+  static final _userStream = Stream<UserModel?>.multi((controller) async {
+    final authChanges = FirebaseAuth.instance.authStateChanges();
+    await for (final user in authChanges) {
+      _currentUser = user == null ? null : _toUser(user);
+      controller.add(_currentUser);
+    }
+  });
+
   bool get isLoading => _isLoading;
 
-  Future<void> signup(
-      String name, String email, String password, File image) async {
-    try {
-      _isLoading = true;
-      notifyListeners();
-
-      final errorMessage =
-          await _authUseCase.signup(name, email, password, image);
-
-      if (errorMessage != null) {
-        _showErrorDialog(errorMessage);
-      } else {
-        Modular.to.navigate('/home/');
-      }
-    } on AuthException catch (error) {
-      _handleAuthException(error);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+  UserModel? get currentUser {
+    return _currentUser;
   }
 
-  Future<void> login(String email, String password) async {
-    try {
-      _isLoading = true;
-      notifyListeners();
-
-      final errorMessage = await _authUseCase.login(email, password);
-
-      if (errorMessage != null) {
-        _showErrorDialog(errorMessage);
-      } else {
-        Modular.to.navigate('/home/');
-      }
-    } on AuthException catch (error) {
-      _handleAuthException(error);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+  Stream<UserModel?> get userChanges {
+    return _userStream;
   }
 
-  Future<void> resetPassword(String email) async {
+  Future<String?> login(String email, String password) async {
+    _isLoading = true;
+
     try {
-      _isLoading = true;
+      await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       notifyListeners();
-
-      final errorMessage = await _authUseCase.resetPassword(email);
-
-      if (errorMessage != null) {
-        _showErrorDialog(errorMessage);
-      } else {
-        _showSuccessDialog();
-      }
-    } on AuthException catch (error) {
-      _handleAuthException(error);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+    } on FirebaseAuthException catch (error) {
+      final authException = AuthException.fromFirebaseAuthException(error);
+      return authException.toString();
+    } catch (error) {
+      return error.toString();
     }
+    _isLoading = false;
+
+    return null;
   }
 
-  void _showErrorDialog(String msg) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('error_occurred'.i18n()),
-        content: Text(msg),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('close'.i18n()),
-          ),
-        ],
-      ),
+  Future<void> logout() async {
+    await _auth.signOut();
+    notifyListeners();
+  }
+
+  static UserModel _toUser(User user, [String? name, String? imageUrl]) {
+    return UserModel(
+      id: user.uid,
+      name: name ?? user.displayName ?? user.email!.split('@')[0],
+      email: user.email!,
+      imageUrl: imageUrl ?? user.photoURL ?? 'assets/images/avatar.png',
     );
   }
 
-  void _showSuccessDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('success_email_send'.i18n()),
-        content: Text('forgot_password_mensage'.i18n()),
-        actions: [
-          ElevatedButton(
-            child: Text('ok'.i18n()),
-            onPressed: () {
-              Navigator.of(context).pop();
-              Modular.to.pop();
-            },
-          ),
-        ],
-      ),
-    );
+/*
+
+  Future<String?> _uploadImage(File? image, String imageName) async {
+    if (image == null) return null;
+
+    final storage = FirebaseStorage.instance;
+    final imageRef = storage.ref().child('user_images').child(imageName);
+    await imageRef.putFile(image).whenComplete(() {});
+    return await imageRef.getDownloadURL();
   }
 
-  void _handleAuthException(AuthException error) {
-    final errorMessage = AuthException.errors[error.code];
-    if (errorMessage != null) {
-      _showErrorDialog(errorMessage);
-    } else {
-      _showErrorDialog('generic_error_message'.i18n());
-    }
+  Future<void> _saveUser(UserModel user) async {
+    final store = FirebaseFirestore.instance;
+    final docRef = store.collection('users').doc(user.id);
+
+    return docRef.set({
+      'name': user.name,
+      'email': user.email,
+      'imageUrl': user.imageUrl,
+    });
   }
+*/
 }

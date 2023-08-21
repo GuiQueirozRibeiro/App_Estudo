@@ -3,7 +3,6 @@ import 'package:localization/localization.dart';
 
 class AuthException implements Exception {
   static Map<String, String> errors = {
-    'email-already-in-use': 'email_exists'.i18n(),
     'invalid-email': 'email_not_found'.i18n(),
     'user_disabled': 'user_disabled'.i18n(),
     'user-not-found': 'user-not-found'.i18n(),

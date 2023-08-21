@@ -1,4 +1,4 @@
-# App estudo
+# App Professor IA
 
 A new Flutter project.
 

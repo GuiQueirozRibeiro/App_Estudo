@@ -3,9 +3,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
-import '../../../auth/usecase/auth_use_case.dart';
-import '../widget/messages.dart';
-import '../widget/new_message.dart';
+import '../../../auth/viewmodel/auth_view_model.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -16,7 +14,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   Future<void> _showConfirmationDialog() async {
-    final authProvider = Provider.of<AuthUseCase>(context, listen: false);
+    final authProvider = Provider.of<AuthViewModel>(context, listen: false);
     bool confirmed = await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -51,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Estudo Chat'),
+        title: const Text('Professor IA Chat'),
         centerTitle: true,
         actions: [
           IconButton(
@@ -62,10 +60,7 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: const SafeArea(
         child: Column(
-          children: [
-            Expanded(child: Messages()),
-            NewMessage(),
-          ],
+          children: [Center(child: Text('chat com GPT'))],
         ),
       ),
     );

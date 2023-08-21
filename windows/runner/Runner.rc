@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "br.com.GuilhermeQueiroz" "\0"
-            VALUE "FileDescription", "estudo" "\0"
+            VALUE "FileDescription", "professorIA" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "estudo" "\0"
+            VALUE "InternalName", "professorIA" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 br.com.GuilhermeQueiroz. All rights reserved." "\0"
-            VALUE "OriginalFilename", "estudo.exe" "\0"
-            VALUE "ProductName", "estudo" "\0"
+            VALUE "OriginalFilename", "professorIA.exe" "\0"
+            VALUE "ProductName", "professorIA" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

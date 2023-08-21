@@ -5,12 +5,14 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 
 import '../../../../common/widgets/custom_button.dart';
-import '../../../../common/widgets/custom_text_field.dart';
+import '../widget/custom_text_field.dart';
 import '../../repository/auth_form_data.dart';
 import '../../viewmodel/auth_view_model.dart';
 
 class LoginPage extends StatefulWidget {
+  final bool isStudant;
   const LoginPage({
+    this.isStudant = true,
     Key? key,
   }) : super(key: key);
 
@@ -34,9 +36,33 @@ class LoginPageState extends State<LoginPage> {
     AuthViewModel authViewModel =
         Provider.of<AuthViewModel>(context, listen: false);
 
-    await authViewModel.login(
-      _formData.email,
+    final errorMessage = await authViewModel.login(
+      widget.isStudant
+          ? _formData.id + _formData.emailSt
+          : _formData.id + _formData.emailTc,
       _formData.password,
+    );
+
+    if (errorMessage != null) {
+      _showErrorDialog(errorMessage);
+    } else {
+      Modular.to.navigate('/home/');
+    }
+  }
+
+  void _showErrorDialog(String msg) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('error_occurred'.i18n()),
+        content: Text(msg),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('close'.i18n()),
+          ),
+        ],
+      ),
     );
   }
 
@@ -47,7 +73,7 @@ class LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.tertiary,
         ),
         child: Center(
           child: SingleChildScrollView(
@@ -62,15 +88,16 @@ class LoginPageState extends State<LoginPage> {
                   children: [
                     Image.asset(
                       'lib/assets/images/logo.png',
-                      height: screenSize.height * 0.1,
                     ),
                     SizedBox(height: screenSize.height * 0.02),
                     Text(
-                      'login_title'.i18n(),
+                      widget.isStudant
+                          ? 'student_title'.i18n()
+                          : 'teacher_title'.i18n(),
                       style: TextStyle(
                         fontSize: screenSize.width * 0.06,
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.tertiary,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -86,15 +113,19 @@ class LoginPageState extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: CustomTextField(
-                              key: const ValueKey('email'),
-                              initialValue: _formData.email,
-                              onChanged: (email) => _formData.email = email!,
-                              text: 'email_field'.i18n(),
+                              key: const ValueKey('id'),
+                              initialValue: _formData.id,
+                              onChanged: (id) => _formData.id = id!,
+                              text: widget.isStudant
+                                  ? 'student_field'.i18n()
+                                  : 'teacher_field'.i18n(),
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
-                              validator: (email) {
-                                if (email!.isEmpty) {
-                                  return 'email_required'.i18n();
+                              validator: (id) {
+                                if (id!.isEmpty) {
+                                  return widget.isStudant
+                                      ? 'student_required'.i18n()
+                                      : 'teacher_required'.i18n();
                                 }
                                 return null;
                               },
@@ -125,21 +156,6 @@ class LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           SizedBox(height: screenSize.height * 0.008),
-                          TextButton(
-                            onPressed: () {
-                              Modular.to.pushNamed('forgotPassword');
-                            },
-                            style: const ButtonStyle(
-                              alignment: Alignment.centerRight,
-                            ),
-                            child: Text(
-                              'forgot_password'.i18n(),
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.tertiary,
-                                fontSize: screenSize.width * 0.04,
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                     ),
@@ -148,35 +164,24 @@ class LoginPageState extends State<LoginPage> {
                       builder: (context, authViewModel, child) {
                         return authViewModel.isLoading
                             ? CircularProgressIndicator(
-                                color: Theme.of(context).colorScheme.outline,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant,
                               )
                             : CustomButton(
+                                isBig: true,
                                 size: screenSize,
                                 onPressed: _submit,
                                 buttonText: 'login'.i18n(),
                               );
                       },
                     ),
-                    SizedBox(height: screenSize.height * 0.2),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'without_account'.i18n(),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.tertiary,
-                            fontSize: screenSize.width * 0.04,
-                          ),
-                        ),
-                        CustomButton(
-                          size: screenSize,
-                          buttonText: 'sign_up'.i18n(),
-                          onPressed: () {
-                            Modular.to.pushNamed('signup');
-                          },
-                          isBig: false,
-                        ),
-                      ],
+                    SizedBox(height: screenSize.height * 0.12),
+                    CustomButton(
+                      isBig: true,
+                      size: screenSize,
+                      onPressed: (() => Modular.to.pop()),
+                      buttonText: 'back'.i18n(),
                     ),
                   ],
                 ),

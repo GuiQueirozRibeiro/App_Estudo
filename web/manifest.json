@@ -1,6 +1,6 @@
 {
-    "name": "estudo",
-    "short_name": "estudo",
+    "name": "Professor IA",
+    "short_name": "professorIA",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

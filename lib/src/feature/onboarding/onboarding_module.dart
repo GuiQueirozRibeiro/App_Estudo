@@ -8,7 +8,7 @@ import 'viewmodel/onboarding_view_model.dart';
 class OnBoardingModule extends Module {
   @override
   void binds(i) {
-    i.addSingleton(() => OnboardingViewModel());
+    i.addLazySingleton(() => OnboardingViewModel());
   }
 
   @override

@@ -8,7 +8,7 @@ class CustomButton extends StatelessWidget {
 
   const CustomButton({
     Key? key,
-    this.isBig = true,
+    this.isBig = false,
     required this.size,
     required this.buttonText,
     required this.onPressed,
@@ -37,6 +37,7 @@ class CustomButton extends StatelessWidget {
         style: TextStyle(
           fontSize: isBig ? screenWidth * 0.04 : screenWidth * 0.035,
           fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.tertiary,
         ),
       ),
     );

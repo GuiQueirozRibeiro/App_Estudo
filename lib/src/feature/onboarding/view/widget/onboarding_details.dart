@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gif/gif.dart';
 import 'package:localization/localization.dart';
 
 class OnBoardingDetails extends StatefulWidget {
@@ -22,27 +21,11 @@ class OnBoardingDetails extends StatefulWidget {
 
 class OnBoardingDetailsState extends State<OnBoardingDetails>
     with TickerProviderStateMixin {
-  late GifController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = GifController(vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
     final double screenWidth = screenSize.width;
     final double screenHeight = screenSize.height;
-
-    GifController controller = GifController(vsync: this);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -79,25 +62,9 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
                   ),
                 ],
               ),
-        Gif(
-          image: AssetImage(widget.imagePath),
-          controller: controller,
-          autostart: Autostart.loop,
-          duration: const Duration(seconds: 3),
-          placeholder: (context) => Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-          ),
-          onFetchCompleted: () {
-            controller.reset();
-            controller.forward();
-          },
-          width: screenWidth * 0.9,
-          height: screenHeight * 0.4,
-          fit: BoxFit.cover,
-        ),
+        SizedBox(height: screenHeight * 0.04),
+        Image.asset(widget.imagePath),
+        SizedBox(height: screenHeight * 0.04),
         if (widget.isTitle)
           Column(
             children: [

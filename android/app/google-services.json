@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:144291076568:android:ab23531e445fa1b76afaad",
+        "mobilesdk_app_id": "1:144291076568:android:830dcd0775f1e6ae6afaad",
         "android_client_info": {
-          "package_name": "br.com.GuilhermeQueiroz.estudo"
+          "package_name": "br.com.GuilhermeQueiroz.professorIA"
         }
       },
       "oauth_client": [

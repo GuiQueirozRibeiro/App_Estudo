@@ -41,8 +41,9 @@ class AuthViewModel extends ChangeNotifier {
       return authException.toString();
     } catch (error) {
       return error.toString();
+    } finally {
+      _isLoading = false;
     }
-    _isLoading = false;
 
     return null;
   }

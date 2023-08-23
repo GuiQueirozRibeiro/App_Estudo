@@ -22,7 +22,7 @@ class CustomButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -30,12 +30,12 @@ class CustomButton extends StatelessWidget {
           horizontal: isBig ? screenWidth * 0.12 : screenWidth * 0.03,
           vertical: isBig ? screenHeight * 0.01 : screenHeight * 0.001,
         ),
-        elevation: 20,
+        elevation: 4,
       ),
       child: Text(
         buttonText,
         style: TextStyle(
-          fontSize: isBig ? screenWidth * 0.04 : screenWidth * 0.035,
+          fontSize: isBig ? screenWidth * 0.05 : screenWidth * 0.04,
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.tertiary,
         ),

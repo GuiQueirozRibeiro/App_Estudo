@@ -13,7 +13,6 @@ class OnboardingViewModel extends ChangeNotifier {
   late SharedPreferences prefs;
 
   int currentPage = 0;
-  bool isLoading = true;
   late Size screen;
 
   final PageController pageController = PageController(initialPage: 0);
@@ -22,19 +21,19 @@ class OnboardingViewModel extends ChangeNotifier {
     OnBoardingDetails(
       title: 'onboard_title1'.i18n(),
       subtitle: 'onboard_sub_title1'.i18n(),
-      imagePath: 'lib/assets/images/mcs_icon.png',
+      imagePath: 'lib/assets/images/cmcs_icon.png',
       isTitle: true,
     ),
     OnBoardingDetails(
       title: 'onboard_title2'.i18n(),
       subtitle: 'onboard_sub_title2'.i18n(),
-      imagePath: 'lib/assets/images/mcs_icon.png',
+      imagePath: 'lib/assets/images/cmcs_icon.png',
       isTitle: false,
     ),
     OnBoardingDetails(
       title: 'onboard_title3'.i18n(),
       subtitle: 'onboard_sub_title3'.i18n(),
-      imagePath: 'lib/assets/images/mcs_icon.png',
+      imagePath: 'lib/assets/images/cmcs_icon.png',
       isTitle: false,
     ),
   ];
@@ -69,15 +68,14 @@ class OnboardingViewModel extends ChangeNotifier {
     if (onboardingCompleted) {
       auth.userChanges.listen((UserModel? user) {
         if (user != null) {
-          Modular.to.pushReplacementNamed('/home/');
+          Modular.to.navigate('/home/');
         } else {
-          Modular.to.pushReplacementNamed('/auth/');
+          Modular.to.navigate('/auth/');
         }
       });
+    } else {
+      Modular.to.pushReplacementNamed('/onboarding');
     }
-
-    isLoading = false;
-    notifyListeners();
   }
 
   void goToNextPage() {
@@ -114,7 +112,7 @@ class OnboardingViewModel extends ChangeNotifier {
       width: isActive ? 16.0 : 10.0,
       decoration: BoxDecoration(
         color: isActive
-            ? Theme.of(context).colorScheme.secondary
+            ? Theme.of(context).colorScheme.primary
             : Theme.of(context).colorScheme.tertiary,
         borderRadius: BorderRadius.circular(12),
       ),

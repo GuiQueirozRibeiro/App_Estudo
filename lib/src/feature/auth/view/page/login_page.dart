@@ -108,7 +108,7 @@ class LoginPageState extends State<LoginPage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Card(
-                            elevation: 20,
+                            elevation: 4,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -133,7 +133,7 @@ class LoginPageState extends State<LoginPage> {
                           ),
                           SizedBox(height: screenSize.height * 0.016),
                           Card(
-                            elevation: 20,
+                            elevation: 4,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),

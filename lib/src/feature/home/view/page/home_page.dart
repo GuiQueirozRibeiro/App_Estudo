@@ -1,78 +1,101 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
-import 'chat_page.dart';
-import 'profile_page.dart';
+import '../../repository/subject_model.dart';
+import 'subject_details_page.dart';
 
-class NavegationPage extends StatefulWidget {
-  const NavegationPage({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
-  @override
-  NavegationPageState createState() => NavegationPageState();
-}
-
-class NavegationPageState extends State<NavegationPage>
-    with TickerProviderStateMixin {
-  int currentPageIndex = 0;
-  late PageController _pageViewController;
-  late AnimationController _animationController;
-
-  final List<Widget> _pages = const [
-    ChatPage(),
-    ProfilePage(),
-  ];
-
-  final List<Widget> _icons = const [
-    Icon(Icons.chat, size: 30, color: Colors.white),
-    Icon(Icons.home, size: 30, color: Colors.white),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
+  Widget buildSubjectCard(
+      BuildContext context, double cardHeight, Subject subject) {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SubjectDetailsPage(subject: subject),
+            ),
+          );
+        },
+        child: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: SizedBox(
+            height: cardHeight,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15.0),
+                    child: Image.network(
+                      subject.imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 20,
+                  left: 20,
+                  child: Text(
+                    subject.title,
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 20,
+                  left: 20,
+                  child: Text(
+                    subject.teacher,
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: PopupMenuButton<int>(
+                    itemBuilder: (context) => [
+                      const PopupMenuItem<int>(
+                        value: 0,
+                        child: Text('Cancelar Inscrição'),
+                      ),
+                    ],
+                    icon: const Icon(Icons.more_vert, color: Colors.white),
+                    offset: const Offset(0, 40),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    elevation: 8,
+                    onSelected: (value) {},
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
-    _pageViewController = PageController();
-    _pageViewController.addListener(() {
-      setState(() {
-        currentPageIndex = _pageViewController.page?.round() ?? 0;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    _pageViewController.dispose();
-    super.dispose();
-  }
-
-  void _onTap(int index) {
-    if (currentPageIndex != index) {
-      _pageViewController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    double cardHeight = MediaQuery.of(context).size.height * 0.21;
     return Scaffold(
-      body: PageView(
-        controller: _pageViewController,
-        children: _pages,
-      ),
-      bottomNavigationBar: CurvedNavigationBar(
-        index: currentPageIndex,
-        backgroundColor: Colors.transparent,
-        color: Theme.of(context).colorScheme.primary,
-        height: 60,
-        items: _icons,
-        onTap: _onTap,
+      body: ListView.builder(
+        itemCount: Subject.subjects.length,
+        itemBuilder: (context, index) {
+          return buildSubjectCard(context, cardHeight, Subject.subjects[index]);
+        },
       ),
     );
   }

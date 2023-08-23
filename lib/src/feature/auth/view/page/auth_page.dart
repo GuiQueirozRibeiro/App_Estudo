@@ -62,7 +62,7 @@ class BackgroundWave extends StatelessWidget {
       clipper: BottomWaveClipper(),
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );
@@ -106,27 +106,33 @@ class RoundedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-        padding: const EdgeInsets.all(15),
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(30.0),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 120),
-          const SizedBox(height: 10),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 18,
-              color: Theme.of(context).colorScheme.outline,
-            ),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(30.0),
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon,
+                  color: Theme.of(context).colorScheme.secondary, size: 120),
+              const SizedBox(height: 10),
+              Text(
+                text,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

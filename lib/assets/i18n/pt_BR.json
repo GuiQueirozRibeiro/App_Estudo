@@ -1,40 +1,28 @@
 {
     "app_name" : "Professor IA",
     
-    "onboard_title1" : "bla bla bla",
-    "onboard_sub_title1" : "bla bla bla",
-    "onboard_title2" : "bla bla bla",
-    "onboard_sub_title2" : "bla bla bla",
-    "onboard_title3" : "bla bla bla",
-    "onboard_sub_title3" : "bla bla bla",
+    "onboard_title1": "Bem-vindo ao Professor de IA",
+    "onboard_sub_title1": "Seu assistente alimentado por uma IA para o sucesso acadêmico.",
+    "onboard_title2": "Aprendizado Descomplicado",
+    "onboard_sub_title2": "Faça perguntas, resolva problemas e aprenda com a ajuda da nossa IA.",
+    "onboard_title3": "Aprimoramento do Ensino",
+    "onboard_sub_title3": "Professores, podem envolver e apoiar seus alunos como nunca antes.",
 
-    "login_title": "Conta de login",
-    "sign_up_title": "Criação de conta",
+    "login": "Entrar",
+    
+    "studant": "Sou Aluno(a)",
+    "teacher": "Sou Professor(a)",
 
-    "login": "ENTRAR",
-    "sign_up": "CADASTRAR",
-    "sign_in": "CRIAR",
+    "student_title": "Central do Aluno",
+    "teacher_title": "Central do Educator",
 
-    "success_email_send": "E-mail enviado com sucesso",
-    "forgot_password_mensage": "Verifique o e-mail enviado para prosseguir com a recuperação de senha",
-
-    "without_account": "Não tem uma conta ? ",
-    "with_account": "Já tem uma conta ? ",
-    "forgot_password" : "Esqueceu a senha ? ",
-    "reset_password": "Redefinir senha",
-
-    "name_field" : "Nome",
-    "email_field" : "E-mail",
+    "student_field" : "Matrícula",
+    "teacher_field" : "Usuário",
     "password_field" : "Senha",
 
-    "name_required" : "Nome é obrigatório!",
-    "name_invalid" : "Nome deve ter pelo menos 5 caracteres",
-
-    "email_required" : "E-mail é obrigatório!",
-    "email_invalid" : "Por favor, coloque um e-mail válido",
-
+    "student_required" : "Matrícula é obrigatória!",
+    "teacher_required" : "Usuário é obrigatório!",
     "password_required" : "Senha é obrigatória!",
-    "password_invalid" : "Senha inválida. Mínimo de 8 caracteres: 1 letra maiúscula, 1 letra minúscula, 1 número e 1 caractere especial",
 
     "error_occurred": "Ocorreu um erro!",
     "unexpected_error": "Ocorreu um erro inesperado!",

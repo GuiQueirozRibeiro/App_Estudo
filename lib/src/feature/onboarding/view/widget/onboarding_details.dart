@@ -71,7 +71,7 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
               Text(
                 widget.title,
                 style: TextStyle(
-                  fontSize: screenWidth * 0.06,
+                  fontSize: screenWidth * 0.08,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.tertiary,
                 ),
@@ -81,7 +81,7 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
               Text(
                 widget.subtitle,
                 style: TextStyle(
-                  fontSize: screenWidth * 0.04,
+                  fontSize: screenWidth * 0.06,
                   color: Theme.of(context).colorScheme.tertiary,
                 ),
                 textAlign: TextAlign.center,

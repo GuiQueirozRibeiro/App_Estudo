@@ -1,5 +1,3 @@
-enum AuthMode { studant, teacher }
-
 class AuthFormData {
   String id = '';
   String password = '';

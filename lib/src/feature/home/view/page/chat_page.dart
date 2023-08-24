@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
+
+import '../../repository/chat_model.dart';
+import '../../viewmodel/chat_view_model.dart';
+import '../widget/chat_widget.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -8,114 +14,132 @@ class ChatPage extends StatefulWidget {
 }
 
 class ChatPageState extends State<ChatPage> {
-  final TextEditingController _inputController = TextEditingController();
-  final List<Message> _messages = [];
+  bool _isTyping = false;
 
-  void _sendMessage(String messageText) {
-    final newMessage = Message(text: messageText, isMe: true);
-    setState(() {
-      _messages.add(newMessage);
-    });
+  late TextEditingController _inputController;
+  late ScrollController _listScrollController;
+  late FocusNode _focusNode;
+  @override
+  void initState() {
+    _listScrollController = ScrollController();
+    _inputController = TextEditingController();
+    _focusNode = FocusNode();
+    super.initState();
+  }
 
-    String responseText = '...';
-    final responseMessage = Message(text: responseText, isMe: false);
+  @override
+  void dispose() {
+    _listScrollController.dispose();
+    _inputController.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
 
-    setState(() {
-      _messages.add(responseMessage);
-    });
+  void scrollListToEND() {
+    _listScrollController.animateTo(
+        _listScrollController.position.maxScrollExtent,
+        duration: const Duration(seconds: 2),
+        curve: Curves.easeOut);
+  }
 
-    _inputController.clear();
+  Future<void> _sendMessage({required ChatViewModel chatProvider}) async {
+    try {
+      String msg = _inputController.text;
+      setState(() {
+        _isTyping = true;
+        chatProvider.addUserMessage(msg: msg);
+        _inputController.clear();
+        _focusNode.unfocus();
+      });
+      await chatProvider.sendMessageAndGetAnswers(msg: msg);
+      setState(() {});
+    } catch (error) {
+      chatProvider.chatList.addAll(
+        List.generate(
+          1,
+          (index) => ChatModel(
+            msg: 'Resposta do GPT ...',
+            chatIndex: 1,
+          ),
+        ),
+      );
+    } finally {
+      setState(() {
+        scrollListToEND();
+        _isTyping = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final chatProvider = Provider.of<ChatViewModel>(context);
     return Scaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                return MessageBubble(
-                  message: _messages[index],
-                );
-              },
+      body: SafeArea(
+        child: Column(
+          children: [
+            Flexible(
+              child: ListView.builder(
+                  controller: _listScrollController,
+                  itemCount: chatProvider.getChatList.length,
+                  itemBuilder: (context, index) {
+                    return ChatWidget(
+                      msg: chatProvider.getChatList[index].msg,
+                      chatIndex: chatProvider.getChatList[index].chatIndex,
+                      shouldAnimate:
+                          chatProvider.getChatList.length - 1 == index,
+                    );
+                  }),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25.0),
-                      color: Theme.of(context).colorScheme.outlineVariant,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: TextField(
-                        controller: _inputController,
-                        onSubmitted: (_) {
-                          String messageText = _inputController.text;
-                          if (messageText.isNotEmpty) {
-                            _sendMessage(messageText);
-                          }
-                        },
-                        decoration: const InputDecoration(
-                          hintText: 'Type a message...',
-                          border: InputBorder.none,
+            if (_isTyping) ...[
+              SpinKitThreeBounce(
+                color: Theme.of(context).colorScheme.tertiary,
+                size: 18,
+              ),
+            ],
+            const SizedBox(
+              height: 15,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25.0),
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: TextField(
+                          focusNode: _focusNode,
+                          controller: _inputController,
+                          maxLines: null,
+                          textInputAction: TextInputAction.newline,
+                          decoration: const InputDecoration(
+                            hintText: 'Type a message...',
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () {
-                    String messageText = _inputController.text;
-                    if (messageText.isNotEmpty) {
-                      _sendMessage(messageText);
-                    }
-                  },
-                ),
-              ],
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () async {
+                      String messageText = _inputController.text.trim();
+                      if (messageText.isNotEmpty) {
+                        await _sendMessage(chatProvider: chatProvider);
+                      } else {
+                        _focusNode.unfocus();
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Message {
-  final String text;
-  final bool isMe;
-
-  Message({required this.text, required this.isMe});
-}
-
-class MessageBubble extends StatelessWidget {
-  final Message message;
-
-  const MessageBubble({super.key, required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: message.isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        padding: const EdgeInsets.all(12.0),
-        decoration: BoxDecoration(
-          color: message.isMe
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.outlineVariant,
-          borderRadius: BorderRadius.circular(12.0),
-        ),
-        child: Text(
-          message.text,
-          style: TextStyle(color: Theme.of(context).colorScheme.tertiary),
+          ],
         ),
       ),
     );

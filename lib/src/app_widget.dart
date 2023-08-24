@@ -6,6 +6,7 @@ import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import 'feature/auth/viewmodel/auth_view_model.dart';
+import 'feature/home/viewmodel/chat_view_model.dart';
 import 'feature/onboarding/viewmodel/onboarding_view_model.dart';
 
 class AppWidget extends StatelessWidget {
@@ -22,6 +23,9 @@ class AppWidget extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => AuthViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ChatViewModel(),
         ),
       ],
       child: MaterialApp.router(

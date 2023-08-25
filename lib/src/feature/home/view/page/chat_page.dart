@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 
+import '../../../auth/viewmodel/auth_view_model.dart';
 import '../../repository/chat_model.dart';
 import '../../viewmodel/chat_view_model.dart';
 import '../widget/chat_widget.dart';
@@ -58,7 +59,7 @@ class ChatPageState extends State<ChatPage> {
         List.generate(
           1,
           (index) => ChatModel(
-            msg: 'Resposta do GPT ...',
+            msg: error.toString(),
             chatIndex: 1,
           ),
         ),
@@ -73,7 +74,10 @@ class ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final AuthViewModel authProvider = Provider.of<AuthViewModel>(context);
+    final currentUser = authProvider.currentUser;
     final chatProvider = Provider.of<ChatViewModel>(context);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -86,6 +90,7 @@ class ChatPageState extends State<ChatPage> {
                     return ChatWidget(
                       msg: chatProvider.getChatList[index].msg,
                       chatIndex: chatProvider.getChatList[index].chatIndex,
+                      user: currentUser,
                       shouldAnimate:
                           chatProvider.getChatList.length - 1 == index,
                     );

@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
+import '../../../auth/repository/user_model.dart';
+
 class ChatWidget extends StatelessWidget {
   const ChatWidget({
     super.key,
     required this.msg,
     required this.chatIndex,
+    required this.user,
     this.shouldAnimate = false,
   });
 
   final String msg;
   final int chatIndex;
+  final UserModel? user;
   final bool shouldAnimate;
+
+  ImageProvider _getImageProvider() {
+    if (chatIndex != 0) {
+      return const AssetImage("lib/assets/images/chat_logo.png");
+    } else if (user?.imageUrl != null) {
+      return NetworkImage(user!.imageUrl);
+    } else {
+      return const AssetImage("lib/assets/images/avatar.png");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +49,7 @@ class ChatWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                  image: AssetImage(
-                    chatIndex == 0
-                        ? 'lib/assets/images/avatar.png'
-                        : 'lib/assets/images/chat_logo.png',
-                  ),
+                  image: _getImageProvider(),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -52,13 +62,13 @@ class ChatWidget extends StatelessWidget {
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Theme.of(context).colorScheme.tertiary,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     )
                   : shouldAnimate
                       ? DefaultTextStyle(
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.tertiary,
+                            color: Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
                           ),
@@ -77,7 +87,7 @@ class ChatWidget extends StatelessWidget {
                       : Text(
                           msg.trim(),
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.tertiary,
+                            color: Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
                           ),
@@ -91,12 +101,12 @@ class ChatWidget extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.thumb_up_alt_outlined,
-                        color: Theme.of(context).colorScheme.tertiary,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                       const SizedBox(width: 5),
                       Icon(
                         Icons.thumb_down_alt_outlined,
-                        color: Theme.of(context).colorScheme.tertiary,
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
                     ],
                   ),

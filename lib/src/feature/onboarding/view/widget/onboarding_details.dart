@@ -36,7 +36,7 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
                 'app_name'.i18n(),
                 style: TextStyle(
                   fontSize: screenWidth * 0.1,
-                  color: Theme.of(context).colorScheme.tertiary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
                 textAlign: TextAlign.center,
               )
@@ -47,7 +47,7 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
                     style: TextStyle(
                       fontSize: screenWidth * 0.08,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.tertiary,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -56,7 +56,7 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
                     widget.subtitle,
                     style: TextStyle(
                       fontSize: screenWidth * 0.06,
-                      color: Theme.of(context).colorScheme.tertiary,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -73,7 +73,7 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
                 style: TextStyle(
                   fontSize: screenWidth * 0.08,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.tertiary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -82,7 +82,7 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
                 widget.subtitle,
                 style: TextStyle(
                   fontSize: screenWidth * 0.06,
-                  color: Theme.of(context).colorScheme.tertiary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
                 textAlign: TextAlign.center,
               ),

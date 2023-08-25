@@ -51,7 +51,7 @@ class CustomTextField extends StatelessWidget {
           ),
         ),
         filled: true,
-        fillColor: Theme.of(context).colorScheme.tertiary,
+        fillColor: Theme.of(context).colorScheme.secondary,
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16.0,
           horizontal: 12.0,

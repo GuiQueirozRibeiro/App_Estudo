@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../repository/subject_model.dart';
+import '../../repository/subject.dart';
 
 class SubjectDetailsPage extends StatelessWidget {
   final Subject subject;
@@ -95,10 +95,13 @@ class SubjectDetailsPage extends StatelessWidget {
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      const Text(
+                                      Text(
                                         '7 de ago.',
                                         style: TextStyle(
-                                            fontSize: 14, color: Colors.grey),
+                                            fontSize: 14,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .outlineVariant),
                                       ),
                                     ],
                                   ),
@@ -107,10 +110,10 @@ class SubjectDetailsPage extends StatelessWidget {
                               const SizedBox(height: 8),
                               Text(
                                 'Olá a todos,\n\nSejam todos muito bem-vindos à emocionante jornada da disciplina de ${subject.title}! Aqui, vamos explorar diversos tópicos interessantes e expandir nossos horizontes. Mal posso esperar para compartilhar conhecimento e aprendizado com cada um de vocês.',
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.black,
-                                ),
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    color:
+                                        Theme.of(context).colorScheme.outline),
                                 textAlign: TextAlign.justify,
                               ),
                             ],

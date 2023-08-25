@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../auth/viewmodel/auth_view_model.dart';
-import '../../home/repository/user_model.dart';
+import '../../auth/repository/user_model.dart';
 import '../view/widget/onboarding_details.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
@@ -113,7 +113,7 @@ class OnboardingViewModel extends ChangeNotifier {
       decoration: BoxDecoration(
         color: isActive
             ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.tertiary,
+            : Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(12),
       ),
     );

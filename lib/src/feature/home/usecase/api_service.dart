@@ -6,36 +6,8 @@ import 'package:http/http.dart' as http;
 
 import '../../../common/utils/constants.dart';
 import '../repository/chat_model.dart';
-import '../repository/models_model.dart';
 
 class ApiService {
-  static Future<List<ModelsModel>> getModels() async {
-    try {
-      var response = await http.get(
-        Uri.parse("${Constants.baseUrl}/models"),
-        headers: {'Authorization': 'Bearer ${Constants.openaiApiKey}'},
-      );
-
-      Map jsonResponse = jsonDecode(response.body);
-
-      if (jsonResponse['error'] != null) {
-        // print("jsonResponse['error'] ${jsonResponse['error']["message"]}");
-        throw HttpException(jsonResponse['error']["message"]);
-      }
-      // print("jsonResponse $jsonResponse");
-      List temp = [];
-      for (var value in jsonResponse["data"]) {
-        temp.add(value);
-        // log("temp ${value["id"]}");
-      }
-      return ModelsModel.modelsFromSnapshot(temp);
-    } catch (error) {
-      log("error $error");
-      rethrow;
-    }
-  }
-
-  // Send Message using ChatGPT API
   static Future<List<ChatModel>> sendMessageGPT(
       {required String message, required String modelId}) async {
     try {
@@ -80,7 +52,6 @@ class ApiService {
     }
   }
 
-  // Send Message fct
   static Future<List<ChatModel>> sendMessage(
       {required String message, required String modelId}) async {
     try {
@@ -100,16 +71,12 @@ class ApiService {
         ),
       );
 
-      // Map jsonResponse = jsonDecode(response.body);
-
       Map jsonResponse = json.decode(utf8.decode(response.bodyBytes));
       if (jsonResponse['error'] != null) {
-        // print("jsonResponse['error'] ${jsonResponse['error']["message"]}");
         throw HttpException(jsonResponse['error']["message"]);
       }
       List<ChatModel> chatList = [];
       if (jsonResponse["choices"].length > 0) {
-        // log("jsonResponse[choices]text ${jsonResponse["choices"][0]["text"]}");
         chatList = List.generate(
           jsonResponse["choices"].length,
           (index) => ChatModel(

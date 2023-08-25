@@ -4,6 +4,7 @@ import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/viewmodel/auth_view_model.dart';
+import '../widget/circle_avatar_edit.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -47,20 +48,44 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthViewModel>(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('profile'.i18n()),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.exit_to_app),
-            onPressed: () => _showConfirmationDialog(),
-          ),
-        ],
-      ),
       body: Center(
-        child: Text('profile'.i18n()),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatarWithEditButton(
+                onImageChanged: (newImage) {
+                  authProvider.changeUserImage(newImage);
+                },
+                userImageUrl: authProvider.currentUser?.imageUrl,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                authProvider.currentUser?.name ?? '',
+                style: const TextStyle(fontSize: 20),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                authProvider.currentUser?.classroom ?? '',
+                style: const TextStyle(fontSize: 16),
+              ),
+            ],
+          ),
+        ),
       ),
+      floatingActionButton: FloatingActionButton(
+        elevation: 5,
+        onPressed: () => _showConfirmationDialog(),
+        child: Icon(
+          Icons.exit_to_app,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

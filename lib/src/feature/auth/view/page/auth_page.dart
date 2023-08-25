@@ -119,8 +119,7 @@ class RoundedButton extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon,
-                  color: Theme.of(context).colorScheme.secondary, size: 120),
+              Icon(icon, color: color, size: 120),
               const SizedBox(height: 10),
               Text(
                 text,

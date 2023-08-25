@@ -15,7 +15,7 @@ class OnBoardingPage extends StatelessWidget {
       body: Consumer<OnboardingViewModel>(builder: (context, viewModel, child) {
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).colorScheme.tertiary,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,

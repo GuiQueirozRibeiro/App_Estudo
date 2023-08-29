@@ -36,7 +36,6 @@
 
     "take_photo": "Tirar Foto",
     "gallery": "Galeria",
-    "no_image": "Nenhuma imagem!",
 
     "skip" : "Pular",
     "next" : "Proximo",
@@ -51,7 +50,8 @@
     "ok": "Ok",
     "are_you_sure": "Tem Certeza?",
 
-    "delete_account": "Excluir conta",
-    "logout_account": "Sair da conta"
+    "logout_account": "Sair da conta",
+    "upload_photo": "Troca de Imagem",
 
+    "message_field": "Envie uma mensagem"
 }

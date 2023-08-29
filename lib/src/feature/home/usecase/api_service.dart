@@ -5,10 +5,10 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 
 import '../../../common/utils/constants.dart';
-import '../repository/chat_model.dart';
+import '../repository/chat.dart';
 
 class ApiService {
-  static Future<List<ChatModel>> sendMessageGPT(
+  static Future<List<Chat>> sendMessageGPT(
       {required String message, required String modelId}) async {
     try {
       log("modelId $modelId");
@@ -35,11 +35,11 @@ class ApiService {
       if (jsonResponse['error'] != null) {
         throw HttpException(jsonResponse['error']["message"]);
       }
-      List<ChatModel> chatList = [];
+      List<Chat> chatList = [];
       if (jsonResponse["choices"].length > 0) {
         chatList = List.generate(
           jsonResponse["choices"].length,
-          (index) => ChatModel(
+          (index) => Chat(
             msg: jsonResponse["choices"][index]["message"]["content"],
             chatIndex: 1,
           ),
@@ -52,7 +52,7 @@ class ApiService {
     }
   }
 
-  static Future<List<ChatModel>> sendMessage(
+  static Future<List<Chat>> sendMessage(
       {required String message, required String modelId}) async {
     try {
       log("modelId $modelId");
@@ -75,11 +75,11 @@ class ApiService {
       if (jsonResponse['error'] != null) {
         throw HttpException(jsonResponse['error']["message"]);
       }
-      List<ChatModel> chatList = [];
+      List<Chat> chatList = [];
       if (jsonResponse["choices"].length > 0) {
         chatList = List.generate(
           jsonResponse["choices"].length,
-          (index) => ChatModel(
+          (index) => Chat(
             msg: jsonResponse["choices"][index]["text"],
             chatIndex: 1,
           ),

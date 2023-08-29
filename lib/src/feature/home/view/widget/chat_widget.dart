@@ -32,7 +32,7 @@ class ChatWidget extends StatelessWidget {
     return Align(
       alignment: chatIndex == 0 ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: chatIndex == 0
@@ -93,23 +93,6 @@ class ChatWidget extends StatelessWidget {
                           ),
                         ),
             ),
-            chatIndex == 0
-                ? const SizedBox.shrink()
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.thumb_up_alt_outlined,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                      const SizedBox(width: 5),
-                      Icon(
-                        Icons.thumb_down_alt_outlined,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ],
-                  ),
           ],
         ),
       ),

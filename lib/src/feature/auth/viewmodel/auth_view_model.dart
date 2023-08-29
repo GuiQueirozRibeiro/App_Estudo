@@ -11,8 +11,8 @@ import '../repository/user_model.dart';
 class AuthViewModel extends ChangeNotifier {
   bool _isLoading = false;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   static UserModel? _currentUser;
+
   static final _userStream = Stream<UserModel?>.multi((controller) async {
     final authChanges = FirebaseAuth.instance.authStateChanges();
     await for (final user in authChanges) {
@@ -33,12 +33,15 @@ class AuthViewModel extends ChangeNotifier {
 
   Future<String?> login(String email, String password) async {
     _isLoading = true;
+    notifyListeners();
 
     try {
       await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
+      await _loadCurrentUser();
     } on FirebaseAuthException catch (error) {
       final authException = AuthException.fromFirebaseAuthException(error);
       return authException.toString();
@@ -46,6 +49,7 @@ class AuthViewModel extends ChangeNotifier {
       return error.toString();
     } finally {
       _isLoading = false;
+      notifyListeners();
     }
 
     return null;
@@ -56,6 +60,13 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> _loadCurrentUser() async {
+    if (_auth.currentUser != null) {
+      _currentUser = await _toUser(_auth.currentUser!);
+      notifyListeners();
+    }
+  }
+
   static Future<UserModel> _toUser(User user) async {
     DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
         .collection('users')
@@ -64,22 +75,21 @@ class AuthViewModel extends ChangeNotifier {
 
     Map<String, dynamic>? userData =
         userSnapshot.data() as Map<String, dynamic>?;
-
-    String classroom = userData?['classroom'];
-    String imageUrl = userData?['imageUrl'];
-    String name = userData?['name'];
     return UserModel(
-      id: user.uid,
-      name: name,
-      classroom: classroom,
-      imageUrl: imageUrl,
-    );
+        id: user.uid,
+        name: userData?['name'],
+        classroom: userData?['classroom'],
+        imageUrl: userData?['imageUrl'],
+        isProfessor: userData?['isProfessor']);
   }
 
   Future<String?> changeUserImage(File newImage) async {
     _isLoading = true;
 
     try {
+      if (_currentUser?.imageUrl != null) {
+        await _deleteOldImage(_currentUser!.imageUrl);
+      }
       String imageName = _currentUser?.id ?? '';
       String? imageUrl = await _uploadImage(newImage, imageName);
 
@@ -89,8 +99,9 @@ class AuthViewModel extends ChangeNotifier {
           name: _currentUser!.name,
           classroom: _currentUser!.classroom,
           imageUrl: imageUrl,
+          isProfessor: _currentUser!.isProfessor,
         ));
-        notifyListeners();
+        await _loadCurrentUser();
       }
     } catch (error) {
       return error.toString();
@@ -110,12 +121,21 @@ class AuthViewModel extends ChangeNotifier {
     return await imageRef.getDownloadURL();
   }
 
+  Future<void> _deleteOldImage(String imageUrl) async {
+    final storage = FirebaseStorage.instance;
+    final imageRef = storage.refFromURL(imageUrl);
+    await imageRef.delete();
+  }
+
   Future<void> _saveUser(UserModel user) async {
     final store = FirebaseFirestore.instance;
     final docRef = store.collection('users').doc(user.id);
 
     return docRef.set({
+      'name': user.name,
+      'classroom': user.classroom,
       'imageUrl': user.imageUrl,
+      'isProfessor': user.isProfessor,
     });
   }
 }

@@ -1,133 +1,182 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 
+import '../../../auth/repository/user_model.dart';
+import '../../../auth/viewmodel/auth_view_model.dart';
+import '../../repository/activity.dart';
+import '../../repository/activity_group.dart';
 import '../../repository/subject.dart';
+import '../../usecase/firestore_service.dart';
+import '../widget/activity_card.dart';
 
-class SubjectDetailsPage extends StatelessWidget {
+class SubjectDetailsPage extends StatefulWidget {
   final Subject subject;
 
-  const SubjectDetailsPage({Key? key, required this.subject}) : super(key: key);
+  const SubjectDetailsPage({
+    Key? key,
+    required this.subject,
+  }) : super(key: key);
+
+  @override
+  State<SubjectDetailsPage> createState() => _SubjectDetailsPageState();
+}
+
+class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
+  late Future<List<Activity>> activitiesFuture;
+  late UserModel? user;
+  Widget _buildLoadingIndicator(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildError() {
+    return Scaffold(
+      body: Center(
+        child: Text('error_occurred'.i18n()),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final authProvider = Provider.of<AuthViewModel>(context, listen: false);
+    user = authProvider.currentUser;
+    activitiesFuture =
+        FirestoreService().fetchActivities(widget.subject.id, user!);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 200,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(subject.title),
-              centerTitle: true,
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Hero(
-                    tag: 'image_${subject.title}',
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(subject.imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment(0, 0.8),
-                        end: Alignment(0, 0),
-                        colors: [
-                          Color.fromRGBO(0, 0, 0, 0.6),
-                          Color.fromRGBO(0, 0, 0, 0)
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate(
-              [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        width: 1,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: ClipOval(
-                                      child: Image.asset(
-                                          'lib/assets/images/avatar.png'),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        subject.teacher,
-                                        style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                      Text(
-                                        '7 de ago.',
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .outlineVariant),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+    return FutureBuilder<List<Activity>>(
+      future: activitiesFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _buildLoadingIndicator(context);
+        } else if (snapshot.hasError) {
+          return _buildError();
+        } else {
+          final activities = snapshot.data ?? [];
+
+          final groupedActivities = groupActivities(activities);
+
+          return Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: 200,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: Text(widget.subject.name),
+                    centerTitle: true,
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Hero(
+                          tag: 'image_${widget.subject.name}',
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: NetworkImage(widget.subject.imageUrl),
+                                fit: BoxFit.cover,
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Olá a todos,\n\nSejam todos muito bem-vindos à emocionante jornada da disciplina de ${subject.title}! Aqui, vamos explorar diversos tópicos interessantes e expandir nossos horizontes. Mal posso esperar para compartilhar conhecimento e aprendizado com cada um de vocês.',
-                                style: TextStyle(
-                                    fontSize: 15,
-                                    color:
-                                        Theme.of(context).colorScheme.outline),
-                                textAlign: TextAlign.justify,
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(0, 0.8),
+                              end: Alignment(0, 0),
+                              colors: [
+                                Color.fromRGBO(0, 0, 0, 0.6),
+                                Color.fromRGBO(0, 0, 0, 0)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (BuildContext context, int index) {
+                      final activityGroup = groupedActivities[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "${activityGroup.subject} - ${activityGroup.classes}",
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: activityGroup.activities.length,
+                            itemBuilder: (context, index) {
+                              final activity = activityGroup.activities[index];
+                              return ActivityCard(
+                                cardHeight: 150,
+                                activity: activity,
+                                user: activity.user,
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                    childCount: groupedActivities.length,
                   ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
+          );
+        }
+      },
     );
+  }
+
+  List<ActivityGroup> groupActivities(List<Activity> activities) {
+    final Map<String, Map<String, List<Activity>>> groupedActivities = {};
+
+    for (final activity in activities) {
+      final subject = activity.user!.classroom;
+      final classes = activity.classes.join(', ');
+
+      if (!groupedActivities.containsKey(subject)) {
+        groupedActivities[subject] = {};
+      }
+
+      if (!groupedActivities[subject]!.containsKey(classes)) {
+        groupedActivities[subject]![classes] = [];
+      }
+
+      groupedActivities[subject]![classes]!.add(activity);
+    }
+
+    final List<ActivityGroup> activityGroups = [];
+    for (final subject in groupedActivities.keys) {
+      for (final classes in groupedActivities[subject]!.keys) {
+        final activitiesForGroup = groupedActivities[subject]![classes]!;
+        activityGroups.add(ActivityGroup(
+          subject: subject,
+          classes: classes,
+          activities: activitiesForGroup,
+        ));
+      }
+    }
+
+    return activityGroups;
   }
 }

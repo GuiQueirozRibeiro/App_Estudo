@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/viewmodel/auth_view_model.dart';
-import '../../repository/chat_model.dart';
+import '../../repository/chat.dart';
 import '../../viewmodel/chat_view_model.dart';
 import '../widget/chat_widget.dart';
 
@@ -20,6 +21,7 @@ class ChatPageState extends State<ChatPage> {
   late TextEditingController _inputController;
   late ScrollController _listScrollController;
   late FocusNode _focusNode;
+
   @override
   void initState() {
     _listScrollController = ScrollController();
@@ -58,7 +60,7 @@ class ChatPageState extends State<ChatPage> {
       chatProvider.chatList.addAll(
         List.generate(
           1,
-          (index) => ChatModel(
+          (index) => Chat(
             msg: error.toString(),
             chatIndex: 1,
           ),
@@ -79,22 +81,40 @@ class ChatPageState extends State<ChatPage> {
     final chatProvider = Provider.of<ChatViewModel>(context);
 
     return Scaffold(
-      body: SafeArea(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Flexible(
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'app_name'.i18n(),
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Image.asset('lib/assets/images/icon.png',
+                    height: 60, width: 60),
+              ],
+            ),
+            const Divider(),
+            Expanded(
               child: ListView.builder(
-                  controller: _listScrollController,
-                  itemCount: chatProvider.getChatList.length,
-                  itemBuilder: (context, index) {
-                    return ChatWidget(
-                      msg: chatProvider.getChatList[index].msg,
-                      chatIndex: chatProvider.getChatList[index].chatIndex,
-                      user: currentUser,
-                      shouldAnimate:
-                          chatProvider.getChatList.length - 1 == index,
-                    );
-                  }),
+                controller: _listScrollController,
+                itemCount: chatProvider.getChatList.length,
+                itemBuilder: (context, index) {
+                  return ChatWidget(
+                    msg: chatProvider.getChatList[index].msg,
+                    chatIndex: chatProvider.getChatList[index].chatIndex,
+                    user: currentUser,
+                    shouldAnimate: chatProvider.getChatList.length - 1 == index,
+                  );
+                },
+              ),
             ),
             if (_isTyping) ...[
               SpinKitThreeBounce(
@@ -102,47 +122,41 @@ class ChatPageState extends State<ChatPage> {
                 size: 18,
               ),
             ],
-            const SizedBox(
-              height: 15,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25.0),
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: TextField(
-                          focusNode: _focusNode,
-                          controller: _inputController,
-                          maxLines: null,
-                          textInputAction: TextInputAction.newline,
-                          decoration: const InputDecoration(
-                            hintText: 'Type a message...',
-                            border: InputBorder.none,
-                          ),
+            Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.0),
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: TextField(
+                        focusNode: _focusNode,
+                        controller: _inputController,
+                        maxLines: null,
+                        textInputAction: TextInputAction.newline,
+                        decoration: InputDecoration(
+                          hintText: 'message_field'.i18n(),
+                          border: InputBorder.none,
                         ),
                       ),
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: () async {
-                      String messageText = _inputController.text.trim();
-                      if (messageText.isNotEmpty) {
-                        await _sendMessage(chatProvider: chatProvider);
-                      } else {
-                        _focusNode.unfocus();
-                      }
-                    },
-                  ),
-                ],
-              ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: () async {
+                    String messageText = _inputController.text.trim();
+                    if (messageText.isNotEmpty) {
+                      await _sendMessage(chatProvider: chatProvider);
+                    } else {
+                      _focusNode.unfocus();
+                    }
+                  },
+                ),
+              ],
             ),
           ],
         ),

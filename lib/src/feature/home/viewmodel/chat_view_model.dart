@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../repository/chat_model.dart';
+import '../repository/chat.dart';
 import '../usecase/api_service.dart';
 
 class ChatViewModel extends ChangeNotifier {
-  List<ChatModel> chatList = [];
-  List<ChatModel> get getChatList {
+  List<Chat> chatList = [];
+  List<Chat> get getChatList {
     return chatList;
   }
 
   void addUserMessage({required String msg}) {
-    chatList.add(ChatModel(msg: msg, chatIndex: 0));
+    chatList.add(Chat(msg: msg, chatIndex: 0));
     notifyListeners();
   }
 

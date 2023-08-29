@@ -7,8 +7,11 @@ class SubjectCard extends StatelessWidget {
   final double cardHeight;
   final Subject subject;
 
-  const SubjectCard(
-      {super.key, required this.cardHeight, required this.subject});
+  const SubjectCard({
+    super.key,
+    required this.cardHeight,
+    required this.subject,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +46,7 @@ class SubjectCard extends StatelessWidget {
                   top: 20,
                   left: 20,
                   child: Text(
-                    subject.title,
+                    subject.name,
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -55,30 +58,10 @@ class SubjectCard extends StatelessWidget {
                   bottom: 20,
                   left: 20,
                   child: Text(
-                    subject.teacher,
+                    subject.teachers[0],
                     style: TextStyle(
                         fontSize: 16,
                         color: Theme.of(context).colorScheme.secondary),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: PopupMenuButton<int>(
-                    itemBuilder: (context) => [
-                      const PopupMenuItem<int>(
-                        value: 0,
-                        child: Text('Cancelar Inscrição'),
-                      ),
-                    ],
-                    icon: Icon(Icons.more_vert,
-                        color: Theme.of(context).colorScheme.secondary),
-                    offset: const Offset(0, 40),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    elevation: 8,
-                    onSelected: (value) {},
                   ),
                 ),
               ],

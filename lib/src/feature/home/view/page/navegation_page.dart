@@ -32,7 +32,6 @@ class NavegationPageState extends State<NavegationPage>
 
   @override
   void initState() {
-    super.initState();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -43,6 +42,7 @@ class NavegationPageState extends State<NavegationPage>
         currentPageIndex = _pageViewController.page?.round() ?? 1;
       });
     });
+    super.initState();
   }
 
   @override

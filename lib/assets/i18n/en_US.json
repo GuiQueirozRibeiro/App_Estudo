@@ -34,7 +34,6 @@
 
     "take_photo": "Take Photo",
     "gallery": "Gallery",
-    "no_image": "No image!",
 
     "skip" : "Skip",
     "next" : "Next",
@@ -50,8 +49,7 @@
     "are_you_sure": "Are you sure?",
 
     "logout_account": "Logout account",
+    "upload_photo": "Image Change",
 
-    "home" : "Home",
-    "chat" : "Chat",
-    "profile" : "Profile"
+    "message_field": "Send a message"
 }

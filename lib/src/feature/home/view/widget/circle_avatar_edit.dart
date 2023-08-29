@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:localization/localization.dart';
 
 class CircleAvatarWithEditButton extends StatefulWidget {
   final void Function(File image) onImageChanged;
@@ -22,6 +23,32 @@ class CircleAvatarWithEditButtonState
     extends State<CircleAvatarWithEditButton> {
   File? _image;
 
+  Future<bool?> showConfirmationDialog() async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('upload_photo'.i18n()),
+          content: Text('are_you_sure'.i18n()),
+          actions: [
+            TextButton(
+              child: Text('no'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('yes'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _takePicture() async {
     final picker = ImagePicker();
     final imageFile = await picker.pickImage(
@@ -30,11 +57,15 @@ class CircleAvatarWithEditButtonState
     );
 
     if (imageFile != null) {
-      setState(() {
-        _image = File(imageFile.path);
-      });
+      final confirmed = await showConfirmationDialog();
 
-      widget.onImageChanged(_image!);
+      if (confirmed == true) {
+        setState(() {
+          _image = File(imageFile.path);
+        });
+
+        widget.onImageChanged(_image!);
+      }
     }
   }
 
@@ -47,11 +78,15 @@ class CircleAvatarWithEditButtonState
     );
 
     if (pickedImage != null) {
-      setState(() {
-        _image = File(pickedImage.path);
-      });
+      final confirmed = await showConfirmationDialog();
 
-      widget.onImageChanged(_image!);
+      if (confirmed == true) {
+        setState(() {
+          _image = File(pickedImage.path);
+        });
+
+        widget.onImageChanged(_image!);
+      }
     }
   }
 
@@ -77,7 +112,7 @@ class CircleAvatarWithEditButtonState
               children: <Widget>[
                 ListTile(
                   leading: const Icon(Icons.camera_alt),
-                  title: const Text('Take Photo'),
+                  title: Text('take_photo'.i18n()),
                   onTap: () {
                     Navigator.pop(context);
                     _takePicture();
@@ -85,7 +120,7 @@ class CircleAvatarWithEditButtonState
                 ),
                 ListTile(
                   leading: const Icon(Icons.photo),
-                  title: const Text('Choose from Gallery'),
+                  title: Text('gallery'.i18n()),
                   onTap: () {
                     Navigator.pop(context);
                     _pickImage();

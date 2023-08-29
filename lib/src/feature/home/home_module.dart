@@ -1,7 +1,9 @@
 import 'package:flutter_modular/flutter_modular.dart';
 
+import 'view/page/activity_form_page.dart';
 import 'view/page/navegation_page.dart';
 import 'view/page/subject_details_page.dart';
+import 'view/page/subject_form_page.dart';
 
 class HomeModule extends Module {
   @override
@@ -11,13 +13,18 @@ class HomeModule extends Module {
   void routes(r) {
     r.child('/', child: (_) => const NavegationPage());
     r.child(
-      '/details',
+      '/details/',
       child: (_) => SubjectDetailsPage(subject: r.args.data),
       transition: TransitionType.fadeIn,
     );
     r.child(
-      '/edit',
-      child: (_) => SubjectDetailsPage(subject: r.args.data),
+      '/subjectFormPage',
+      child: (_) => const SubjectFormPage(),
+      transition: TransitionType.fadeIn,
+    );
+    r.child(
+      '/details/activityFormPage',
+      child: (_) => const ActivityFormPage(),
       transition: TransitionType.fadeIn,
     );
   }

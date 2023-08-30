@@ -55,12 +55,11 @@ class FirestoreService {
       if (doc['subjectId'] == subjectId &&
           (doc['classes'].contains(user.classroom) || user.isProfessor)) {
         final activity = Activity(
-          title: doc['title'],
-          assignedDate: doc['assignedDate'],
+          id: doc.id,
           classes: doc['classes'],
           description: doc['description'],
+          assignedDate: doc['assignedDate'],
           dueDate: doc['dueDate'],
-          status: doc['status'],
           user: professor,
         );
 

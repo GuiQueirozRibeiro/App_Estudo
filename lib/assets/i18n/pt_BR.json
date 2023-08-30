@@ -34,9 +34,6 @@
     "authentication_error": "Ocorreu um erro no processo de autenticação!",
     "gif_error": "Erro ao carregar o GIF",
 
-    "take_photo": "Tirar Foto",
-    "gallery": "Galeria",
-
     "skip" : "Pular",
     "next" : "Proximo",
     "done" : "Pronto",
@@ -50,8 +47,14 @@
     "ok": "Ok",
     "are_you_sure": "Tem Certeza?",
 
+    "take_photo": "Tirar Foto",
+    "gallery": "Galeria",
+
     "logout_account": "Sair da conta",
     "upload_photo": "Troca de Imagem",
+
+    "show_less": "Mostrar Menos",
+    "show_more": "Mostrar Mais",
 
     "message_field": "Envie uma mensagem"
 }

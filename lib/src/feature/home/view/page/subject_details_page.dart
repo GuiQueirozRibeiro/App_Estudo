@@ -109,31 +109,19 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
                       final activityGroup = groupedActivities[index];
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "${activityGroup.subject} - ${activityGroup.classes}",
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: activityGroup.activities.length,
-                            itemBuilder: (context, index) {
-                              final activity = activityGroup.activities[index];
-                              return ActivityCard(
-                                cardHeight: 150,
-                                activity: activity,
-                                user: activity.user,
-                              );
-                            },
-                          ),
-                        ],
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: activityGroup.activities.length,
+                        itemBuilder: (context, index) {
+                          final activity = activityGroup.activities[index];
+                          return ActivityCard(
+                            cardHeight: 150,
+                            activity: activity,
+                            user: activity.user,
+                            isProfessor: user!.isProfessor,
+                          );
+                        },
                       );
                     },
                     childCount: groupedActivities.length,

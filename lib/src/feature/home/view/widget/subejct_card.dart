@@ -19,7 +19,7 @@ class SubjectCard extends StatelessWidget {
       padding: const EdgeInsets.all(5.0),
       child: GestureDetector(
         onTap: () {
-          Modular.to.pushNamed('details', arguments: subject);
+          Modular.to.pushNamed('details/', arguments: subject);
         },
         child: Card(
           elevation: 5,

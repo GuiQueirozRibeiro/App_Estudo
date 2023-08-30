@@ -32,9 +32,6 @@
     "invalid_password": "Invalid password",
     "authentication_error": "An error occurred during the authentication process!",
 
-    "take_photo": "Take Photo",
-    "gallery": "Gallery",
-
     "skip" : "Skip",
     "next" : "Next",
     "done" : "Done",
@@ -48,8 +45,14 @@
     "ok": "Ok",
     "are_you_sure": "Are you sure?",
 
+    "take_photo": "Take Photo",
+    "gallery": "Gallery",
+
     "logout_account": "Logout account",
     "upload_photo": "Image Change",
+
+    "show_less": "Show Less",
+    "show_more": "Show More",
 
     "message_field": "Send a message"
 }

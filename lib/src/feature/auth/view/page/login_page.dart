@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'dart:async';
 
 import '../../../../common/widgets/custom_button.dart';
-import '../widget/custom_text_field.dart';
+import '../../../../common/widgets/custom_text_field.dart';
 import '../../repository/auth_form_data.dart';
 import '../../viewmodel/auth_view_model.dart';
 

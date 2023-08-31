@@ -25,6 +25,7 @@ class SubjectDetailsPage extends StatefulWidget {
 class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
   late Future<List<Activity>> activitiesFuture;
   late UserModel? user;
+
   Widget _buildLoadingIndicator(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -116,7 +117,6 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
                         itemBuilder: (context, index) {
                           final activity = activityGroup.activities[index];
                           return ActivityCard(
-                            cardHeight: 150,
                             activity: activity,
                             user: activity.user,
                             isProfessor: user!.isProfessor,

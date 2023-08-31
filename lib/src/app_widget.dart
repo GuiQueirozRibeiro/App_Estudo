@@ -35,6 +35,8 @@ class AppWidget extends StatelessWidget {
             primary: const Color(0xFF012b5d),
             secondary: Colors.white,
             tertiary: const Color(0xFF0096c0),
+            error: Colors.red,
+            onError: Colors.green,
             outline: Colors.black,
             outlineVariant: Colors.grey[400],
           ),

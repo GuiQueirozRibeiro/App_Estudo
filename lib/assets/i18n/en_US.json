@@ -51,8 +51,8 @@
     "logout_account": "Logout account",
     "upload_photo": "Image Change",
 
-    "show_less": "Show Less",
-    "show_more": "Show More",
+    "activity_done": "Activity marked as done!",
+    "activity_not_done": "Activity marked as not done",
 
     "message_field": "Send a message"
 }

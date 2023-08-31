@@ -53,8 +53,8 @@
     "logout_account": "Sair da conta",
     "upload_photo": "Troca de Imagem",
 
-    "show_less": "Mostrar Menos",
-    "show_more": "Mostrar Mais",
+    "activity_done": "Atividade marcada como concluída!",
+    "activity_not_done": "Atividade marcada como não concluída",
 
     "message_field": "Envie uma mensagem"
 }

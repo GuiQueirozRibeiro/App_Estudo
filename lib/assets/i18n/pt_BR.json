@@ -53,6 +53,10 @@
     "logout_account": "Sair da conta",
     "upload_photo": "Troca de Imagem",
 
+    "subject_form": "Formulário da Matéria",
+    "no_image": "Clique para enviar uma imagem",
+    "name_field": "Nome",
+
     "activity_done": "Atividade marcada como concluída!",
     "activity_not_done": "Atividade marcada como não concluída",
 

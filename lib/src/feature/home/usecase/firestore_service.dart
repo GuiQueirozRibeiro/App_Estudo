@@ -19,7 +19,7 @@ class FirestoreService {
         name: doc['name'],
         imageUrl: doc['imageUrl'],
         classes: doc['classes'],
-        teachers: doc['teachers'],
+        teacher: doc['teacher'],
       );
 
       if (subject.classes.contains(user.classroom) ||

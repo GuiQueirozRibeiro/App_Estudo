@@ -8,8 +8,10 @@ class CustomTextField extends StatelessWidget {
   final String? initialValue;
   final TextInputType keyboardType;
   final TextInputAction textInputAction;
+  final TextEditingController? controller;
   final FormFieldValidator<String>? validator;
   final FormFieldSetter<String>? onChanged;
+  final FormFieldSetter<String>? onSaved;
   final void Function(String)? onFieldSubmitted;
 
   const CustomTextField({
@@ -19,10 +21,12 @@ class CustomTextField extends StatelessWidget {
     this.maxLines = 1,
     this.obscureText = false,
     this.initialValue,
+    this.controller,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.done,
     this.validator,
     this.onChanged,
+    this.onSaved,
     this.onFieldSubmitted,
   }) : super(key: key);
 
@@ -30,6 +34,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       key: valueKey,
+      controller: controller,
       decoration: InputDecoration(
         hintText: text,
         errorMaxLines: 3,
@@ -63,6 +68,7 @@ class CustomTextField extends StatelessWidget {
       textInputAction: textInputAction,
       validator: validator,
       onChanged: onChanged,
+      onSaved: onSaved,
       onFieldSubmitted: onFieldSubmitted,
     );
   }

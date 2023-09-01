@@ -51,6 +51,10 @@
     "logout_account": "Logout account",
     "upload_photo": "Image Change",
 
+    "subject_form": "Subject Form",
+    "no_image": "Click to upload an image",
+    "name_field": "Name",
+
     "activity_done": "Activity marked as done!",
     "activity_not_done": "Activity marked as not done",
 

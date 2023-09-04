@@ -1,9 +1,9 @@
 class Subject {
   final String? id;
-  final String name;
-  final String imageUrl;
-  final String teacher;
-  final List classes;
+  String name;
+  String imageUrl;
+  String teacher;
+  List classes;
 
   Subject({
     this.id,

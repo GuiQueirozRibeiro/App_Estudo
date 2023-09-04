@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -9,42 +10,44 @@ import '../../../auth/repository/user_model.dart';
 import '../../../auth/viewmodel/auth_view_model.dart';
 import '../../repository/subject.dart';
 import '../../../../common/widgets/custom_text_field.dart';
-import '../../viewmodel/subject_form_view_model.dart';
+import '../../usecase/firestore_service.dart';
 import '../widget/subejct_card.dart';
 
 class SubjectFormPage extends StatefulWidget {
-  final Subject? subject;
-  final SubjectFormViewModel viewModel = SubjectFormViewModel();
+  final Subject subject;
 
-  SubjectFormPage({
+  const SubjectFormPage({
     super.key,
-    this.subject,
-  }) {
-    if (subject != null) {
-      viewModel.nameController.text = subject!.name;
-      viewModel.imageUrlController.text = subject!.imageUrl;
-      viewModel.selectedClasses = subject!.classes.toList();
-    }
-  }
+    required this.subject,
+  });
 
   @override
   SubjectFormPageState createState() => SubjectFormPageState();
 }
 
 class SubjectFormPageState extends State<SubjectFormPage> {
+  File? _image;
+  late AuthViewModel authProvider;
+  late UserModel? currentUser;
   final _formKey = GlobalKey<FormState>();
   final List<String> classOptions = ['1A', '1B', '2A', '2B', '3A', '3B'];
-  late UserModel? currentUser;
   final StreamController<String> _nameStreamController =
       StreamController<String>();
+  bool _isLoading = false;
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController imageUrlController = TextEditingController();
+  List selectedClasses = [];
 
   @override
   void initState() {
     super.initState();
-    final authProvider = Provider.of<AuthViewModel>(context, listen: false);
+    authProvider = Provider.of<AuthViewModel>(context, listen: false);
     currentUser = authProvider.currentUser;
-    widget.viewModel.nameController.addListener(() {
-      _nameStreamController.add(widget.viewModel.nameController.text);
+    nameController.text = widget.subject.name;
+    imageUrlController.text = widget.subject.imageUrl;
+    selectedClasses = widget.subject.classes.toList();
+    nameController.addListener(() {
+      _nameStreamController.add(nameController.text);
     });
   }
 
@@ -54,16 +57,81 @@ class SubjectFormPageState extends State<SubjectFormPage> {
     super.dispose();
   }
 
+  Future<bool?> _showDialog(String title, String content) async {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: Text('no'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('yes'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _selectImage(String imagePath) {
+    setState(() {
+      _image = File(imagePath);
+    });
+  }
+
   Future<void> _submitForm() async {
-    final isValid = Form.of(context).validate();
+    final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
       return;
     }
 
-    Form.of(context).save();
+    _formKey.currentState?.save();
 
-    Modular.to.pop();
+    final confirm = await _showDialog(
+      'upload_subject'.i18n(),
+      'are_you_sure'.i18n(),
+    );
+    if (confirm!) {
+      setState(() => _isLoading = true);
+
+      try {
+        String? imageUrl = widget.subject.imageUrl;
+        if (_image != null) {
+          imageUrl = await authProvider.uploadImage(
+              _image, widget.subject.id!, widget.subject.imageUrl);
+        }
+        await FirestoreService().updateSubject(
+          Subject(
+            id: widget.subject.id,
+            name: nameController.text,
+            imageUrl: imageUrl ?? '',
+            classes: selectedClasses,
+            teacher: widget.subject.teacher,
+          ),
+        );
+      } catch (error) {
+        await _showDialog(
+          'error_occurred'.i18n(),
+          'error_updating_subject'.i18n(),
+        );
+      } finally {
+        Modular.to.pop();
+        setState(() => _isLoading = false);
+      }
+    } else {
+      return;
+    }
   }
 
   Widget _buildClassItem(bool isChecked, String classOption) {
@@ -77,9 +145,9 @@ class SubjectFormPageState extends State<SubjectFormPage> {
           onTap: () {
             setState(() {
               if (isChecked) {
-                widget.viewModel.selectedClasses.remove(classOption);
+                selectedClasses.remove(classOption);
               } else {
-                widget.viewModel.selectedClasses.add(classOption);
+                selectedClasses.add(classOption);
               }
             });
           },
@@ -110,9 +178,9 @@ class SubjectFormPageState extends State<SubjectFormPage> {
                   onChanged: (value) {
                     setState(() {
                       if (isChecked) {
-                        widget.viewModel.selectedClasses.remove(classOption);
+                        selectedClasses.remove(classOption);
                       } else {
-                        widget.viewModel.selectedClasses.add(classOption);
+                        selectedClasses.add(classOption);
                       }
                     });
                   },
@@ -141,75 +209,79 @@ class SubjectFormPageState extends State<SubjectFormPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(5.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              StreamBuilder<String>(
-                  stream: _nameStreamController.stream,
-                  builder: (context, snapshot) {
-                    final name =
-                        snapshot.data ?? widget.viewModel.nameController.text;
-                    return SubjectCard(
-                      cardHeight: cardHeight,
-                      subject: Subject(
-                        name: name,
-                        imageUrl: widget.viewModel.imageUrlController.text,
-                        classes: widget.viewModel.selectedClasses,
-                        teacher: widget.subject != null
-                            ? widget.subject!.teacher
-                            : '',
-                      ),
-                      user: UserModel(
-                        id: '',
-                        name: '',
-                        classroom: widget.viewModel.selectedClasses.join(', '),
-                        imageUrl: '',
-                        isProfessor: false,
-                      ),
-                      isForm: true,
-                    );
-                  }),
-              const SizedBox(height: 20),
-              CustomTextField(
-                text: 'Name',
-                controller: widget.viewModel.nameController,
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.outlineVariant,
               ),
-              const Divider(),
-              const SizedBox(height: 10),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: (classOptions.length / 2).ceil(),
-                  itemBuilder: (ctx, index) {
-                    int firstIndex = index * 2;
-                    int secondIndex = firstIndex + 1;
+            )
+          : Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    StreamBuilder<String>(
+                        stream: _nameStreamController.stream,
+                        builder: (context, snapshot) {
+                          final name = snapshot.data ?? nameController.text;
+                          return SubjectCard(
+                            cardHeight: cardHeight,
+                            subject: Subject(
+                              name: name,
+                              imageUrl: imageUrlController.text,
+                              classes: selectedClasses,
+                              teacher: widget.subject.teacher,
+                            ),
+                            user: UserModel(
+                              id: '',
+                              name: '',
+                              classroom: selectedClasses.join(', '),
+                              imageUrl: '',
+                              isProfessor: false,
+                            ),
+                            isForm: true,
+                            onImageSelected: _selectImage,
+                          );
+                        }),
+                    const SizedBox(height: 20),
+                    CustomTextField(
+                      text: 'Name',
+                      controller: nameController,
+                    ),
+                    const Divider(),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: (classOptions.length / 2).ceil(),
+                        itemBuilder: (ctx, index) {
+                          int firstIndex = index * 2;
+                          int secondIndex = firstIndex + 1;
 
-                    return Row(
-                      children: [
-                        if (firstIndex < classOptions.length)
-                          _buildClassItem(
-                            widget.viewModel.selectedClasses
-                                .contains(classOptions[firstIndex]),
-                            classOptions[firstIndex],
-                          ),
-                        if (secondIndex < classOptions.length)
-                          _buildClassItem(
-                            widget.viewModel.selectedClasses
-                                .contains(classOptions[secondIndex]),
-                            classOptions[secondIndex],
-                          ),
-                      ],
-                    );
-                  },
+                          return Row(
+                            children: [
+                              if (firstIndex < classOptions.length)
+                                _buildClassItem(
+                                  selectedClasses
+                                      .contains(classOptions[firstIndex]),
+                                  classOptions[firstIndex],
+                                ),
+                              if (secondIndex < classOptions.length)
+                                _buildClassItem(
+                                  selectedClasses
+                                      .contains(classOptions[secondIndex]),
+                                  classOptions[secondIndex],
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

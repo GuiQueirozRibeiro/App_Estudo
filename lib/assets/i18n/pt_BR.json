@@ -25,6 +25,7 @@
     "password_required" : "Senha é obrigatória!",
 
     "error_occurred": "Ocorreu um erro!",
+    "error_updating_subject": "Ocorreu um erro para atualizar a Matéria",
     "unexpected_error": "Ocorreu um erro inesperado!",
     "email_exists": "E-mail já cadastrado",
     "email_not_found": "E-mail não encontrado",
@@ -54,6 +55,7 @@
     "upload_photo": "Troca de Imagem",
 
     "subject_form": "Formulário da Matéria",
+    "upload_subject": "Atualizar a Matéria",
     "no_image": "Clique para enviar uma imagem",
     "name_field": "Nome",
 

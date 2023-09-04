@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
@@ -85,18 +84,6 @@ class _HomePageState extends State<HomePage> {
 
             return Scaffold(
               body: _buildSubjectListView(subjectsList, cardHeight),
-              floatingActionButton: (currentUser?.classroom.length ?? 0) > 2
-                  ? FloatingActionButton(
-                      elevation: 5,
-                      onPressed: () => Modular.to.pushNamed('subjectFormPage'),
-                      child: Icon(
-                        Icons.add,
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    )
-                  : null,
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerFloat,
             );
           }
         },

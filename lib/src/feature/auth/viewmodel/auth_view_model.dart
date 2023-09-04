@@ -87,11 +87,9 @@ class AuthViewModel extends ChangeNotifier {
     _isLoading = true;
 
     try {
-      if (_currentUser?.imageUrl != null) {
-        await _deleteOldImage(_currentUser!.imageUrl);
-      }
       String imageName = _currentUser?.id ?? '';
-      String? imageUrl = await _uploadImage(newImage, imageName);
+      String? imageUrl =
+          await uploadImage(newImage, imageName, _currentUser!.imageUrl);
 
       if (imageUrl != null) {
         await _saveUser(UserModel(
@@ -112,13 +110,21 @@ class AuthViewModel extends ChangeNotifier {
     return null;
   }
 
-  Future<String?> _uploadImage(File? image, String imageName) async {
+  Future<String?> uploadImage(
+      File? image, String imageName, String oldImage) async {
     if (image == null) return null;
 
     final storage = FirebaseStorage.instance;
-    final imageRef = storage.ref().child('user_images').child(imageName);
-    await imageRef.putFile(image).whenComplete(() {});
-    return await imageRef.getDownloadURL();
+    try {
+      await _deleteOldImage(oldImage);
+      final imageRef = storage.ref().child('user_images/$imageName.jpeg');
+
+      await imageRef.putFile(image);
+      return await imageRef.getDownloadURL();
+    } catch (error) {
+      debugPrint('Erro ao fazer upload da imagem: $error');
+      return null;
+    }
   }
 
   Future<void> _deleteOldImage(String imageUrl) async {

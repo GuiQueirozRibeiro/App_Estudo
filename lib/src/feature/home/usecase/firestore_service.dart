@@ -7,6 +7,23 @@ import '../repository/subject.dart';
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  Future<void> updateSubject(Subject subject) async {
+    try {
+      final subjectRef = _firestore.collection('subjects').doc(subject.id);
+
+      final subjectData = {
+        'name': subject.name,
+        'imageUrl': subject.imageUrl,
+        'teacher': subject.teacher,
+        'classes': subject.classes,
+      };
+
+      await subjectRef.update(subjectData);
+    } catch (e) {
+      return;
+    }
+  }
+
   Future<List<Subject>> fetchSubjects(UserModel user) async {
     final QuerySnapshot querySnapshot =
         await _firestore.collection('subjects').get();
@@ -23,7 +40,7 @@ class FirestoreService {
       );
 
       if (subject.classes.contains(user.classroom) ||
-          (user.isProfessor && subject.name == user.classroom)) {
+          (user.isProfessor && subject.teacher == user.name)) {
         subjects.add(subject);
       }
     }

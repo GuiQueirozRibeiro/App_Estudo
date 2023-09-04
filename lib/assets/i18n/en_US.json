@@ -25,6 +25,7 @@
     "password_required" : "Password is required!",
 
     "error_occurred": "An error occurred!",
+    "error_updating_subject": "An error occurred while updating the subject",
     "unexpected_error": "Unexpected error",
     "email_not_found": "E-mail not found",
     "user_disabled": "The user account has been disabled",
@@ -52,6 +53,7 @@
     "upload_photo": "Image Change",
 
     "subject_form": "Subject Form",
+    "upload_subject": "Upload Subject",
     "no_image": "Click to upload an image",
     "name_field": "Name",
 

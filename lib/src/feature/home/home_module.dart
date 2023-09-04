@@ -19,9 +19,7 @@ class HomeModule extends Module {
     );
     r.child(
       '/subjectFormPage',
-      child: (_) => SubjectFormPage(
-        subject: r.args.data,
-      ),
+      child: (_) => SubjectFormPage(subject: r.args.data),
       transition: TransitionType.fadeIn,
     );
     r.child(

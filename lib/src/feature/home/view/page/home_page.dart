@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/repository/user_model.dart';
@@ -17,35 +16,38 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late UserModel? currentUser;
-  late Future<List<Subject>> subjectsFuture;
+  late FirestoreService firestoreProvider;
+  List<Subject> subjectsList = [];
+  bool isDataLoaded = false;
 
   @override
   void initState() {
     super.initState();
     final authProvider = Provider.of<AuthViewModel>(context, listen: false);
     currentUser = authProvider.currentUser;
+    firestoreProvider = Provider.of<FirestoreService>(context, listen: false);
 
-    subjectsFuture = _fetchSubjects();
+    _fetchSubjects();
+
+    firestoreProvider.addListener(_handleFirestoreChange);
   }
 
-  Future<List<Subject>> _fetchSubjects() async {
-    return await FirestoreService().fetchSubjects(currentUser!);
+  @override
+  void dispose() {
+    firestoreProvider.removeListener(_handleFirestoreChange);
+    super.dispose();
   }
 
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Center(
-      child: CircularProgressIndicator(
-        color: Theme.of(context).colorScheme.outlineVariant,
-      ),
-    );
+  void _handleFirestoreChange() {
+    _fetchSubjects();
   }
 
-  Widget _buildError() {
-    return Scaffold(
-      body: Center(
-        child: Text('error_occurred'.i18n()),
-      ),
-    );
+  Future<void> _fetchSubjects() async {
+    final subjects = await firestoreProvider.fetchSubjects(currentUser!);
+    setState(() {
+      subjectsList = subjects;
+      isDataLoaded = true;
+    });
   }
 
   Widget _buildSubjectListView(List<Subject> subjectsList, double cardHeight) {
@@ -67,26 +69,11 @@ class _HomePageState extends State<HomePage> {
 
     return RefreshIndicator(
       onRefresh: () async {
-        setState(() {
-          subjectsFuture = _fetchSubjects();
-        });
+        await _fetchSubjects();
       },
       color: Theme.of(context).colorScheme.outlineVariant,
-      child: FutureBuilder<List<Subject>>(
-        future: subjectsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Scaffold(body: _buildLoadingIndicator(context));
-          } else if (snapshot.hasError) {
-            return Scaffold(body: _buildError());
-          } else {
-            final List<Subject> subjectsList = snapshot.data ?? [];
-
-            return Scaffold(
-              body: _buildSubjectListView(subjectsList, cardHeight),
-            );
-          }
-        },
+      child: Scaffold(
+        body: _buildSubjectListView(subjectsList, cardHeight),
       ),
     );
   }

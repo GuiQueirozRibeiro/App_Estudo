@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 import '../../auth/repository/user_model.dart';
 import '../repository/activity.dart';
 import '../repository/subject.dart';
 
-class FirestoreService {
+class FirestoreService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> updateSubject(Subject subject) async {
@@ -14,11 +15,11 @@ class FirestoreService {
       final subjectData = {
         'name': subject.name,
         'imageUrl': subject.imageUrl,
-        'teacher': subject.teacher,
         'classes': subject.classes,
       };
 
       await subjectRef.update(subjectData);
+      notifyListeners();
     } catch (e) {
       return;
     }
@@ -75,9 +76,9 @@ class FirestoreService {
           id: doc.id,
           classes: doc['classes'],
           description: doc['description'],
+          user: professor,
           assignedDate: doc['assignedDate'],
           dueDate: doc['dueDate'],
-          user: professor,
         );
 
         activities.add(activity);

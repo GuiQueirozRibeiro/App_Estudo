@@ -29,10 +29,7 @@ class SubjectFormPageState extends State<SubjectFormPage> {
   File? _image;
   late AuthViewModel authProvider;
   late UserModel? currentUser;
-  final _formKey = GlobalKey<FormState>();
   final List<String> classOptions = ['1A', '1B', '2A', '2B', '3A', '3B'];
-  final StreamController<String> _nameStreamController =
-      StreamController<String>();
   bool _isLoading = false;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController imageUrlController = TextEditingController();
@@ -46,14 +43,10 @@ class SubjectFormPageState extends State<SubjectFormPage> {
     nameController.text = widget.subject.name;
     imageUrlController.text = widget.subject.imageUrl;
     selectedClasses = widget.subject.classes.toList();
-    nameController.addListener(() {
-      _nameStreamController.add(nameController.text);
-    });
   }
 
   @override
   void dispose() {
-    _nameStreamController.close();
     super.dispose();
   }
 
@@ -90,14 +83,8 @@ class SubjectFormPageState extends State<SubjectFormPage> {
   }
 
   Future<void> _submitForm() async {
-    final isValid = _formKey.currentState?.validate() ?? false;
-
-    if (!isValid) {
-      return;
-    }
-
-    _formKey.currentState?.save();
-
+    final firestoreProvider =
+        Provider.of<FirestoreService>(context, listen: false);
     final confirm = await _showDialog(
       'upload_subject'.i18n(),
       'are_you_sure'.i18n(),
@@ -109,17 +96,12 @@ class SubjectFormPageState extends State<SubjectFormPage> {
         String? imageUrl = widget.subject.imageUrl;
         if (_image != null) {
           imageUrl = await authProvider.uploadImage(
-              _image, widget.subject.id!, widget.subject.imageUrl);
+              _image, widget.subject.id, widget.subject.imageUrl);
         }
-        await FirestoreService().updateSubject(
-          Subject(
-            id: widget.subject.id,
-            name: nameController.text,
-            imageUrl: imageUrl ?? '',
-            classes: selectedClasses,
-            teacher: widget.subject.teacher,
-          ),
-        );
+        widget.subject.imageUrl = imageUrl ?? '';
+        widget.subject.name = nameController.text;
+        widget.subject.classes = selectedClasses;
+        await firestoreProvider.updateSubject(widget.subject);
       } catch (error) {
         await _showDialog(
           'error_occurred'.i18n(),
@@ -217,69 +199,62 @@ class SubjectFormPageState extends State<SubjectFormPage> {
             )
           : Padding(
               padding: const EdgeInsets.all(5.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    StreamBuilder<String>(
-                        stream: _nameStreamController.stream,
-                        builder: (context, snapshot) {
-                          final name = snapshot.data ?? nameController.text;
-                          return SubjectCard(
-                            cardHeight: cardHeight,
-                            subject: Subject(
-                              name: name,
-                              imageUrl: imageUrlController.text,
-                              classes: selectedClasses,
-                              teacher: widget.subject.teacher,
-                            ),
-                            user: UserModel(
-                              id: '',
-                              name: '',
-                              classroom: selectedClasses.join(', '),
-                              imageUrl: '',
-                              isProfessor: false,
-                            ),
-                            isForm: true,
-                            onImageSelected: _selectImage,
-                          );
-                        }),
-                    const SizedBox(height: 20),
-                    CustomTextField(
-                      text: 'Name',
-                      controller: nameController,
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  SubjectCard(
+                    cardHeight: cardHeight,
+                    subject: Subject(
+                      id: widget.subject.id,
+                      name: nameController.text,
+                      imageUrl: imageUrlController.text,
+                      classes: selectedClasses,
+                      teacher: widget.subject.teacher,
                     ),
-                    const Divider(),
-                    const SizedBox(height: 10),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: (classOptions.length / 2).ceil(),
-                        itemBuilder: (ctx, index) {
-                          int firstIndex = index * 2;
-                          int secondIndex = firstIndex + 1;
+                    user: UserModel(
+                      id: '',
+                      name: '',
+                      classroom: selectedClasses.join(', '),
+                      imageUrl: '',
+                      isProfessor: false,
+                    ),
+                    isForm: true,
+                    onImageSelected: _selectImage,
+                  ),
+                  const SizedBox(height: 20),
+                  CustomTextField(
+                    text: 'Name',
+                    controller: nameController,
+                  ),
+                  const Divider(),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: (classOptions.length / 2).ceil(),
+                      itemBuilder: (ctx, index) {
+                        int firstIndex = index * 2;
+                        int secondIndex = firstIndex + 1;
 
-                          return Row(
-                            children: [
-                              if (firstIndex < classOptions.length)
-                                _buildClassItem(
-                                  selectedClasses
-                                      .contains(classOptions[firstIndex]),
-                                  classOptions[firstIndex],
-                                ),
-                              if (secondIndex < classOptions.length)
-                                _buildClassItem(
-                                  selectedClasses
-                                      .contains(classOptions[secondIndex]),
-                                  classOptions[secondIndex],
-                                ),
-                            ],
-                          );
-                        },
-                      ),
+                        return Row(
+                          children: [
+                            if (firstIndex < classOptions.length)
+                              _buildClassItem(
+                                selectedClasses
+                                    .contains(classOptions[firstIndex]),
+                                classOptions[firstIndex],
+                              ),
+                            if (secondIndex < classOptions.length)
+                              _buildClassItem(
+                                selectedClasses
+                                    .contains(classOptions[secondIndex]),
+                                classOptions[secondIndex],
+                              ),
+                          ],
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
     );

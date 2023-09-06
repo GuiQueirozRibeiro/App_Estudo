@@ -7,21 +7,17 @@ class Activity {
   final String id;
   final List classes;
   final String description;
+  final UserModel user;
   final DateTime assignedDate;
   final DateTime? dueDate;
-  String? status;
-  String? subject;
-  UserModel? user;
 
   Activity({
     required this.id,
     required this.classes,
     required this.description,
+    required this.user,
     required Timestamp assignedDate,
     Timestamp? dueDate,
-    this.status,
-    this.subject,
-    this.user,
   })  : assignedDate = assignedDate.toDate(),
         dueDate = dueDate?.toDate();
 

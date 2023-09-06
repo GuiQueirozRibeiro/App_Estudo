@@ -6,6 +6,7 @@ import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import 'feature/auth/viewmodel/auth_view_model.dart';
+import 'feature/home/usecase/firestore_service.dart';
 import 'feature/home/viewmodel/chat_view_model.dart';
 import 'feature/onboarding/viewmodel/onboarding_view_model.dart';
 
@@ -26,6 +27,9 @@ class AppWidget extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => ChatViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => FirestoreService(),
         ),
       ],
       child: MaterialApp.router(

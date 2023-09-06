@@ -139,7 +139,7 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
     final Map<String, Map<String, List<Activity>>> groupedActivities = {};
 
     for (final activity in activities) {
-      final subject = activity.user!.classroom;
+      final subject = activity.user.classroom;
       final classes = activity.classes.join(', ');
 
       if (!groupedActivities.containsKey(subject)) {

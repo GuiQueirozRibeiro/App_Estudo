@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,12 +10,14 @@ class ActivityCard extends StatefulWidget {
   final Activity activity;
   final UserModel? user;
   final bool isProfessor;
+  final bool isForm;
 
   const ActivityCard({
     super.key,
     required this.activity,
     required this.user,
     required this.isProfessor,
+    this.isForm = false,
   });
 
   @override
@@ -110,41 +113,39 @@ class _ActivityCardState extends State<ActivityCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: _isLoading
-              ? Center(
-                  child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                ))
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                            shape: BoxShape.circle,
+    return Card(
+      elevation: 5,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: _isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ))
+            : Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1,
+                            color: Theme.of(context).colorScheme.outline,
                           ),
-                          child: ClipOval(
-                            child: Image.network(widget.user!.imageUrl),
-                          ),
+                          shape: BoxShape.circle,
                         ),
-                        const SizedBox(width: 16),
-                        Column(
+                        child: ClipOval(
+                          child: Image.network(widget.user!.imageUrl),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
@@ -162,60 +163,61 @@ class _ActivityCardState extends State<ActivityCard> {
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    GestureDetector(
-                      onTap: () => setState(
-                          () => _showFullDescription = !_showFullDescription),
-                      child: Text(
-                        widget.activity.description.replaceAll('\\n', '\n'),
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        textAlign: TextAlign.justify,
-                        maxLines: _showFullDescription ? null : 4,
-                        overflow: TextOverflow.fade,
                       ),
+                      if (widget.user!.isProfessor && !widget.isForm)
+                        GestureDetector(
+                          onTap: () => Modular.to.pushNamed('activityFormPage',
+                              arguments: widget.activity),
+                          child: const Icon(Icons.edit),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () => setState(
+                        () => _showFullDescription = !_showFullDescription),
+                    child: Text(
+                      widget.activity.description.replaceAll('\\n', '\n'),
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      textAlign: TextAlign.justify,
+                      maxLines: _showFullDescription ? null : 4,
+                      overflow: TextOverflow.fade,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        if (widget.activity.dueDate != null)
-                          Text(
-                            widget.activity.formattedDueDate(),
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: _isDone
-                                  ? Theme.of(context).colorScheme.onError
-                                  : Theme.of(context).colorScheme.error,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (widget.activity.dueDate != null)
+                        Text(
+                          widget.activity.formattedDueDate(),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: _isDone
+                                ? Theme.of(context).colorScheme.onError
+                                : Theme.of(context).colorScheme.error,
+                            fontWeight: FontWeight.bold,
                           ),
-                        if (!widget.isProfessor &&
-                            widget.activity.dueDate != null)
-                          GestureDetector(
-                            onTap: () async {
-                              await _updateActivityStatus(!_isDone);
-                            },
-                            child: Icon(
-                              _isDone ? Icons.check_circle : Icons.cancel,
-                              color: _isDone
-                                  ? Theme.of(context).colorScheme.onError
-                                  : Theme.of(context).colorScheme.error,
-                            ),
+                        ),
+                      if (!widget.isProfessor &&
+                          widget.activity.dueDate != null)
+                        GestureDetector(
+                          onTap: () async {
+                            await _updateActivityStatus(!_isDone);
+                          },
+                          child: Icon(
+                            _isDone ? Icons.check_circle : Icons.cancel,
+                            color: _isDone
+                                ? Theme.of(context).colorScheme.onError
+                                : Theme.of(context).colorScheme.error,
                           ),
-                        if (!widget.user!.isProfessor)
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {},
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-        ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
       ),
     );
   }

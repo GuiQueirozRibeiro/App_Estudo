@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
@@ -110,18 +111,21 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
                   delegate: SliverChildBuilderDelegate(
                     (BuildContext context, int index) {
                       final activityGroup = groupedActivities[index];
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: activityGroup.activities.length,
-                        itemBuilder: (context, index) {
-                          final activity = activityGroup.activities[index];
-                          return ActivityCard(
-                            activity: activity,
-                            user: activity.user,
-                            isProfessor: user!.isProfessor,
-                          );
-                        },
+                      return SafeArea(
+                        child: ListView.builder(
+                          padding: const EdgeInsets.all(5),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: activityGroup.activities.length,
+                          itemBuilder: (context, index) {
+                            final activity = activityGroup.activities[index];
+                            return ActivityCard(
+                              activity: activity,
+                              user: activity.user,
+                              isProfessor: user!.isProfessor,
+                            );
+                          },
+                        ),
                       );
                     },
                     childCount: groupedActivities.length,
@@ -129,6 +133,18 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
                 ),
               ],
             ),
+            floatingActionButton: user!.isProfessor
+                ? FloatingActionButton(
+                    elevation: 5,
+                    onPressed: () => Modular.to.pushNamed('activityFormPage'),
+                    child: Icon(
+                      Icons.add,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  )
+                : null,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
           );
         }
       },

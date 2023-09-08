@@ -11,6 +11,7 @@ import '../../../auth/viewmodel/auth_view_model.dart';
 import '../../repository/subject.dart';
 import '../../../../common/widgets/custom_text_field.dart';
 import '../../usecase/firestore_service.dart';
+import '../widget/class_list_view.dart';
 import '../widget/subejct_card.dart';
 
 class SubjectFormPage extends StatefulWidget {
@@ -29,7 +30,6 @@ class SubjectFormPageState extends State<SubjectFormPage> {
   File? _image;
   late AuthViewModel authProvider;
   late UserModel? currentUser;
-  final List<String> classOptions = ['1A', '1B', '2A', '2B', '3A', '3B'];
   bool _isLoading = false;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController imageUrlController = TextEditingController();
@@ -82,6 +82,16 @@ class SubjectFormPageState extends State<SubjectFormPage> {
     });
   }
 
+  void updateSelectedClasses(bool isChecked, String classOption) {
+    setState(() {
+      if (isChecked) {
+        selectedClasses.remove(classOption);
+      } else {
+        selectedClasses.add(classOption);
+      }
+    });
+  }
+
   Future<void> _submitForm() async {
     final firestoreProvider =
         Provider.of<FirestoreService>(context, listen: false);
@@ -116,66 +126,6 @@ class SubjectFormPageState extends State<SubjectFormPage> {
     }
   }
 
-  Widget _buildClassItem(bool isChecked, String classOption) {
-    return Expanded(
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: InkWell(
-          onTap: () {
-            setState(() {
-              if (isChecked) {
-                selectedClasses.remove(classOption);
-              } else {
-                selectedClasses.add(classOption);
-              }
-            });
-          },
-          splashColor: Theme.of(context).colorScheme.primary,
-          child: Container(
-            decoration: BoxDecoration(
-              color: isChecked
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.secondary,
-              borderRadius: BorderRadius.circular(10.0),
-            ),
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  classOption,
-                  style: TextStyle(
-                    color: isChecked
-                        ? Theme.of(context).colorScheme.secondary
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontSize: 16.0,
-                  ),
-                ),
-                Checkbox(
-                  value: isChecked,
-                  onChanged: (value) {
-                    setState(() {
-                      if (isChecked) {
-                        selectedClasses.remove(classOption);
-                      } else {
-                        selectedClasses.add(classOption);
-                      }
-                    });
-                  },
-                  activeColor: Theme.of(context).colorScheme.primary,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final cardHeight = MediaQuery.of(context).size.height * 0.21;
@@ -201,7 +151,7 @@ class SubjectFormPageState extends State<SubjectFormPage> {
               padding: const EdgeInsets.all(5.0),
               child: Column(
                 children: [
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   SubjectCard(
                     cardHeight: cardHeight,
                     subject: Subject(
@@ -221,38 +171,15 @@ class SubjectFormPageState extends State<SubjectFormPage> {
                     isForm: true,
                     onImageSelected: _selectImage,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                   CustomTextField(
                     text: 'Name',
                     controller: nameController,
                   ),
-                  const Divider(),
                   const SizedBox(height: 10),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: (classOptions.length / 2).ceil(),
-                      itemBuilder: (ctx, index) {
-                        int firstIndex = index * 2;
-                        int secondIndex = firstIndex + 1;
-
-                        return Row(
-                          children: [
-                            if (firstIndex < classOptions.length)
-                              _buildClassItem(
-                                selectedClasses
-                                    .contains(classOptions[firstIndex]),
-                                classOptions[firstIndex],
-                              ),
-                            if (secondIndex < classOptions.length)
-                              _buildClassItem(
-                                selectedClasses
-                                    .contains(classOptions[secondIndex]),
-                                classOptions[secondIndex],
-                              ),
-                          ],
-                        );
-                      },
-                    ),
+                  ClassListView(
+                    selectedClasses: selectedClasses,
+                    onClassItemTap: updateSelectedClasses,
                   ),
                 ],
               ),

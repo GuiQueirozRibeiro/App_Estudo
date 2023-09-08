@@ -52,6 +52,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildSubjectListView(List<Subject> subjectsList, double cardHeight) {
     return ListView.builder(
+      padding: const EdgeInsets.all(5),
       itemCount: subjectsList.length,
       itemBuilder: (context, index) {
         return SubjectCard(
@@ -73,7 +74,7 @@ class _HomePageState extends State<HomePage> {
       },
       color: Theme.of(context).colorScheme.outlineVariant,
       child: Scaffold(
-        body: _buildSubjectListView(subjectsList, cardHeight),
+        body: SafeArea(child: _buildSubjectListView(subjectsList, cardHeight)),
       ),
     );
   }

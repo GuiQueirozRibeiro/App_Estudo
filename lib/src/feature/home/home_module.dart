@@ -24,7 +24,7 @@ class HomeModule extends Module {
     );
     r.child(
       '/details/activityFormPage',
-      child: (_) => const ActivityFormPage(),
+      child: (_) => ActivityFormPage(activity: r.args.data),
       transition: TransitionType.fadeIn,
     );
   }

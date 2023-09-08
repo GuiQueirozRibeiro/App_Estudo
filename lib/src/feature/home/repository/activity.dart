@@ -5,17 +5,19 @@ import '../../auth/repository/user_model.dart';
 
 class Activity {
   final String id;
-  final List classes;
-  final String description;
   final UserModel user;
-  final DateTime assignedDate;
-  final DateTime? dueDate;
+  final String subjectId;
+  List classes;
+  String description;
+  DateTime assignedDate;
+  DateTime? dueDate;
 
   Activity({
     required this.id,
+    required this.user,
+    required this.subjectId,
     required this.classes,
     required this.description,
-    required this.user,
     required Timestamp assignedDate,
     Timestamp? dueDate,
   })  : assignedDate = assignedDate.toDate(),

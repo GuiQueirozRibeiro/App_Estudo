@@ -146,7 +146,10 @@ class ChatPageState extends State<ChatPage> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.send),
+                  icon: Icon(
+                    Icons.send,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                   onPressed: () async {
                     String messageText = _inputController.text.trim();
                     if (messageText.isNotEmpty) {

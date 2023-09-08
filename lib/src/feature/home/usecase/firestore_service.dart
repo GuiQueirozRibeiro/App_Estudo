@@ -49,8 +49,45 @@ class FirestoreService extends ChangeNotifier {
     return subjects;
   }
 
+  Future<void> createActivity(Activity activity) async {
+    try {
+      final activityRef = _firestore.collection('activities').doc();
+
+      final activityData = {
+        'classes': activity.classes,
+        'description': activity.description,
+        'assignedDate': DateTime.now(),
+        'dueDate': activity.dueDate,
+        'subjectId': activity.subjectId,
+        'professorId': activity.user.id,
+      };
+
+      await activityRef.set(activityData);
+      notifyListeners();
+    } catch (e) {
+      return;
+    }
+  }
+
+  Future<void> updateActivity(Activity activity) async {
+    try {
+      final subjectRef = _firestore.collection('activities').doc(activity.id);
+
+      final subjectData = {
+        'classes': activity.classes,
+        'description': activity.description,
+        'dueDate': activity.dueDate,
+      };
+
+      await subjectRef.update(subjectData);
+      notifyListeners();
+    } catch (e) {
+      return;
+    }
+  }
+
   Future<List<Activity>> fetchActivities(
-    String? subjectId,
+    String subjectId,
     UserModel user,
   ) async {
     final QuerySnapshot querySnapshot =
@@ -74,9 +111,10 @@ class FirestoreService extends ChangeNotifier {
           (doc['classes'].contains(user.classroom) || user.isProfessor)) {
         final activity = Activity(
           id: doc.id,
+          user: professor,
+          subjectId: subjectId,
           classes: doc['classes'],
           description: doc['description'],
-          user: professor,
           assignedDate: doc['assignedDate'],
           dueDate: doc['dueDate'],
         );

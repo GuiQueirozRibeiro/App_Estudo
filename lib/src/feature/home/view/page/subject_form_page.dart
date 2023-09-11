@@ -172,9 +172,15 @@ class SubjectFormPageState extends State<SubjectFormPage> {
                     onImageSelected: _selectImage,
                   ),
                   const SizedBox(height: 10),
-                  CustomTextField(
-                    text: 'Name',
-                    controller: nameController,
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: CustomTextField(
+                      text: 'name_field'.i18n(),
+                      controller: nameController,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   ClassListView(

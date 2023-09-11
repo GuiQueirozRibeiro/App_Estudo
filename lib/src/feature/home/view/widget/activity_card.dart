@@ -165,10 +165,26 @@ class _ActivityCardState extends State<ActivityCard> {
                         ),
                       ),
                       if (widget.user!.isProfessor && !widget.isForm)
-                        GestureDetector(
-                          onTap: () => Modular.to.pushNamed('activityFormPage',
-                              arguments: widget.activity),
-                          child: const Icon(Icons.edit),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () => Modular.to.pushNamed(
+                                  'activityFormPage',
+                                  arguments: widget.activity),
+                              child: Icon(
+                                Icons.edit,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () => {},
+                              child: Icon(
+                                Icons.delete,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            ),
+                          ],
                         ),
                     ],
                   ),
@@ -177,7 +193,7 @@ class _ActivityCardState extends State<ActivityCard> {
                     onTap: () => setState(
                         () => _showFullDescription = !_showFullDescription),
                     child: Text(
-                      widget.activity.description.replaceAll('\\n', '\n'),
+                      widget.activity.description,
                       style: TextStyle(
                         fontSize: 15,
                         color: Theme.of(context).colorScheme.outline,
@@ -187,6 +203,8 @@ class _ActivityCardState extends State<ActivityCard> {
                       overflow: TextOverflow.fade,
                     ),
                   ),
+                  if (widget.activity.dueDate != null)
+                    const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

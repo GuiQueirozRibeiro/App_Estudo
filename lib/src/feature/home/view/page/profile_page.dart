@@ -70,7 +70,9 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 10),
               Text(
-                authProvider.currentUser?.classroom ?? '',
+                authProvider.currentUser!.isProfessor
+                    ? 'teacher'.i18n()
+                    : authProvider.currentUser?.classroom ?? '',
                 style: const TextStyle(fontSize: 16),
               ),
             ],

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -41,12 +43,38 @@ class FirestoreService extends ChangeNotifier {
       );
 
       if (subject.classes.contains(user.classroom) ||
-          (user.isProfessor && subject.teacher == user.name)) {
+          (user.isProfessor && subject.id == user.classroom)) {
         subjects.add(subject);
       }
     }
 
     return subjects;
+  }
+
+  Future<void> saveActivity(Map<String, Object?> data, UserModel professor) {
+    bool hasId = data['id'] != null;
+    DateTime? dueDateTime;
+
+    if (data['dueDate'] != null) {
+      DateTime dueDate = data['dueDate'] as DateTime;
+      dueDateTime = DateTime(dueDate.year, dueDate.month, dueDate.day, 7, 30);
+    }
+
+    final activity = Activity(
+      id: hasId ? data['id'] as String : Random().nextDouble().toString(),
+      classes: data['classes'] as List,
+      description: data['description'] as String,
+      assignedDate: Timestamp.fromDate(DateTime.now()),
+      dueDate: dueDateTime != null ? Timestamp.fromDate(dueDateTime) : null,
+      subjectId: professor.classroom,
+      user: professor,
+    );
+
+    if (hasId) {
+      return updateActivity(activity);
+    } else {
+      return createActivity(activity);
+    }
   }
 
   Future<void> createActivity(Activity activity) async {
@@ -56,8 +84,10 @@ class FirestoreService extends ChangeNotifier {
       final activityData = {
         'classes': activity.classes,
         'description': activity.description,
-        'assignedDate': DateTime.now(),
-        'dueDate': activity.dueDate,
+        'assignedDate': activity.assignedDate,
+        'dueDate': activity.dueDate != null
+            ? Timestamp.fromDate(activity.dueDate!)
+            : null,
         'subjectId': activity.subjectId,
         'professorId': activity.user.id,
       };
@@ -76,7 +106,9 @@ class FirestoreService extends ChangeNotifier {
       final subjectData = {
         'classes': activity.classes,
         'description': activity.description,
-        'dueDate': activity.dueDate,
+        'dueDate': activity.dueDate != null
+            ? Timestamp.fromDate(activity.dueDate!)
+            : null,
       };
 
       await subjectRef.update(subjectData);

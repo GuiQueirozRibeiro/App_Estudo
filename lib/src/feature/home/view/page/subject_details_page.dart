@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/repository/user_model.dart';
@@ -24,95 +23,97 @@ class SubjectDetailsPage extends StatefulWidget {
 }
 
 class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
-  late Future<List<Activity>> activitiesFuture;
+  List<Activity>? activitiesList;
   late UserModel? user;
-
-  Widget _buildLoadingIndicator(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(
-          color: Theme.of(context).colorScheme.outlineVariant,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildError() {
-    return Scaffold(
-      body: Center(
-        child: Text('error_occurred'.i18n()),
-      ),
-    );
-  }
+  late FirestoreService firestoreProvider;
 
   @override
   void initState() {
     super.initState();
     final authProvider = Provider.of<AuthViewModel>(context, listen: false);
+    firestoreProvider = Provider.of<FirestoreService>(context, listen: false);
     user = authProvider.currentUser;
-    activitiesFuture =
-        FirestoreService().fetchActivities(widget.subject.id, user!);
+
+    _fetchActivities();
+
+    firestoreProvider.addListener(_handleFirestoreChange);
+  }
+
+  @override
+  void dispose() {
+    firestoreProvider.removeListener(_handleFirestoreChange);
+    super.dispose();
+  }
+
+  void _handleFirestoreChange() {
+    _fetchActivities();
+  }
+
+  Future<void> _fetchActivities() async {
+    final activities =
+        await firestoreProvider.fetchActivities(widget.subject.id, user!);
+    setState(() {
+      activitiesList = activities;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Activity>>(
-      future: activitiesFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildLoadingIndicator(context);
-        } else if (snapshot.hasError) {
-          return _buildError();
-        } else {
-          final activities = snapshot.data ?? [];
-
-          final groupedActivities = groupActivities(activities);
-
-          return Scaffold(
-            body: CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  expandedHeight: 200,
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    title: Text(widget.subject.name),
-                    centerTitle: true,
-                    background: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Hero(
-                          tag: 'image_${widget.subject.name}',
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(widget.subject.imageUrl),
-                                fit: BoxFit.cover,
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _fetchActivities();
+      },
+      child: Scaffold(
+        body: activitiesList == null
+            ? Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
+              )
+            : CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    expandedHeight: 200,
+                    pinned: true,
+                    flexibleSpace: FlexibleSpaceBar(
+                      title: Text(widget.subject.name),
+                      centerTitle: true,
+                      background: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Hero(
+                            tag: 'image_${widget.subject.name}',
+                            child: Container(
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(widget.subject.imageUrl),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        const DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment(0, 0.8),
-                              end: Alignment(0, 0),
-                              colors: [
-                                Color.fromRGBO(0, 0, 0, 0.6),
-                                Color.fromRGBO(0, 0, 0, 0)
-                              ],
+                          const DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment(0, 0.8),
+                                end: Alignment(0, 0),
+                                colors: [
+                                  Color.fromRGBO(0, 0, 0, 0.6),
+                                  Color.fromRGBO(0, 0, 0, 0)
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
-                      final activityGroup = groupedActivities[index];
-                      return SafeArea(
-                        child: ListView.builder(
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        final activityGroup =
+                            groupActivities(activitiesList!)[index];
+                        return ListView.builder(
                           padding: const EdgeInsets.all(5),
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -125,29 +126,25 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
                               isProfessor: user!.isProfessor,
                             );
                           },
-                        ),
-                      );
-                    },
-                    childCount: groupedActivities.length,
-                  ),
-                ),
-              ],
-            ),
-            floatingActionButton: user!.isProfessor
-                ? FloatingActionButton(
-                    elevation: 5,
-                    onPressed: () => Modular.to.pushNamed('activityFormPage'),
-                    child: Icon(
-                      Icons.add,
-                      color: Theme.of(context).colorScheme.primary,
+                        );
+                      },
+                      childCount: groupActivities(activitiesList!).length,
                     ),
-                  )
-                : null,
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-          );
-        }
-      },
+                  ),
+                ],
+              ),
+        floatingActionButton: user!.isProfessor
+            ? FloatingActionButton(
+                elevation: 5,
+                onPressed: () => Modular.to.pushNamed('activityFormPage'),
+                child: Icon(
+                  Icons.add,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      ),
     );
   }
 

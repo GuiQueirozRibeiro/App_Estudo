@@ -18,14 +18,13 @@ class _HomePageState extends State<HomePage> {
   late UserModel? currentUser;
   late FirestoreService firestoreProvider;
   List<Subject> subjectsList = [];
-  bool isDataLoaded = false;
 
   @override
   void initState() {
     super.initState();
     final authProvider = Provider.of<AuthViewModel>(context, listen: false);
-    currentUser = authProvider.currentUser;
     firestoreProvider = Provider.of<FirestoreService>(context, listen: false);
+    currentUser = authProvider.currentUser;
 
     _fetchSubjects();
 
@@ -46,7 +45,6 @@ class _HomePageState extends State<HomePage> {
     final subjects = await firestoreProvider.fetchSubjects(currentUser!);
     setState(() {
       subjectsList = subjects;
-      isDataLoaded = true;
     });
   }
 

@@ -15,36 +15,32 @@
 
     "student_title": "Central do Aluno",
     "teacher_title": "Central do Educator",
-
+    
     "student_field" : "Matrícula",
     "teacher_field" : "Usuário",
     "password_field" : "Senha",
-
+    
     "student_required" : "Matrícula é obrigatória!",
     "teacher_required" : "Usuário é obrigatório!",
     "password_required" : "Senha é obrigatória!",
-
+    
+    "error": "Erro",
     "error_occurred": "Ocorreu um erro!",
     "error_updating_subject": "Ocorreu um erro para atualizar a Matéria",
     "unexpected_error": "Ocorreu um erro inesperado!",
-    "email_exists": "E-mail já cadastrado",
     "email_not_found": "E-mail não encontrado",
     "user_disabled": "A conta do usuário foi desabilitada",
     "user_not_found": "Usuário não encontrado",
     "invalid_password": "Senha informada não confere",
     "authentication_error": "Ocorreu um erro no processo de autenticação!",
-    "gif_error": "Erro ao carregar o GIF",
 
     "skip" : "Pular",
     "next" : "Proximo",
     "done" : "Pronto",
     "back": "Voltar",
-    "save": "Salvar",
-    "continue": "Continuar",
     "send": "Enviar",
     "yes": "Sim",
     "no": "Não",
-    "error": "Erro",
     "ok": "Ok",
     "are_you_sure": "Tem Certeza?",
 
@@ -53,6 +49,11 @@
 
     "logout_account": "Sair da conta",
     "upload_photo": "Troca de Imagem",
+
+    "activity_form": "Formulário da Atividade",
+    "delete_activity": "Deletar Atividade",
+    "description_field": "Descrição",
+    "delivery_date": "Data de Entrega:",
 
     "subject_form": "Formulário da Matéria",
     "upload_subject": "Atualizar a Matéria",

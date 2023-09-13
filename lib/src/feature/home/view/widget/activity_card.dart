@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../auth/repository/user_model.dart';
 import '../../repository/activity.dart';
+import '../../usecase/firestore_service.dart';
 
 class ActivityCard extends StatefulWidget {
   final Activity activity;
@@ -111,6 +113,68 @@ class _ActivityCardState extends State<ActivityCard> {
     }
   }
 
+  void _deleteActivity() async {
+    bool confirmDelete = await _showConfirmationDialog();
+    if (confirmDelete == true) {
+      await _performDeleteActivity();
+    }
+  }
+
+  Future<bool> _showConfirmationDialog() async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('delete_activity'.i18n()),
+          content: Text('are_you_sure'.i18n()),
+          actions: [
+            TextButton(
+              child: Text('no'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('yes'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showErrorDialog(String msg) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('error_occurred'.i18n()),
+        content: Text(msg),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('close'.i18n()),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _performDeleteActivity() async {
+    setState(() => _isLoading = true);
+    final firestoreProvider =
+        Provider.of<FirestoreService>(context, listen: false);
+
+    try {
+      await firestoreProvider.deleteActivity(widget.activity.id);
+    } catch (error) {
+      _showErrorDialog('unexpected_error'.i18n());
+    }
+    setState(() => _isLoading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -178,7 +242,7 @@ class _ActivityCardState extends State<ActivityCard> {
                             ),
                             const SizedBox(width: 8),
                             GestureDetector(
-                              onTap: () => {},
+                              onTap: () => _deleteActivity(),
                               child: Icon(
                                 Icons.delete,
                                 color: Theme.of(context).colorScheme.error,

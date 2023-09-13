@@ -19,11 +19,12 @@
     "student_field" : "Enrollment",
     "teacher_field" : "User",
     "password_field" : "Password",
-
+    
     "student_required" : "Enrollment is required!",
     "teacher_required" : "User is required!",
     "password_required" : "Password is required!",
-
+    
+    "error": "Error",
     "error_occurred": "An error occurred!",
     "error_updating_subject": "An error occurred while updating the subject",
     "unexpected_error": "Unexpected error",
@@ -37,12 +38,9 @@
     "next" : "Next",
     "done" : "Done",
     "back": "Back",
-    "save": "Save",
-    "continue": "Continue",
     "send": "Send",
     "yes": "Yes",
     "no": "No",
-    "error": "Error",
     "ok": "Ok",
     "are_you_sure": "Are you sure?",
 
@@ -51,6 +49,11 @@
 
     "logout_account": "Logout account",
     "upload_photo": "Image Change",
+
+    "activity_form": "Activity Form",
+    "delete_activity": "Delete Activity",
+    "description_field": "Description",
+    "delivery_date": "Delivery Date:",
 
     "subject_form": "Subject Form",
     "upload_subject": "Upload Subject",

@@ -11,20 +11,16 @@ class FirestoreService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> updateSubject(Subject subject) async {
-    try {
-      final subjectRef = _firestore.collection('subjects').doc(subject.id);
+    final subjectRef = _firestore.collection('subjects').doc(subject.id);
 
-      final subjectData = {
-        'name': subject.name,
-        'imageUrl': subject.imageUrl,
-        'classes': subject.classes,
-      };
+    final subjectData = {
+      'name': subject.name,
+      'imageUrl': subject.imageUrl,
+      'classes': subject.classes,
+    };
 
-      await subjectRef.update(subjectData);
-      notifyListeners();
-    } catch (e) {
-      return;
-    }
+    await subjectRef.update(subjectData);
+    notifyListeners();
   }
 
   Future<List<Subject>> fetchSubjects(UserModel user) async {
@@ -78,44 +74,42 @@ class FirestoreService extends ChangeNotifier {
   }
 
   Future<void> createActivity(Activity activity) async {
-    try {
-      final activityRef = _firestore.collection('activities').doc();
+    final activityRef = _firestore.collection('activities').doc();
 
-      final activityData = {
-        'classes': activity.classes,
-        'description': activity.description,
-        'assignedDate': activity.assignedDate,
-        'dueDate': activity.dueDate != null
-            ? Timestamp.fromDate(activity.dueDate!)
-            : null,
-        'subjectId': activity.subjectId,
-        'professorId': activity.user.id,
-      };
+    final activityData = {
+      'classes': activity.classes,
+      'description': activity.description,
+      'assignedDate': activity.assignedDate,
+      'dueDate': activity.dueDate != null
+          ? Timestamp.fromDate(activity.dueDate!)
+          : null,
+      'subjectId': activity.subjectId,
+      'professorId': activity.user.id,
+    };
 
-      await activityRef.set(activityData);
-      notifyListeners();
-    } catch (e) {
-      return;
-    }
+    await activityRef.set(activityData);
+    notifyListeners();
   }
 
   Future<void> updateActivity(Activity activity) async {
-    try {
-      final subjectRef = _firestore.collection('activities').doc(activity.id);
+    final subjectRef = _firestore.collection('activities').doc(activity.id);
 
-      final subjectData = {
-        'classes': activity.classes,
-        'description': activity.description,
-        'dueDate': activity.dueDate != null
-            ? Timestamp.fromDate(activity.dueDate!)
-            : null,
-      };
+    final subjectData = {
+      'classes': activity.classes,
+      'description': activity.description,
+      'dueDate': activity.dueDate != null
+          ? Timestamp.fromDate(activity.dueDate!)
+          : null,
+    };
 
-      await subjectRef.update(subjectData);
-      notifyListeners();
-    } catch (e) {
-      return;
-    }
+    await subjectRef.update(subjectData);
+    notifyListeners();
+  }
+
+  Future<void> deleteActivity(String activityId) async {
+    final activityRef = _firestore.collection('activities').doc(activityId);
+    await activityRef.delete();
+    notifyListeners();
   }
 
   Future<List<Activity>> fetchActivities(
@@ -154,7 +148,6 @@ class FirestoreService extends ChangeNotifier {
         activities.add(activity);
       }
     }
-
     return activities;
   }
 }

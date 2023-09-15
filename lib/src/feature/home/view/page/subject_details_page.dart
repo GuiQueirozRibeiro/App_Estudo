@@ -122,7 +122,6 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
                             final activity = activityGroup.activities[index];
                             return ActivityCard(
                               activity: activity,
-                              user: activity.user,
                               isProfessor: user!.isProfessor,
                             );
                           },

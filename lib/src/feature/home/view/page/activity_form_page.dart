@@ -1,13 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
-import 'package:professor_ia/src/feature/home/usecase/firestore_service.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../common/widgets/custom_text_field.dart';
+import '../../../auth/repository/user_model.dart';
 import '../../../auth/viewmodel/auth_view_model.dart';
 import '../../repository/activity.dart';
-//import '../widget/activity_card.dart';
+import '../../usecase/firestore_service.dart';
+import '../widget/activity_card.dart';
 import '../widget/class_list_view.dart';
 import '../widget/date_picker.dart';
 
@@ -27,6 +29,14 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _formData = <String, Object?>{};
   final _descriptionController = TextEditingController();
+  late final UserModel? currentUser;
+
+  @override
+  void initState() {
+    final authProvider = Provider.of<AuthViewModel>(context, listen: false);
+    currentUser = authProvider.currentUser;
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -100,8 +110,6 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
 
     final firestoreProvider =
         Provider.of<FirestoreService>(context, listen: false);
-    final authProvider = Provider.of<AuthViewModel>(context, listen: false);
-    final currentUser = authProvider.currentUser;
 
     try {
       await firestoreProvider.saveActivity(_formData, currentUser!);
@@ -140,12 +148,17 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
                 child: Column(
                   children: [
                     const SizedBox(height: 10),
-                    //ActivityCard(
-                    //  activity: widget.activity!,
-                    //  user: widget.activity!.user,
-                    //  isProfessor: widget.activity!.user.isProfessor,
-                    //  isForm: true,
-                    //),
+                    ActivityCard(
+                      activity: Activity(
+                        id: '',
+                        user: currentUser!,
+                        subjectId: '',
+                        classes: _selectedClasses,
+                        description: _descriptionController.text,
+                        assignedDate: Timestamp.fromDate(DateTime.now()),
+                      ),
+                      isForm: true,
+                    ),
                     const SizedBox(height: 10),
                     Card(
                       elevation: 4,

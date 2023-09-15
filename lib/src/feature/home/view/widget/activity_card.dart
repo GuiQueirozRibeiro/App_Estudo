@@ -4,21 +4,18 @@ import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../auth/repository/user_model.dart';
 import '../../repository/activity.dart';
 import '../../usecase/firestore_service.dart';
 
 class ActivityCard extends StatefulWidget {
   final Activity activity;
-  final UserModel? user;
   final bool isProfessor;
   final bool isForm;
 
   const ActivityCard({
     super.key,
     required this.activity,
-    required this.user,
-    required this.isProfessor,
+    this.isProfessor = false,
     this.isForm = false,
   });
 
@@ -204,7 +201,7 @@ class _ActivityCardState extends State<ActivityCard> {
                           shape: BoxShape.circle,
                         ),
                         child: ClipOval(
-                          child: Image.network(widget.user!.imageUrl),
+                          child: Image.network(widget.activity.user.imageUrl),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -213,7 +210,7 @@ class _ActivityCardState extends State<ActivityCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.user!.name,
+                              widget.activity.user.name,
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -228,7 +225,7 @@ class _ActivityCardState extends State<ActivityCard> {
                           ],
                         ),
                       ),
-                      if (widget.user!.isProfessor && !widget.isForm)
+                      if (widget.isProfessor && !widget.isForm)
                         Row(
                           children: [
                             GestureDetector(

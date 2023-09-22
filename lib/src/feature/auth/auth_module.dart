@@ -2,7 +2,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 
 import 'view/page/auth_page.dart';
 import 'view/page/login_page.dart';
-import '../home/home_module.dart';
 
 class AuthModule extends Module {
   @override
@@ -18,6 +17,5 @@ class AuthModule extends Module {
       ),
       transition: TransitionType.fadeIn,
     );
-    r.module('/home', module: HomeModule());
   }
 }

@@ -8,7 +8,7 @@ import '../../../../common/widgets/custom_text_field.dart';
 import '../../../auth/repository/user_model.dart';
 import '../../../auth/viewmodel/auth_view_model.dart';
 import '../../repository/activity.dart';
-import '../../usecase/firestore_service.dart';
+import '../../repository/activity_list.dart';
 import '../widget/activity_card.dart';
 import '../widget/class_list_view.dart';
 import '../widget/date_picker.dart';
@@ -108,13 +108,11 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
 
     setState(() => _isLoading = true);
 
-    final firestoreProvider =
-        Provider.of<FirestoreService>(context, listen: false);
+    final activityProvider = Provider.of<ActivityList>(context, listen: false);
 
     try {
-      await firestoreProvider.saveActivity(_formData, currentUser!);
+      await activityProvider.saveActivity(_formData, currentUser!);
     } catch (error) {
-      debugPrint(error.toString());
       _showErrorDialog(error.toString());
     } finally {
       Modular.to.pop();
@@ -155,7 +153,9 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
                         subjectId: '',
                         classes: _selectedClasses,
                         description: _descriptionController.text,
-                        assignedDate: Timestamp.fromDate(DateTime.now()),
+                        assignedDate: Timestamp.fromDate(
+                            _formData['assignedDate'] as DateTime? ??
+                                DateTime.now()),
                       ),
                       isForm: true,
                     ),

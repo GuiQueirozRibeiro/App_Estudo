@@ -3,9 +3,9 @@ import 'package:localization/localization.dart';
 
 class AuthException implements Exception {
   static Map<String, String> errors = {
-    'user_disabled': 'user_disabled'.i18n(),
-    'user-not-found': 'user-not-found'.i18n(),
-    'wrong-password': 'invalid_password'.i18n(),
+    'user-disabled': 'user_disabled',
+    'user-not-found': 'user_not_found',
+    'wrong-password': 'invalid_password',
   };
 
   final String code;
@@ -14,7 +14,11 @@ class AuthException implements Exception {
 
   @override
   String toString() {
-    return code.toString();
+    if (errors.containsKey(code)) {
+      return errors[code]!.i18n();
+    } else {
+      return code;
+    }
   }
 
   static AuthException fromFirebaseAuthException(FirebaseAuthException e) {

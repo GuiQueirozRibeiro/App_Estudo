@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../repository/activity.dart';
-import '../../usecase/firestore_service.dart';
+import '../../repository/activity_list.dart';
 
 class ActivityCard extends StatefulWidget {
   final Activity activity;
@@ -161,11 +161,10 @@ class _ActivityCardState extends State<ActivityCard> {
 
   Future<void> _performDeleteActivity() async {
     setState(() => _isLoading = true);
-    final firestoreProvider =
-        Provider.of<FirestoreService>(context, listen: false);
+    final activityProvider = Provider.of<ActivityList>(context, listen: false);
 
     try {
-      await firestoreProvider.deleteActivity(widget.activity.id);
+      await activityProvider.deleteActivity(widget.activity.id);
     } catch (error) {
       _showErrorDialog('unexpected_error'.i18n());
     }

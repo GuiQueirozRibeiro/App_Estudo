@@ -14,8 +14,8 @@ class OnBoardingModule extends Module {
 
   @override
   void routes(r) {
-    r.child('/', child: (context) => const SplashPage());
-    r.child('/onboarding', child: (context) => const OnBoardingPage());
+    r.child('/', child: (_) => const SplashPage());
+    r.child('/onboarding', child: (_) => const OnBoardingPage());
     r.module('/home', module: HomeModule());
     r.module('/auth', module: AuthModule());
   }

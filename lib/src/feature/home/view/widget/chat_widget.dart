@@ -3,7 +3,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 
 import '../../../auth/repository/user_model.dart';
 
-class ChatWidget extends StatelessWidget {
+class ChatWidget extends StatefulWidget {
   const ChatWidget({
     super.key,
     required this.msg,
@@ -17,11 +17,24 @@ class ChatWidget extends StatelessWidget {
   final UserModel? user;
   final bool shouldAnimate;
 
+  @override
+  State<ChatWidget> createState() => _ChatWidgetState();
+}
+
+class _ChatWidgetState extends State<ChatWidget> {
+  bool _isAnimating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isAnimating = widget.shouldAnimate;
+  }
+
   ImageProvider _getImageProvider() {
-    if (chatIndex != 0) {
+    if (widget.chatIndex != 0) {
       return const AssetImage("lib/assets/images/chat_logo.png");
-    } else if (user?.imageUrl != null) {
-      return NetworkImage(user!.imageUrl);
+    } else if (widget.user?.imageUrl != null) {
+      return NetworkImage(widget.user!.imageUrl);
     } else {
       return const AssetImage("lib/assets/images/avatar.png");
     }
@@ -30,14 +43,15 @@ class ChatWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: chatIndex == 0 ? Alignment.centerRight : Alignment.centerLeft,
+      alignment:
+          widget.chatIndex == 0 ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8.0),
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          color: chatIndex == 0
+          color: widget.chatIndex == 0
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.outlineVariant,
+              : Theme.of(context).colorScheme.shadow,
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: Row(
@@ -56,16 +70,16 @@ class ChatWidget extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: chatIndex == 0
+              child: widget.chatIndex == 0
                   ? Text(
-                      msg,
+                      widget.msg,
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                         fontSize: 16,
                         color: Theme.of(context).colorScheme.secondary,
                       ),
                     )
-                  : shouldAnimate
+                  : _isAnimating
                       ? DefaultTextStyle(
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
@@ -79,13 +93,19 @@ class ChatWidget extends StatelessWidget {
                             totalRepeatCount: 1,
                             animatedTexts: [
                               TyperAnimatedText(
-                                msg.trim(),
+                                widget.msg.trim(),
+                                speed: const Duration(milliseconds: 20),
                               ),
                             ],
+                            onFinished: () {
+                              setState(() {
+                                _isAnimating = false;
+                              });
+                            },
                           ),
                         )
                       : Text(
-                          msg.trim(),
+                          widget.msg.trim(),
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.w700,

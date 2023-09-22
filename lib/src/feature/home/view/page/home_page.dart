@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../auth/repository/user_model.dart';
 import '../../../auth/viewmodel/auth_view_model.dart';
-import '../../repository/subject.dart';
-import '../../usecase/firestore_service.dart';
+import '../../repository/subject_list.dart';
 import '../widget/subejct_card.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,63 +15,43 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late UserModel? currentUser;
-  late FirestoreService firestoreProvider;
-  List<Subject> subjectsList = [];
 
   @override
   void initState() {
     super.initState();
     final authProvider = Provider.of<AuthViewModel>(context, listen: false);
-    firestoreProvider = Provider.of<FirestoreService>(context, listen: false);
     currentUser = authProvider.currentUser;
-
-    _fetchSubjects();
-
-    firestoreProvider.addListener(_handleFirestoreChange);
   }
 
-  @override
-  void dispose() {
-    firestoreProvider.removeListener(_handleFirestoreChange);
-    super.dispose();
-  }
-
-  void _handleFirestoreChange() {
-    _fetchSubjects();
-  }
-
-  Future<void> _fetchSubjects() async {
-    final subjects = await firestoreProvider.fetchSubjects(currentUser!);
-    setState(() {
-      subjectsList = subjects;
-    });
-  }
-
-  Widget _buildSubjectListView(List<Subject> subjectsList, double cardHeight) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(5),
-      itemCount: subjectsList.length,
-      itemBuilder: (context, index) {
-        return SubjectCard(
-          cardHeight: cardHeight,
-          subject: subjectsList[index],
-          user: currentUser!,
-        );
-      },
-    );
+  Future<void> _refreshSubjects(BuildContext context) {
+    return Provider.of<SubjectList>(
+      context,
+      listen: false,
+    ).loadSubjects();
   }
 
   @override
   Widget build(BuildContext context) {
+    final subjectList = Provider.of<SubjectList>(context, listen: false);
     final cardHeight = MediaQuery.of(context).size.height * 0.21;
 
     return RefreshIndicator(
-      onRefresh: () async {
-        await _fetchSubjects();
-      },
+      onRefresh: () => _refreshSubjects(context),
       color: Theme.of(context).colorScheme.outlineVariant,
       child: Scaffold(
-        body: SafeArea(child: _buildSubjectListView(subjectsList, cardHeight)),
+        body: SafeArea(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(5),
+            itemCount: subjectList.itemsCount,
+            itemBuilder: (context, index) {
+              return SubjectCard(
+                cardHeight: cardHeight,
+                subject: subjectList.items[index],
+                user: currentUser!,
+              );
+            },
+          ),
+        ),
       ),
     );
   }

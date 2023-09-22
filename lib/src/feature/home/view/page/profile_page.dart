@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../auth/repository/user_model.dart';
 import '../../../auth/viewmodel/auth_view_model.dart';
+import '../../repository/user_list.dart';
 import '../widget/circle_avatar_edit.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -14,8 +17,18 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final Uri _url = Uri.parse('https://github.com/GuiQueirozRibeiro');
+  late UserModel? currentUser;
+  late AuthViewModel authProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    authProvider = Provider.of<AuthViewModel>(context, listen: false);
+    currentUser = authProvider.currentUser;
+  }
+
   Future<void> _showConfirmationDialog() async {
-    final authProvider = Provider.of<AuthViewModel>(context, listen: false);
     bool confirmed = await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -46,37 +59,196 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> _launchUrl() async {
+    if (!await launchUrl(_url)) {
+      throw Exception('Could not launch $_url');
+    }
+  }
+
+  Future<void> _refreshProducts(BuildContext context) {
+    return Provider.of<UserList>(
+      context,
+      listen: false,
+    ).loadUsers();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthViewModel>(context);
-
+    final userList = Provider.of<UserList>(context, listen: false);
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatarWithEditButton(
-                onImageChanged: (newImage) {
-                  authProvider.changeUserImage(newImage);
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 70),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatarWithEditButton(
+                  onImageChanged: (newImage) {
+                    authProvider.changeUserImage(newImage);
+                  },
+                  userImageUrl: currentUser?.imageUrl,
+                ),
+                Expanded(
+                  child: Column(
+                    children: [
+                      Text(
+                        currentUser?.name ?? '',
+                        style: const TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        currentUser!.isProfessor
+                            ? 'teacher'.i18n()
+                            : authProvider.currentUser?.classroom ?? '',
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 60),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _launchUrl,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  elevation: 4,
+                ),
+                child: Text(
+                  'help_support'.i18n(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    userList.toggleUserList();
+                  });
                 },
-                userImageUrl: authProvider.currentUser?.imageUrl,
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  elevation: 4,
+                ),
+                child: Text(
+                  currentUser!.isProfessor
+                      ? 'students'.i18n()
+                      : 'teachers'.i18n(),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
               ),
-              const SizedBox(height: 20),
-              Text(
-                authProvider.currentUser?.name ?? '',
-                style: const TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: RefreshIndicator(
+                color: Theme.of(context).colorScheme.outlineVariant,
+                onRefresh: () => _refreshProducts(context),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: userList.showUserList ? userList.itemsCount : 0,
+                  itemBuilder: (context, index) {
+                    final user = userList.items[index];
+                    return Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
+                      child: ListTile(
+                        title: Text(
+                          user.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          user.classroom,
+                        ),
+                        leading: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: ClipOval(
+                            child: Image.network(
+                              user.imageUrl,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-              const SizedBox(height: 10),
-              Text(
-                authProvider.currentUser!.isProfessor
-                    ? 'teacher'.i18n()
-                    : authProvider.currentUser?.classroom ?? '',
-                style: const TextStyle(fontSize: 16),
+            ),
+            TextButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text(
+                        "terms_conditions_title".i18n(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20.0,
+                        ),
+                      ),
+                      content: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Text(
+                              'terms_conditions_content'.i18n(),
+                              style: const TextStyle(fontSize: 16.0),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Text(
+                'terms_conditions_title'.i18n(),
+                style: const TextStyle(
+                  fontSize: 16.0,
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(

@@ -46,7 +46,9 @@ class LoginPageState extends State<LoginPage> {
     if (errorMessage != null) {
       _showErrorDialog(errorMessage);
     } else {
-      Modular.to.navigate('/home/');
+      Future.delayed(Duration.zero, () {
+        Modular.to.pushReplacementNamed('/');
+      });
     }
   }
 

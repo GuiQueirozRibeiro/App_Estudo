@@ -6,6 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../auth/viewmodel/auth_view_model.dart';
 import '../../auth/repository/user_model.dart';
+import '../../home/repository/activity_list.dart';
+import '../../home/repository/subject_list.dart';
+import '../../home/repository/user_list.dart';
+import '../../home/viewmodel/chat_view_model.dart';
 import '../view/widget/onboarding_details.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
@@ -27,13 +31,13 @@ class OnboardingViewModel extends ChangeNotifier {
     OnBoardingDetails(
       title: 'onboard_title2'.i18n(),
       subtitle: 'onboard_sub_title2'.i18n(),
-      imagePath: 'lib/assets/images/cmcs_icon.png',
+      imagePath: 'lib/assets/images/onboarding1.gif',
       isTitle: false,
     ),
     OnBoardingDetails(
       title: 'onboard_title3'.i18n(),
       subtitle: 'onboard_sub_title3'.i18n(),
-      imagePath: 'lib/assets/images/cmcs_icon.png',
+      imagePath: 'lib/assets/images/onboarding2.gif',
       isTitle: false,
     ),
   ];
@@ -68,7 +72,22 @@ class OnboardingViewModel extends ChangeNotifier {
     if (onboardingCompleted) {
       auth.userChanges.listen((UserModel? user) {
         if (user != null) {
-          Modular.to.navigate('/home/');
+          Provider.of<ChatViewModel>(context, listen: false).clearMessages();
+          Provider.of<UserList>(context, listen: false)
+              .loadUsers()
+              .then((_) => {
+                    Provider.of<SubjectList>(
+                      context,
+                      listen: false,
+                    ).loadSubjects().then((_) => {
+                          Provider.of<ActivityList>(
+                            context,
+                            listen: false,
+                          )
+                              .loadActivity()
+                              .then((value) => Modular.to.navigate('/home/'))
+                        })
+                  });
         } else {
           Modular.to.navigate('/auth/');
         }

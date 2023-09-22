@@ -10,7 +10,7 @@ import '../../../auth/repository/user_model.dart';
 import '../../../auth/viewmodel/auth_view_model.dart';
 import '../../repository/subject.dart';
 import '../../../../common/widgets/custom_text_field.dart';
-import '../../usecase/firestore_service.dart';
+import '../../repository/subject_list.dart';
 import '../widget/class_list_view.dart';
 import '../widget/subejct_card.dart';
 
@@ -93,8 +93,7 @@ class SubjectFormPageState extends State<SubjectFormPage> {
   }
 
   Future<void> _submitForm() async {
-    final firestoreProvider =
-        Provider.of<FirestoreService>(context, listen: false);
+    final subjectProvider = Provider.of<SubjectList>(context, listen: false);
     final confirm = await _showDialog(
       'upload_subject'.i18n(),
       'are_you_sure'.i18n(),
@@ -111,7 +110,7 @@ class SubjectFormPageState extends State<SubjectFormPage> {
         widget.subject.imageUrl = imageUrl ?? '';
         widget.subject.name = nameController.text;
         widget.subject.classes = selectedClasses;
-        await firestoreProvider.updateSubject(widget.subject);
+        await subjectProvider.updateSubject(widget.subject);
       } catch (error) {
         await _showDialog(
           'error_occurred'.i18n(),

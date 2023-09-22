@@ -14,6 +14,7 @@ class OnBoardingPage extends StatelessWidget {
     return Scaffold(
       body: Consumer<OnboardingViewModel>(builder: (context, viewModel, child) {
         return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.tertiary,
           ),
@@ -54,8 +55,8 @@ class OnBoardingPage extends StatelessWidget {
                       size: viewModel.screen,
                       buttonText:
                           viewModel.currentPage == viewModel.pages.length - 1
-                              ? 'Done'.i18n()
-                              : 'Next'.i18n(),
+                              ? 'done'.i18n()
+                              : 'next'.i18n(),
                       onPressed: () {
                         viewModel.goToNextPage();
                       },

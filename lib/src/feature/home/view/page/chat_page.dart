@@ -18,17 +18,9 @@ class ChatPage extends StatefulWidget {
 class ChatPageState extends State<ChatPage> {
   bool _isTyping = false;
 
-  late TextEditingController _inputController;
-  late ScrollController _listScrollController;
-  late FocusNode _focusNode;
-
-  @override
-  void initState() {
-    _listScrollController = ScrollController();
-    _inputController = TextEditingController();
-    _focusNode = FocusNode();
-    super.initState();
-  }
+  final TextEditingController _inputController = TextEditingController();
+  final ScrollController _listScrollController = ScrollController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void dispose() {
@@ -55,7 +47,6 @@ class ChatPageState extends State<ChatPage> {
         _focusNode.unfocus();
       });
       await chatProvider.sendMessageAndGetAnswers(msg: msg);
-      setState(() {});
     } catch (error) {
       chatProvider.chatList.addAll(
         List.generate(
@@ -99,9 +90,18 @@ class ChatPageState extends State<ChatPage> {
                 const SizedBox(width: 8),
                 Image.asset('lib/assets/images/icon.png',
                     height: 60, width: 60),
+                const SizedBox(width: 32),
+                IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  onPressed: () {
+                    chatProvider.clearMessages();
+                  },
+                )
               ],
             ),
-            const Divider(),
             Expanded(
               child: ListView.builder(
                 controller: _listScrollController,
@@ -118,17 +118,18 @@ class ChatPageState extends State<ChatPage> {
             ),
             if (_isTyping) ...[
               SpinKitThreeBounce(
-                color: Theme.of(context).colorScheme.tertiary,
+                color: Theme.of(context).colorScheme.primary,
                 size: 18,
               ),
             ],
+            const SizedBox(height: 18),
             Row(
               children: [
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25.0),
-                      color: Theme.of(context).colorScheme.outlineVariant,
+                      color: Theme.of(context).colorScheme.shadow,
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -9,6 +9,11 @@ class ChatViewModel extends ChangeNotifier {
     return chatList;
   }
 
+  void clearMessages() {
+    chatList = [];
+    notifyListeners();
+  }
+
   void addUserMessage({required String msg}) {
     chatList.add(Chat(msg: msg, chatIndex: 0));
     notifyListeners();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:localization/localization.dart';
 
 class DatePicker extends StatefulWidget {
   final DateTime? selectedDate;
@@ -33,6 +34,8 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   Widget build(BuildContext context) {
+    Locale currentLocale = Localizations.localeOf(context);
+    String currentLanguage = currentLocale.languageCode;
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -43,15 +46,16 @@ class _DatePickerState extends State<DatePicker> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Data de Entrega:',
-              style: TextStyle(fontSize: 16),
+            Text(
+              'delivery_date'.i18n(),
+              style: const TextStyle(fontSize: 16),
             ),
             Row(
               children: [
                 if (widget.selectedDate != null)
                   Text(
-                    DateFormat('dd/MM/y').format(widget.selectedDate!),
+                    DateFormat(currentLanguage == 'en' ? 'MM/dd/y' : 'dd/MM/y')
+                        .format(widget.selectedDate!),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 IconButton(

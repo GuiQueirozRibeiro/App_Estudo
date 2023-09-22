@@ -6,7 +6,9 @@ import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import 'feature/auth/viewmodel/auth_view_model.dart';
-import 'feature/home/usecase/firestore_service.dart';
+import 'feature/home/repository/activity_list.dart';
+import 'feature/home/repository/subject_list.dart';
+import 'feature/home/repository/user_list.dart';
 import 'feature/home/viewmodel/chat_view_model.dart';
 import 'feature/onboarding/viewmodel/onboarding_view_model.dart';
 
@@ -28,8 +30,32 @@ class AppWidget extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => ChatViewModel(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => FirestoreService(),
+        ChangeNotifierProxyProvider<AuthViewModel, UserList>(
+          create: (_) => UserList(),
+          update: (ctx, auth, previous) {
+            return UserList(
+              auth.currentUser,
+              previous?.showUserList ?? false,
+              previous?.items ?? [],
+            );
+          },
+        ),
+        ChangeNotifierProxyProvider<AuthViewModel, SubjectList>(
+          create: (_) => SubjectList(),
+          update: (ctx, auth, previous) {
+            return SubjectList(
+              auth.currentUser,
+              previous?.items ?? [],
+            );
+          },
+        ),
+        ChangeNotifierProxyProvider(
+          create: (_) => ActivityList(),
+          update: (ctx, auth, previous) {
+            return ActivityList(
+              previous?.items ?? [],
+            );
+          },
         ),
       ],
       child: MaterialApp.router(
@@ -42,7 +68,8 @@ class AppWidget extends StatelessWidget {
             error: Colors.red,
             onError: Colors.green,
             outline: Colors.black,
-            outlineVariant: Colors.grey[400],
+            outlineVariant: Colors.grey,
+            shadow: Colors.grey[300],
           ),
         ),
         debugShowCheckedModeBanner: false,

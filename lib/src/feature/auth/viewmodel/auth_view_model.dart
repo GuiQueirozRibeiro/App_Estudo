@@ -122,8 +122,7 @@ class AuthViewModel extends ChangeNotifier {
       await imageRef.putFile(image);
       return await imageRef.getDownloadURL();
     } catch (error) {
-      debugPrint('Erro ao fazer upload da imagem: $error');
-      return null;
+      return 'Erro ao fazer upload da imagem: $error';
     }
   }
 

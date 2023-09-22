@@ -74,7 +74,7 @@ class CircleAvatarWithEditButtonState
     final pickedImage = await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 100,
-      maxWidth: 150,
+      maxWidth: 300,
     );
 
     if (pickedImage != null) {
@@ -135,12 +135,12 @@ class CircleAvatarWithEditButtonState
         alignment: Alignment.topRight,
         children: [
           CircleAvatar(
-            radius: 50,
+            radius: 60,
             backgroundColor: Colors.transparent,
             child: ClipOval(
               child: SizedBox(
-                width: 100,
-                height: 100,
+                width: 120,
+                height: 120,
                 child: FadeInImage(
                   placeholder: const AssetImage("lib/assets/images/avatar.png"),
                   image: _getImageProvider(),

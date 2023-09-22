@@ -4,47 +4,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../auth/repository/user_model.dart';
-import '../repository/activity.dart';
-import '../repository/subject.dart';
+import 'activity.dart';
 
-class FirestoreService extends ChangeNotifier {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+class ActivityList with ChangeNotifier {
+  final List<Activity> _items;
 
-  Future<void> updateSubject(Subject subject) async {
-    final subjectRef = _firestore.collection('subjects').doc(subject.id);
+  ActivityList([
+    this._items = const [],
+  ]);
 
-    final subjectData = {
-      'name': subject.name,
-      'imageUrl': subject.imageUrl,
-      'classes': subject.classes,
-    };
+  List<Activity> get items => [..._items];
 
-    await subjectRef.update(subjectData);
-    notifyListeners();
-  }
-
-  Future<List<Subject>> fetchSubjects(UserModel user) async {
-    final QuerySnapshot querySnapshot =
-        await _firestore.collection('subjects').get();
-
-    final List<Subject> subjects = [];
-
-    for (final doc in querySnapshot.docs) {
-      final subject = Subject(
-        id: doc.id,
-        name: doc['name'],
-        imageUrl: doc['imageUrl'],
-        classes: doc['classes'],
-        teacher: doc['teacher'],
-      );
-
-      if (subject.classes.contains(user.classroom) ||
-          (user.isProfessor && subject.id == user.classroom)) {
-        subjects.add(subject);
-      }
-    }
-
-    return subjects;
+  List<Activity> getSubjectList(String subjectId) {
+    return _items.where((activity) => activity.subjectId == subjectId).toList();
   }
 
   Future<void> saveActivity(Map<String, Object?> data, UserModel professor) {
@@ -74,7 +46,8 @@ class FirestoreService extends ChangeNotifier {
   }
 
   Future<void> createActivity(Activity activity) async {
-    final activityRef = _firestore.collection('activities').doc();
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final activityRef = firestore.collection('activities').doc();
 
     final activityData = {
       'classes': activity.classes,
@@ -92,7 +65,8 @@ class FirestoreService extends ChangeNotifier {
   }
 
   Future<void> updateActivity(Activity activity) async {
-    final subjectRef = _firestore.collection('activities').doc(activity.id);
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final subjectRef = firestore.collection('activities').doc(activity.id);
 
     final subjectData = {
       'classes': activity.classes,
@@ -107,24 +81,23 @@ class FirestoreService extends ChangeNotifier {
   }
 
   Future<void> deleteActivity(String activityId) async {
-    final activityRef = _firestore.collection('activities').doc(activityId);
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final activityRef = firestore.collection('activities').doc(activityId);
     await activityRef.delete();
     notifyListeners();
   }
 
-  Future<List<Activity>> fetchActivities(
-    String subjectId,
-    UserModel user,
-  ) async {
-    final QuerySnapshot querySnapshot =
-        await _firestore.collection('activities').get();
+  Future<void> loadActivity() async {
+    _items.clear();
 
-    final List<Activity> activities = [];
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final QuerySnapshot querySnapshot =
+        await firestore.collection('activities').get();
 
     for (final doc in querySnapshot.docs) {
       final professorId = doc['professorId'];
       final professorDoc =
-          await _firestore.collection('users').doc(professorId).get();
+          await firestore.collection('users').doc(professorId).get();
       final professor = UserModel(
         id: professorDoc.id,
         name: professorDoc['name'],
@@ -133,21 +106,18 @@ class FirestoreService extends ChangeNotifier {
         isProfessor: professorDoc['isProfessor'],
       );
 
-      if (doc['subjectId'] == subjectId &&
-          (doc['classes'].contains(user.classroom) || user.isProfessor)) {
-        final activity = Activity(
-          id: doc.id,
-          user: professor,
-          subjectId: subjectId,
-          classes: doc['classes'],
-          description: doc['description'],
-          assignedDate: doc['assignedDate'],
-          dueDate: doc['dueDate'],
-        );
+      final activity = Activity(
+        id: doc.id,
+        user: professor,
+        subjectId: doc['subjectId'],
+        classes: doc['classes'],
+        description: doc['description'],
+        assignedDate: doc['assignedDate'],
+        dueDate: doc['dueDate'],
+      );
 
-        activities.add(activity);
-      }
+      _items.add(activity);
+      notifyListeners();
     }
-    return activities;
   }
 }

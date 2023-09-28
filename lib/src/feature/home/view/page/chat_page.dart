@@ -17,6 +17,7 @@ class ChatPage extends StatefulWidget {
 
 class ChatPageState extends State<ChatPage> {
   bool _isTyping = false;
+  bool _isAnimating = false;
 
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _listScrollController = ScrollController();
@@ -27,6 +28,7 @@ class ChatPageState extends State<ChatPage> {
     _listScrollController.dispose();
     _inputController.dispose();
     _focusNode.dispose();
+
     super.dispose();
   }
 
@@ -37,16 +39,17 @@ class ChatPageState extends State<ChatPage> {
         curve: Curves.easeOut);
   }
 
-  Future<void> _sendMessage({required ChatViewModel chatProvider}) async {
+  Future<void> _sendMessage(ChatViewModel chatProvider) async {
     try {
       String msg = _inputController.text;
       setState(() {
         _isTyping = true;
+        _isAnimating = true;
         chatProvider.addUserMessage(msg: msg);
         _inputController.clear();
         _focusNode.unfocus();
       });
-      await chatProvider.sendMessageAndGetAnswers(msg: msg);
+      await chatProvider.sendMessageAndGetAnswers(msg);
     } catch (error) {
       chatProvider.chatList.addAll(
         List.generate(
@@ -70,7 +73,7 @@ class ChatPageState extends State<ChatPage> {
     final AuthViewModel authProvider = Provider.of<AuthViewModel>(context);
     final currentUser = authProvider.currentUser;
     final chatProvider = Provider.of<ChatViewModel>(context);
-
+    final chatList = chatProvider.getChatList;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -90,31 +93,30 @@ class ChatPageState extends State<ChatPage> {
                 const SizedBox(width: 8),
                 Image.asset('lib/assets/images/icon.png',
                     height: 60, width: 60),
-                const SizedBox(width: 32),
-                IconButton(
-                  icon: Icon(
-                    Icons.delete,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  onPressed: () {
-                    chatProvider.clearMessages();
-                  },
-                )
               ],
             ),
             Expanded(
-              child: ListView.builder(
-                controller: _listScrollController,
-                itemCount: chatProvider.getChatList.length,
-                itemBuilder: (context, index) {
-                  return ChatWidget(
-                    msg: chatProvider.getChatList[index].msg,
-                    chatIndex: chatProvider.getChatList[index].chatIndex,
-                    user: currentUser,
-                    shouldAnimate: chatProvider.getChatList.length - 1 == index,
-                  );
-                },
-              ),
+              child: chatList.isEmpty
+                  ? Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'welcome_message'.i18n(),
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    )
+                  : ListView.builder(
+                      controller: _listScrollController,
+                      itemCount: chatList.length,
+                      itemBuilder: (context, index) {
+                        return ChatWidget(
+                          msg: chatList[index].msg,
+                          chatIndex: chatList[index].chatIndex,
+                          user: currentUser,
+                          shouldAnimate: _isAnimating,
+                        );
+                      },
+                    ),
             ),
             if (_isTyping) ...[
               SpinKitThreeBounce(
@@ -154,7 +156,7 @@ class ChatPageState extends State<ChatPage> {
                   onPressed: () async {
                     String messageText = _inputController.text.trim();
                     if (messageText.isNotEmpty) {
-                      await _sendMessage(chatProvider: chatProvider);
+                      await _sendMessage(chatProvider);
                     } else {
                       _focusNode.unfocus();
                     }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/repository/user_model.dart';
@@ -32,7 +33,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final subjectList = Provider.of<SubjectList>(context, listen: false);
+    final subjectList = Provider.of<SubjectList>(context);
     final cardHeight = MediaQuery.of(context).size.height * 0.21;
 
     return RefreshIndicator(
@@ -40,17 +41,28 @@ class _HomePageState extends State<HomePage> {
       color: Theme.of(context).colorScheme.outlineVariant,
       child: Scaffold(
         body: SafeArea(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(5),
-            itemCount: subjectList.itemsCount,
-            itemBuilder: (context, index) {
-              return SubjectCard(
-                cardHeight: cardHeight,
-                subject: subjectList.items[index],
-                user: currentUser!,
-              );
-            },
-          ),
+          child: subjectList.subjects.isEmpty
+              ? Container(
+                  alignment: Alignment.center,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
+                  child: Text(
+                    'no_subject'.i18n(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(5),
+                  itemCount: subjectList.subjectsCount,
+                  itemBuilder: (context, index) {
+                    return SubjectCard(
+                      cardHeight: cardHeight,
+                      subject: subjectList.subjects[index],
+                      user: currentUser!,
+                    );
+                  },
+                ),
         ),
       ),
     );

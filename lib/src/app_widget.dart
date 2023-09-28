@@ -27,8 +27,14 @@ class AppWidget extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => AuthViewModel(),
         ),
-        ChangeNotifierProvider(
+        ChangeNotifierProxyProvider<AuthViewModel, ChatViewModel>(
           create: (_) => ChatViewModel(),
+          update: (ctx, auth, previous) {
+            return ChatViewModel(
+              auth.currentUser,
+              previous?.chatList ?? [],
+            );
+          },
         ),
         ChangeNotifierProxyProvider<AuthViewModel, UserList>(
           create: (_) => UserList(),
@@ -36,7 +42,7 @@ class AppWidget extends StatelessWidget {
             return UserList(
               auth.currentUser,
               previous?.showUserList ?? false,
-              previous?.items ?? [],
+              previous?.users ?? [],
             );
           },
         ),
@@ -45,7 +51,7 @@ class AppWidget extends StatelessWidget {
           update: (ctx, auth, previous) {
             return SubjectList(
               auth.currentUser,
-              previous?.items ?? [],
+              previous?.subjects ?? [],
             );
           },
         ),
@@ -53,7 +59,7 @@ class AppWidget extends StatelessWidget {
           create: (_) => ActivityList(),
           update: (ctx, auth, previous) {
             return ActivityList(
-              previous?.items ?? [],
+              previous?.activities ?? [],
             );
           },
         ),

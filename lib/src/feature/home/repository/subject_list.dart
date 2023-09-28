@@ -6,26 +6,28 @@ import 'subject.dart';
 
 class SubjectList with ChangeNotifier {
   final UserModel? _currentUser;
-  final List<Subject> _items;
+  final List<Subject> _subjects;
 
   SubjectList([
     this._currentUser,
-    this._items = const [],
+    this._subjects = const [],
   ]);
 
-  int get itemsCount {
-    return _items.length;
+  int get subjectsCount {
+    return _subjects.length;
   }
 
-  List<Subject> get items => [..._items];
+  List<Subject> get subjects => [..._subjects];
 
-  Future<void> loadSubjects() async {
-    _items.clear();
+  Future<Map<String, List<String>>> loadSubjects() async {
+    _subjects.clear();
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     final QuerySnapshot querySnapshot =
         await firestore.collection('subjects').get();
+
+    Map<String, List<String>> classroomSubjects = {};
 
     for (final doc in querySnapshot.docs) {
       final subject = Subject(
@@ -36,13 +38,22 @@ class SubjectList with ChangeNotifier {
         teacher: doc['teacher'],
       );
 
+      for (final classroom in subject.classes) {
+        if (!classroomSubjects.containsKey(classroom)) {
+          classroomSubjects[classroom] = [];
+        }
+        classroomSubjects[classroom]!.add(subject.name);
+      }
+
       if (subject.classes.contains(_currentUser!.classroom) ||
           (_currentUser!.isProfessor &&
               subject.id == _currentUser!.classroom)) {
-        _items.add(subject);
+        _subjects.add(subject);
       }
     }
+
     notifyListeners();
+    return classroomSubjects;
   }
 
   Future<void> updateSubject(Subject subject) async {

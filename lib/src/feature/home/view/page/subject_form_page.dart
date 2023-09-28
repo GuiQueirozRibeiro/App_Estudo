@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
@@ -50,6 +51,30 @@ class SubjectFormPageState extends State<SubjectFormPage> {
     super.dispose();
   }
 
+  bool _hasFormChanged() {
+    final currentName = nameController.text;
+    final originalName = widget.subject.name;
+    final currentClasses = selectedClasses;
+    final originalClasses = widget.subject.classes;
+
+    return currentName != originalName ||
+        !listEquals(currentClasses, originalClasses);
+  }
+
+  Future<void> _handlePop() async {
+    if (!_hasFormChanged()) {
+      Modular.to.pop();
+    } else {
+      final confirm = await _showDialog(
+        'without_saving'.i18n(),
+        'without_saving_content'.i18n(),
+      );
+      if (confirm ?? false) {
+        Modular.to.pop();
+      }
+    }
+  }
+
   Future<bool?> _showDialog(String title, String content) async {
     return showDialog(
       context: context,
@@ -93,12 +118,17 @@ class SubjectFormPageState extends State<SubjectFormPage> {
   }
 
   Future<void> _submitForm() async {
+    if (!_hasFormChanged()) {
+      Modular.to.pop();
+      return;
+    }
+
     final subjectProvider = Provider.of<SubjectList>(context, listen: false);
     final confirm = await _showDialog(
       'upload_subject'.i18n(),
       'are_you_sure'.i18n(),
     );
-    if (confirm!) {
+    if (confirm ?? false) {
       setState(() => _isLoading = true);
 
       try {
@@ -133,6 +163,10 @@ class SubjectFormPageState extends State<SubjectFormPage> {
       appBar: AppBar(
         title: Text('subject_form'.i18n()),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () => _handlePop(),
+          icon: const Icon(Icons.arrow_back),
+        ),
         actions: [
           IconButton(
             onPressed: () => _submitForm(),

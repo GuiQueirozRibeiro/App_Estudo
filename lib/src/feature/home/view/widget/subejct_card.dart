@@ -52,7 +52,7 @@ class _SubjectCardState extends State<SubjectCard> {
     return GestureDetector(
       onTap: () => widget.isForm
           ? _openImageSelection()
-          : Modular.to.pushNamed('details/', arguments: widget.subject),
+          : Modular.to.pushNamed('subjectDetails/', arguments: widget.subject),
       child: Card(
         elevation: 5,
         shape: RoundedRectangleBorder(

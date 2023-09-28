@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
@@ -64,6 +65,37 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
     }
   }
 
+  bool _hasFormChanged() {
+    final currentDescription = _descriptionController.text;
+    final originalDescription = _formData['description']?.toString() ?? '';
+
+    final currentClasses = _selectedClasses;
+    final originalClasses = _formData['classes'] as List;
+
+    final currentDueDate = _formData['dueDate'] as DateTime?;
+    final originalDueDate = _formData['dueDate'] as DateTime?;
+
+    final descriptionChanged = currentDescription != originalDescription;
+    final classesChanged = !listEquals(currentClasses, originalClasses);
+    final dueDateChanged = currentDueDate != originalDueDate;
+
+    return descriptionChanged || classesChanged || dueDateChanged;
+  }
+
+  Future<void> _handlePop() async {
+    if (!_hasFormChanged()) {
+      Modular.to.pop();
+    } else {
+      final confirm = await _showDialog(
+        'without_saving'.i18n(),
+        'without_saving_content'.i18n(),
+      );
+      if (confirm ?? false) {
+        Modular.to.pop();
+      }
+    }
+  }
+
   void updateDatePicker(DateTime? pickedDate) {
     setState(() {
       _formData['dueDate'] = pickedDate;
@@ -81,23 +113,38 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
     });
   }
 
-  void _showErrorDialog(String msg) {
-    showDialog(
+  Future<bool?> _showDialog(String title, String content) async {
+    return showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('error_occurred'.i18n()),
-        content: Text(msg),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('close'.i18n()),
-          ),
-        ],
-      ),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              child: Text('no'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('yes'.i18n()),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
   Future<void> _submitForm() async {
+    if (!_hasFormChanged()) {
+      Modular.to.pop();
+      return;
+    }
+
     final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
@@ -106,17 +153,28 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
 
     _formKey.currentState?.save();
 
-    setState(() => _isLoading = true);
-
     final activityProvider = Provider.of<ActivityList>(context, listen: false);
 
-    try {
-      await activityProvider.saveActivity(_formData, currentUser!);
-    } catch (error) {
-      _showErrorDialog(error.toString());
-    } finally {
-      Modular.to.pop();
-      setState(() => _isLoading = false);
+    final confirm = await _showDialog(
+      'upload_activity'.i18n(),
+      'are_you_sure'.i18n(),
+    );
+    if (confirm ?? false) {
+      setState(() => _isLoading = true);
+
+      try {
+        await activityProvider.saveActivity(_formData, currentUser!);
+      } catch (error) {
+        await _showDialog(
+          'error_occurred'.i18n(),
+          'error_updating_activity'.i18n(),
+        );
+      } finally {
+        Modular.to.pop();
+        setState(() => _isLoading = false);
+      }
+    } else {
+      return;
     }
   }
 
@@ -126,6 +184,10 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
       appBar: AppBar(
         title: Text('activity_form'.i18n()),
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () => _handlePop(),
+          icon: const Icon(Icons.arrow_back),
+        ),
         actions: [
           IconButton(
             onPressed: () => _submitForm(),

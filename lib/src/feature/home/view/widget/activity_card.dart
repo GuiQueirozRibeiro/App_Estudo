@@ -69,17 +69,24 @@ class _ActivityCardState extends State<ActivityCard> {
   }
 
   Future<void> _updateActivityStatus(bool isDone) async {
-    await _prefs.setBool(_getActivityStatusKey(), isDone);
-    setState(() {
-      _isDone = isDone;
-    });
-    _showStatusSnackBar(isDone);
+    if (widget.activity.dueDate!.day <= DateTime.now().day) {
+      _showStatusSnackBar(_isDone, isAlert: true);
+    } else {
+      await _prefs.setBool(_getActivityStatusKey(), isDone);
+      setState(() {
+        _isDone = isDone;
+      });
+      _showStatusSnackBar(isDone);
+    }
   }
 
-  void _showStatusSnackBar(bool isDone) {
+  void _showStatusSnackBar(bool isDone, {bool? isAlert}) {
     final snackBar = SnackBar(
-      content:
-          Text(isDone ? 'activity_done'.i18n() : 'activity_not_done'.i18n()),
+      content: Text(isAlert != null
+          ? 'activity_finish'.i18n()
+          : isDone
+              ? 'activity_done'.i18n()
+              : 'activity_not_done'.i18n()),
       backgroundColor: isDone
           ? Theme.of(context).colorScheme.onError
           : Theme.of(context).colorScheme.error,

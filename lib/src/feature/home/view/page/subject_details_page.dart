@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 import '../../../auth/repository/user_model.dart';
@@ -39,8 +40,9 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final activityList = Provider.of<ActivityList>(context, listen: false);
+    final activityList = Provider.of<ActivityList>(context);
     final activityGroup = activityList.getSubjectList(widget.subject.id);
+
     return RefreshIndicator(
       onRefresh: () => _refreshActivities(context),
       child: Scaffold(
@@ -85,21 +87,27 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
             SliverList(
               delegate: SliverChildBuilderDelegate(
                 (BuildContext context, int index) {
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(5),
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: activityGroup.length,
-                    itemBuilder: (context, index) {
-                      final activity = activityGroup[index];
-                      return ActivityCard(
-                        activity: activity,
-                        isProfessor: user!.isProfessor,
-                      );
-                    },
-                  );
+                  if (activityGroup.isEmpty) {
+                    return Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 60),
+                      child: Text(
+                        user!.isProfessor
+                            ? 'no_activity_prof'.i18n()
+                            : 'no_activity'.i18n(),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    );
+                  } else {
+                    return ActivityCard(
+                      activity: activityGroup[index],
+                      isProfessor: user!.isProfessor,
+                    );
+                  }
                 },
-                childCount: activityGroup.length,
+                childCount: activityGroup.isEmpty ? 1 : activityGroup.length,
               ),
             ),
           ],

@@ -6,34 +6,41 @@ import '../../auth/repository/user_model.dart';
 class UserList with ChangeNotifier {
   bool _showUserList;
   final UserModel? _currentUser;
-  final List<UserModel> _items;
+  final List<UserModel> _users;
 
   UserList([
     this._currentUser,
     this._showUserList = false,
-    this._items = const [],
+    this._users = const [],
   ]);
 
   bool get showUserList => _showUserList;
 
-  int get itemsCount {
-    return _items.length;
+  int get usersCount {
+    return _users.length;
   }
 
-  List<UserModel> get items => [..._items];
+  List<UserModel> get users => [..._users];
 
   void toggleUserList() {
     _showUserList = !_showUserList;
     notifyListeners();
   }
 
-  Future<void> loadUsers() async {
-    _items.clear();
+  Future<void> loadUsers(Map<String, List<String>> classroomSubjects) async {
+    _users.clear();
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     final QuerySnapshot querySnapshot =
         await firestore.collection('users').get();
+
+    String currenteUserClass = _currentUser!.classroom;
+    if (_currentUser!.isProfessor) {
+      final classroomDoc =
+          await firestore.collection('subjects').doc(currenteUserClass).get();
+      currenteUserClass = classroomDoc['name'];
+    }
 
     for (final doc in querySnapshot.docs) {
       String classroomName = doc['classroom'];
@@ -50,12 +57,20 @@ class UserList with ChangeNotifier {
         isProfessor: doc['isProfessor'],
       );
 
-      if (user.id != _currentUser!.id &&
-          !user.isProfessor == _currentUser!.isProfessor) {
-        _items.add(user);
+      if (_currentUser!.isProfessor) {
+        if (!user.isProfessor &&
+            classroomSubjects.containsKey(classroomName) &&
+            classroomSubjects[classroomName]!.contains(currenteUserClass)) {
+          _users.add(user);
+        }
+      } else {
+        if (user.isProfessor &&
+            classroomSubjects.containsKey(_currentUser!.classroom) &&
+            classroomSubjects[currenteUserClass]!.contains(classroomName)) {
+          _users.add(user);
+        }
       }
     }
-
     notifyListeners();
   }
 }

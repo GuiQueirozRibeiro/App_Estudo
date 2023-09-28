@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../auth/repository/user_model.dart';
 import '../../../auth/viewmodel/auth_view_model.dart';
 import '../../repository/user_list.dart';
-import '../widget/circle_avatar_edit.dart';
+import '../widget/custom_avatar_profile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -65,13 +65,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Future<void> _refreshProducts(BuildContext context) {
-    return Provider.of<UserList>(
-      context,
-      listen: false,
-    ).loadUsers();
-  }
-
   @override
   Widget build(BuildContext context) {
     final userList = Provider.of<UserList>(context, listen: false);
@@ -81,35 +74,11 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircleAvatarWithEditButton(
-                  onImageChanged: (newImage) {
-                    authProvider.changeUserImage(newImage);
-                  },
-                  userImageUrl: currentUser?.imageUrl,
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        currentUser?.name ?? '',
-                        style: const TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        currentUser!.isProfessor
-                            ? 'teacher'.i18n()
-                            : authProvider.currentUser?.classroom ?? '',
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            CustomAvatarProfile(
+              onImageChanged: (newImage) {
+                authProvider.changeUserImage(newImage);
+              },
+              user: currentUser!,
             ),
             const SizedBox(height: 60),
             Container(
@@ -168,15 +137,15 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: RefreshIndicator(
-                color: Theme.of(context).colorScheme.outlineVariant,
-                onRefresh: () => _refreshProducts(context),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: userList.showUserList ? userList.itemsCount : 0,
-                  itemBuilder: (context, index) {
-                    final user = userList.items[index];
-                    return Card(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: userList.showUserList ? userList.usersCount : 0,
+                itemBuilder: (context, index) {
+                  final user = userList.users[index];
+                  return GestureDetector(
+                    onTap: () =>
+                        Modular.to.pushNamed('profileDetails', arguments: user),
+                    child: Card(
                       elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -209,9 +178,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
             TextButton(

@@ -70,23 +70,29 @@ class OnboardingViewModel extends ChangeNotifier {
     bool onboardingCompleted = prefs.getBool('onboardingCompleted') ?? false;
 
     if (onboardingCompleted) {
-      auth.userChanges.listen((UserModel? user) {
+      auth.userChanges.listen((UserModel? user) async {
         if (user != null) {
+          Map<String, List<String>> classroomSubjects = {};
           Provider.of<ChatViewModel>(context, listen: false).clearMessages();
+          classroomSubjects =
+              await Provider.of<SubjectList>(context, listen: false)
+                  .loadSubjects();
+          // ignore: use_build_context_synchronously
           Provider.of<UserList>(context, listen: false)
-              .loadUsers()
+              .loadUsers(classroomSubjects)
               .then((_) => {
-                    Provider.of<SubjectList>(
+                    Provider.of<ActivityList>(
                       context,
                       listen: false,
-                    ).loadSubjects().then((_) => {
-                          Provider.of<ActivityList>(
-                            context,
-                            listen: false,
-                          )
-                              .loadActivity()
-                              .then((value) => Modular.to.navigate('/home/'))
-                        })
+                    )
+                        .loadActivity()
+                        .then((_) => {
+                              Provider.of<ChatViewModel>(
+                                context,
+                                listen: false,
+                              ).loadMessages()
+                            })
+                        .then((value) => Modular.to.navigate('/home/'))
                   });
         } else {
           Modular.to.navigate('/auth/');

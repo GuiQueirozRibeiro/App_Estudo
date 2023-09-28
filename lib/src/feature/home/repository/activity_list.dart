@@ -7,16 +7,22 @@ import '../../auth/repository/user_model.dart';
 import 'activity.dart';
 
 class ActivityList with ChangeNotifier {
-  final List<Activity> _items;
+  final List<Activity> _activities;
 
   ActivityList([
-    this._items = const [],
+    this._activities = const [],
   ]);
 
-  List<Activity> get items => [..._items];
+  List<Activity> get activities => [..._activities];
 
   List<Activity> getSubjectList(String subjectId) {
-    return _items.where((activity) => activity.subjectId == subjectId).toList();
+    return _activities
+        .where((activity) => activity.subjectId == subjectId)
+        .toList();
+  }
+
+  List<Activity> getUserList(String userId) {
+    return _activities.where((activity) => activity.user.id == userId).toList();
   }
 
   Future<void> saveActivity(Map<String, Object?> data, UserModel professor) {
@@ -88,7 +94,7 @@ class ActivityList with ChangeNotifier {
   }
 
   Future<void> loadActivity() async {
-    _items.clear();
+    _activities.clear();
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final QuerySnapshot querySnapshot =
@@ -116,8 +122,8 @@ class ActivityList with ChangeNotifier {
         dueDate: doc['dueDate'],
       );
 
-      _items.add(activity);
-      notifyListeners();
+      _activities.add(activity);
     }
+    notifyListeners();
   }
 }

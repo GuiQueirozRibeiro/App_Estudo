@@ -23,6 +23,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   late List<Activity> activityGroup;
   late List<Chat> chatList;
   final ScrollController _listScrollController = ScrollController();
+  bool dataLoaded = false;
 
   @override
   void dispose() {
@@ -30,16 +31,27 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
     super.dispose();
   }
 
-  Future<void> _refreshData(BuildContext context) {
-    return widget.user.isProfessor
-        ? Provider.of<ActivityList>(
-            context,
-            listen: false,
-          ).loadActivity()
-        : Provider.of<ChatViewModel>(
-            context,
-            listen: false,
-          ).loadMessages();
+  Future<void> _loadData(BuildContext context) async {
+    if (widget.user.isProfessor) {
+      await Provider.of<ActivityList>(
+        context,
+        listen: false,
+      ).loadActivity();
+    } else {
+      final chatProvider = Provider.of<ChatViewModel>(context);
+      chatList = await chatProvider.loadMessagesFromUser(widget.user);
+    }
+    setState(() {
+      dataLoaded = true;
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!dataLoaded) {
+      _loadData(context);
+    }
   }
 
   @override
@@ -47,9 +59,6 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
     if (widget.user.isProfessor) {
       final activityList = Provider.of<ActivityList>(context, listen: false);
       activityGroup = activityList.getUserList(widget.user.id);
-    } else {
-      final chatProvider = Provider.of<ChatViewModel>(context);
-      chatList = chatProvider.getMyChatList(widget.user);
     }
     return Scaffold(
       appBar: AppBar(title: Text('profile_details'.i18n()), centerTitle: true),
@@ -72,53 +81,61 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
             Expanded(
               child: RefreshIndicator(
                 color: Theme.of(context).colorScheme.outlineVariant,
-                onRefresh: () => _refreshData(context),
-                child: widget.user.isProfessor
-                    ? activityGroup.isEmpty
-                        ? Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              'no_activity'.i18n(),
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          )
-                        : ListView.builder(
-                            padding: const EdgeInsets.all(5),
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: activityGroup.length,
-                            itemBuilder: (context, index) {
-                              final activity = activityGroup[index];
-                              return ActivityCard(
-                                activity: activity,
-                                isProfessor: true,
-                                isForm: true,
-                              );
-                            },
-                          )
-                    : chatList.isEmpty
-                        ? Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              'no_message'.i18n(),
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          )
-                        : ListView.builder(
-                            controller: _listScrollController,
-                            itemCount: chatList.length,
-                            itemBuilder: (context, index) {
-                              return ChatWidget(
-                                msg: chatList[index].msg,
-                                chatIndex: chatList[index].chatIndex,
-                                user: widget.user,
-                              );
-                            },
-                          ),
+                onRefresh: () => _loadData(context),
+                child: dataLoaded
+                    ? widget.user.isProfessor
+                        ? activityGroup.isEmpty
+                            ? Container(
+                                alignment: Alignment.center,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  'no_activity'.i18n(),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              )
+                            : ListView.builder(
+                                padding: const EdgeInsets.all(5),
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: activityGroup.length,
+                                itemBuilder: (context, index) {
+                                  final activity = activityGroup[index];
+                                  return ActivityCard(
+                                    activity: activity,
+                                    isProfessor: true,
+                                    isForm: true,
+                                  );
+                                },
+                              )
+                        : chatList.isEmpty
+                            ? Container(
+                                alignment: Alignment.center,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  'no_message'.i18n(),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                              )
+                            : ListView.builder(
+                                controller: _listScrollController,
+                                itemCount: chatList.length,
+                                itemBuilder: (context, index) {
+                                  return ChatWidget(
+                                    msg: chatList[index].msg,
+                                    chatIndex: chatList[index].chatIndex,
+                                    user: widget.user,
+                                  );
+                                },
+                              )
+                    : Center(
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
+                      ),
               ),
             ),
           ],

@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../common/utils/constants.dart';
@@ -11,20 +10,32 @@ import '../../auth/repository/user_model.dart';
 import '../repository/chat.dart';
 
 class ApiService {
-  static Future<List<Chat>> loadMessage(UserModel user) async {
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  static Future<List<Chat>> loadMessages(UserModel user) async {
     List<Chat> chatList = [];
     try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
       final QuerySnapshot querySnapshot =
           await firestore.collection('chat').get();
 
       for (final doc in querySnapshot.docs) {
-        final message =
-            Chat(msg: doc["msg"], chatIndex: doc["index"], uid: doc["uid"]);
-        if (message.uid == user.id) {
-          chatList.add(message);
+        final msg = doc["msg"];
+        final uid = doc["uid"];
+        final response = doc["response"];
+
+        if (user.id == uid) {
+          chatList.addAll(
+            List.generate(
+              2,
+              (index) => Chat(
+                msg: index == 0 ? msg : response,
+                chatIndex: index == 0 ? 0 : 1,
+                uid: uid,
+              ),
+            ),
+          );
         }
       }
+
       return chatList;
     } catch (error) {
       log("error $error");
@@ -36,33 +47,17 @@ class ApiService {
     List<Chat> chatList,
     UserModel user,
   ) async {
-    debugPrint('3');
-
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    debugPrint('4');
-
     final chatRef = firestore.collection('chat').doc();
-    debugPrint(chatList.first.msg);
-    debugPrint(chatList.first.chatIndex.toString());
 
-    debugPrint(chatList.last.msg);
-    debugPrint(chatList.last.chatIndex.toString());
-
-    final chatDataUser = {
-      'msg': chatList.first.msg,
-      'index': chatList.first.chatIndex,
+    final chatData = {
+      'msg': chatList[chatList.length - 2].msg,
       'uid': user.id,
+      'response': chatList.last.msg,
     };
 
-    final chatDataGPT = {
-      'msg': chatList.last.msg,
-      'index': chatList.last.chatIndex,
-      'uid': user.id,
-    };
-
-    chatRef.set(chatDataUser);
-    chatRef.set(chatDataGPT);
+    chatRef.set(chatData);
   }
 
   static Future<List<Chat>> sendMessageGPT(
@@ -105,7 +100,7 @@ class ApiService {
           ),
         );
       }
-      saveMessage(chatList, user);
+      ApiService.saveMessage(chatList, user);
       return chatList;
     } catch (error) {
       log("error $error");

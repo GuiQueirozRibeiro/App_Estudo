@@ -38,7 +38,11 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   Future<void> loadMessages() async {
-    chatList.addAll(await ApiService.loadMessage(_currentUser!));
+    chatList.addAll(await ApiService.loadMessages(_currentUser!));
     notifyListeners();
+  }
+
+  Future<List<Chat>> loadMessagesFromUser(UserModel user) async {
+    return await ApiService.loadMessages(user);
   }
 }

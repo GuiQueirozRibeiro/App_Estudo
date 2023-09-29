@@ -73,7 +73,8 @@ class ChatPageState extends State<ChatPage> {
     final AuthViewModel authProvider = Provider.of<AuthViewModel>(context);
     final currentUser = authProvider.currentUser;
     final chatProvider = Provider.of<ChatViewModel>(context);
-    final chatList = chatProvider.getChatList;
+    final chatList = chatProvider.chatList;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),

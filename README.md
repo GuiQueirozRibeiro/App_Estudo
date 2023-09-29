@@ -2,9 +2,19 @@ SnapStore
 ====
 ## A Flutter Project for FECC
 
-<p float="middle">
-  <img src="lib/assets/images/snap_cart.gif" width="28%" /><img src="lib/assets/images/snap_icon.png" width="28%" /><img src="lib/assets/images/snap_sell_buy.gif" width="28%" />
-</p>
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <img src="lib/assets/images/icon.png" width="100%">
+    </td>
+    <td align="center" width="33%">
+      <img src="lib/assets/images/cmcs_icon.png" width="40%">
+    </td>
+    <td align="center" width="33%">
+      <img src="lib/assets/images/chat_logo.png" width="60%">
+    </td>
+  </tr>
+</table>
 
 # Index
 

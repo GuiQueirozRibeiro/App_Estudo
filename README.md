@@ -8,7 +8,7 @@ Professor IA
       <img src="lib/assets/images/icon.png" width="100%">
     </td>
     <td align="center" width="33%">
-      <img src="lib/assets/images/cmcs_icon.png" width="40%">
+      <img src="lib/assets/images/cmcs_icon.png" width="40%", >
     </td>
     <td align="center" width="33%">
       <img src="lib/assets/images/chat_logo.png" width="60%">

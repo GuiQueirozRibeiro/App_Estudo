@@ -1,4 +1,4 @@
-SnapStore
+Professor IA
 ====
 ## A Flutter Project for FECC
 

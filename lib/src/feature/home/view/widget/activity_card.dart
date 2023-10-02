@@ -168,7 +168,7 @@ class _ActivityCardState extends State<ActivityCard> {
 
   Future<void> _performDeleteActivity() async {
     setState(() => _isLoading = true);
-    final activityProvider = Provider.of<ActivityList>(context, listen: false);
+    final ActivityList activityProvider = Provider.of(context, listen: false);
 
     try {
       await activityProvider.deleteActivity(widget.activity.id);

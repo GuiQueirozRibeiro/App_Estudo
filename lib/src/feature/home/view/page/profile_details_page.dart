@@ -38,8 +38,10 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
         listen: false,
       ).loadActivity();
     } else {
-      final chatProvider = Provider.of<ChatViewModel>(context);
-      chatList = await chatProvider.loadMessagesFromUser(widget.user);
+      chatList = await Provider.of<ChatViewModel>(
+        context,
+        listen: false,
+      ).loadMessagesFromUser(widget.user);
     }
     setState(() {
       dataLoaded = true;
@@ -57,7 +59,7 @@ class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
   @override
   Widget build(BuildContext context) {
     if (widget.user.isProfessor) {
-      final activityList = Provider.of<ActivityList>(context, listen: false);
+      final ActivityList activityList = Provider.of(context, listen: false);
       activityGroup = activityList.getUserList(widget.user.id);
     }
     return Scaffold(

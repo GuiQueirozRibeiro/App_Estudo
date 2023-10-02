@@ -102,7 +102,7 @@ class CustomAvatarProfileState extends State<CustomAvatarProfile> {
 
   @override
   Widget build(BuildContext context) {
-    final subjectList = Provider.of<SubjectList>(context, listen: false);
+    final SubjectList subjectList = Provider.of(context, listen: false);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

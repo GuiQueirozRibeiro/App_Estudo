@@ -29,8 +29,8 @@
     
     "error": "Error",
     "error_occurred": "An error occurred!",
+    "error_activity": "An error occurred while creating/updating the activity",
     "error_updating_subject": "An error occurred while updating the subject",
-    "error_updating_activity": "An error occurred while updating the activity",
     "unexpected_error": "Unexpected error",
     "email_not_found": "E-mail not found",
     "user_disabled": "The user account has been disabled",
@@ -66,7 +66,10 @@
     "upload_activity": "Upload Activity",
     "delete_activity": "Delete Activity",
     "description_field": "Description",
+    "description_required": "Description is required",
+    "description_invalid": "Description must have at least 10 letters",
     "delivery_date": "Delivery Date:",
+    "classes_empty": "Select some class",
 
     "subject_form": "Subject Form",
     "upload_subject": "Upload Subject",

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
+import 'package:professor_ia/src/feature/home/repository/subject_list.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../common/widgets/custom_text_field.dart';
@@ -24,6 +24,7 @@ class ActivityFormPage extends StatefulWidget {
 }
 
 class _ActivityFormPageState extends State<ActivityFormPage> {
+  bool _isNew = true;
   bool _isLoading = false;
   List _selectedClasses = [];
 
@@ -31,10 +32,12 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
   final _formData = <String, Object?>{};
   final _descriptionController = TextEditingController();
   late final UserModel? currentUser;
+  bool _isSnackBarVisible = false;
+  final List<SnackBar> _snackBarQueue = [];
 
   @override
   void initState() {
-    final authProvider = Provider.of<AuthViewModel>(context, listen: false);
+    final AuthViewModel authProvider = Provider.of(context, listen: false);
     currentUser = authProvider.currentUser;
     super.initState();
   }
@@ -62,37 +65,7 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
 
       _selectedClasses = activity.classes.toList();
       _descriptionController.text = _formData['description']?.toString() ?? '';
-    }
-  }
-
-  bool _hasFormChanged() {
-    final currentDescription = _descriptionController.text;
-    final originalDescription = _formData['description']?.toString() ?? '';
-
-    final currentClasses = _selectedClasses;
-    final originalClasses = _formData['classes'] as List;
-
-    final currentDueDate = _formData['dueDate'] as DateTime?;
-    final originalDueDate = _formData['dueDate'] as DateTime?;
-
-    final descriptionChanged = currentDescription != originalDescription;
-    final classesChanged = !listEquals(currentClasses, originalClasses);
-    final dueDateChanged = currentDueDate != originalDueDate;
-
-    return descriptionChanged || classesChanged || dueDateChanged;
-  }
-
-  Future<void> _handlePop() async {
-    if (!_hasFormChanged()) {
-      Modular.to.pop();
-    } else {
-      final confirm = await _showDialog(
-        'without_saving'.i18n(),
-        'without_saving_content'.i18n(),
-      );
-      if (confirm ?? false) {
-        Modular.to.pop();
-      }
+      _isNew = false;
     }
   }
 
@@ -113,39 +86,55 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
     });
   }
 
-  Future<bool?> _showDialog(String title, String content) async {
+  void _showStatusSnackBar() {
+    final snackBar = SnackBar(
+      content: Text('classes_empty'.i18n()),
+      backgroundColor: Theme.of(context).colorScheme.error,
+      duration: const Duration(seconds: 2),
+    );
+    _snackBarQueue.clear();
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+    _snackBarQueue.add(snackBar);
+    _showNextSnackBar();
+  }
+
+  void _showNextSnackBar() {
+    if (!_isSnackBarVisible && _snackBarQueue.isNotEmpty) {
+      final snackBar = _snackBarQueue.removeAt(0);
+
+      setState(() {
+        _isSnackBarVisible = true;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar).closed.then((_) {
+        setState(() {
+          _isSnackBarVisible = false;
+        });
+        _showNextSnackBar();
+      });
+    }
+  }
+
+  Future<void> _showErrorDialog() async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text('no'.i18n()),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-            ),
-            TextButton(
-              child: Text('yes'.i18n()),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
+          title: Text('error_occurred'.i18n()),
+          content: Text('error_activity'.i18n()),
         );
       },
     );
   }
 
   Future<void> _submitForm() async {
-    if (!_hasFormChanged()) {
-      Modular.to.pop();
+    final isValid = _formKey.currentState?.validate() ?? false;
+
+    if (_selectedClasses.isEmpty) {
+      _showStatusSnackBar();
       return;
     }
-
-    final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
       return;
@@ -153,41 +142,30 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
 
     _formKey.currentState?.save();
 
-    final activityProvider = Provider.of<ActivityList>(context, listen: false);
+    final ActivityList activityProvider = Provider.of(context, listen: false);
 
-    final confirm = await _showDialog(
-      'upload_activity'.i18n(),
-      'are_you_sure'.i18n(),
-    );
-    if (confirm ?? false) {
-      setState(() => _isLoading = true);
+    setState(() => _isLoading = true);
 
-      try {
-        await activityProvider.saveActivity(_formData, currentUser!);
-      } catch (error) {
-        await _showDialog(
-          'error_occurred'.i18n(),
-          'error_updating_activity'.i18n(),
-        );
-      } finally {
-        Modular.to.pop();
-        setState(() => _isLoading = false);
-      }
-    } else {
-      return;
+    try {
+      _isNew
+          ? await activityProvider.createActivity(_formData, currentUser!)
+          : await activityProvider.updateActivity(_formData);
+    } catch (error) {
+      await _showErrorDialog();
+    } finally {
+      Modular.to.pop();
+      setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final SubjectList subjectProvider = Provider.of(context);
+    final subject = subjectProvider.subjectById(currentUser!.classroom);
     return Scaffold(
       appBar: AppBar(
         title: Text('activity_form'.i18n()),
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () => _handlePop(),
-          icon: const Icon(Icons.arrow_back),
-        ),
         actions: [
           IconButton(
             onPressed: () => _submitForm(),
@@ -258,6 +236,7 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
                     ClassListView(
                       selectedClasses: _selectedClasses,
                       onClassItemTap: updateSelectedClasses,
+                      classOptions: subject.first.classes,
                     ),
                   ],
                 ),

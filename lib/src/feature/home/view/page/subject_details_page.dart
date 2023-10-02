@@ -27,7 +27,7 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
   @override
   void initState() {
     super.initState();
-    final authProvider = Provider.of<AuthViewModel>(context, listen: false);
+    final AuthViewModel authProvider = Provider.of(context, listen: false);
     user = authProvider.currentUser;
   }
 
@@ -40,7 +40,7 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final activityList = Provider.of<ActivityList>(context);
+    final ActivityList activityList = Provider.of(context);
     final activityGroup = activityList.getSubjectList(widget.subject.id);
 
     return RefreshIndicator(
@@ -101,9 +101,12 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
                       ),
                     );
                   } else {
-                    return ActivityCard(
-                      activity: activityGroup[index],
-                      isProfessor: user!.isProfessor,
+                    return Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: ActivityCard(
+                        activity: activityGroup[index],
+                        isProfessor: user!.isProfessor,
+                      ),
                     );
                   }
                 },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ClassListView extends StatelessWidget {
+  final List classOptions;
   final List selectedClasses;
   final Function(bool, String) onClassItemTap;
 
@@ -8,8 +9,8 @@ class ClassListView extends StatelessWidget {
     super.key,
     required this.selectedClasses,
     required this.onClassItemTap,
+    required this.classOptions,
   });
-  static const List<String> classOptions = ['1A', '1B', '2A', '2B', '3A', '3B'];
 
   Widget _buildClassItem(
       bool isChecked, String classOption, BuildContext context) {

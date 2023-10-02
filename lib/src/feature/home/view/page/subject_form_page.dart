@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
@@ -39,7 +38,7 @@ class SubjectFormPageState extends State<SubjectFormPage> {
   @override
   void initState() {
     super.initState();
-    authProvider = Provider.of<AuthViewModel>(context, listen: false);
+    authProvider = Provider.of(context, listen: false);
     currentUser = authProvider.currentUser;
     nameController.text = widget.subject.name;
     imageUrlController.text = widget.subject.imageUrl;
@@ -51,51 +50,13 @@ class SubjectFormPageState extends State<SubjectFormPage> {
     super.dispose();
   }
 
-  bool _hasFormChanged() {
-    final currentName = nameController.text;
-    final originalName = widget.subject.name;
-    final currentClasses = selectedClasses;
-    final originalClasses = widget.subject.classes;
-
-    return currentName != originalName ||
-        !listEquals(currentClasses, originalClasses);
-  }
-
-  Future<void> _handlePop() async {
-    if (!_hasFormChanged()) {
-      Modular.to.pop();
-    } else {
-      final confirm = await _showDialog(
-        'without_saving'.i18n(),
-        'without_saving_content'.i18n(),
-      );
-      if (confirm ?? false) {
-        Modular.to.pop();
-      }
-    }
-  }
-
-  Future<bool?> _showDialog(String title, String content) async {
+  Future<bool?> _showErrorDialog() async {
     return showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: <Widget>[
-            TextButton(
-              child: Text('no'.i18n()),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-            ),
-            TextButton(
-              child: Text('yes'.i18n()),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
+          title: Text('error_occurred'.i18n()),
+          content: Text('error_updating_subject'.i18n()),
         );
       },
     );
@@ -118,40 +79,25 @@ class SubjectFormPageState extends State<SubjectFormPage> {
   }
 
   Future<void> _submitForm() async {
-    if (!_hasFormChanged()) {
-      Modular.to.pop();
-      return;
-    }
+    final SubjectList subjectProvider = Provider.of(context, listen: false);
 
-    final subjectProvider = Provider.of<SubjectList>(context, listen: false);
-    final confirm = await _showDialog(
-      'upload_subject'.i18n(),
-      'are_you_sure'.i18n(),
-    );
-    if (confirm ?? false) {
-      setState(() => _isLoading = true);
+    setState(() => _isLoading = true);
 
-      try {
-        String? imageUrl = widget.subject.imageUrl;
-        if (_image != null) {
-          imageUrl = await authProvider.uploadImage(
-              _image, widget.subject.id, widget.subject.imageUrl);
-        }
-        widget.subject.imageUrl = imageUrl ?? '';
-        widget.subject.name = nameController.text;
-        widget.subject.classes = selectedClasses;
-        await subjectProvider.updateSubject(widget.subject);
-      } catch (error) {
-        await _showDialog(
-          'error_occurred'.i18n(),
-          'error_updating_subject'.i18n(),
-        );
-      } finally {
-        Modular.to.pop();
-        setState(() => _isLoading = false);
+    try {
+      String? imageUrl = widget.subject.imageUrl;
+      if (_image != null) {
+        imageUrl = await authProvider.uploadImage(
+            _image, widget.subject.id, widget.subject.imageUrl);
       }
-    } else {
-      return;
+      widget.subject.imageUrl = imageUrl ?? '';
+      widget.subject.name = nameController.text;
+      widget.subject.classes = selectedClasses;
+      await subjectProvider.updateSubject(widget.subject);
+    } catch (error) {
+      await _showErrorDialog();
+    } finally {
+      Modular.to.pop();
+      setState(() => _isLoading = false);
     }
   }
 
@@ -163,10 +109,6 @@ class SubjectFormPageState extends State<SubjectFormPage> {
       appBar: AppBar(
         title: Text('subject_form'.i18n()),
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () => _handlePop(),
-          icon: const Icon(Icons.arrow_back),
-        ),
         actions: [
           IconButton(
             onPressed: () => _submitForm(),
@@ -219,6 +161,7 @@ class SubjectFormPageState extends State<SubjectFormPage> {
                   ClassListView(
                     selectedClasses: selectedClasses,
                     onClassItemTap: updateSelectedClasses,
+                    classOptions: widget.subject.classes,
                   ),
                 ],
               ),

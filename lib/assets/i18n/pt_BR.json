@@ -29,8 +29,8 @@
     
     "error": "Erro",
     "error_occurred": "Ocorreu um erro!",
+    "error_activity": "Ocorreu um erro para criar/atualizar a Atividade",
     "error_updating_subject": "Ocorreu um erro para atualizar a Matéria",
-    "error_updating_activity": "Ocorreu um erro para atualizar a Atividade",
     "unexpected_error": "Ocorreu um erro inesperado!",
     "email_not_found": "E-mail não encontrado",
     "user_disabled": "A conta do usuário foi desabilitada",
@@ -66,7 +66,10 @@
     "upload_activity": "Atualizar a Atividade",
     "delete_activity": "Deletar Atividade",
     "description_field": "Descrição",
+    "description_required": "Descrição é obrigatória",
+    "description_invalid": "Descrição precisa no mínimo de 10 letras",
     "delivery_date": "Data de Entrega:",
+    "classes_empty": "Selecione alguma classe",
 
     "subject_form": "Formulário da Matéria",
     "upload_subject": "Atualizar a Matéria",

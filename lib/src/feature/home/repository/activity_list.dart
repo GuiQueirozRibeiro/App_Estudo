@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -22,11 +20,14 @@ class ActivityList with ChangeNotifier {
   }
 
   List<Activity> getUserList(String userId) {
-    return _activities.where((activity) => activity.user.id == userId).toList();
+    return _activities
+        .where((activity) =>
+            activity.user.id == userId && activity.dueDate != null)
+        .toList();
   }
 
-  Future<void> saveActivity(Map<String, Object?> data, UserModel professor) {
-    bool hasId = data['id'] != null;
+  Future<void> createActivity(
+      Map<String, Object?> data, UserModel professor) async {
     DateTime? dueDateTime;
 
     if (data['dueDate'] != null) {
@@ -34,55 +35,43 @@ class ActivityList with ChangeNotifier {
       dueDateTime = DateTime(dueDate.year, dueDate.month, dueDate.day, 7, 30);
     }
 
-    final activity = Activity(
-      id: hasId ? data['id'] as String : Random().nextDouble().toString(),
-      classes: data['classes'] as List,
-      description: data['description'] as String,
-      assignedDate: Timestamp.fromDate(DateTime.now()),
-      dueDate: dueDateTime != null ? Timestamp.fromDate(dueDateTime) : null,
-      subjectId: professor.classroom,
-      user: professor,
-    );
-
-    if (hasId) {
-      return updateActivity(activity);
-    } else {
-      return createActivity(activity);
-    }
-  }
-
-  Future<void> createActivity(Activity activity) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final activityRef = firestore.collection('activities').doc();
 
     final activityData = {
-      'classes': activity.classes,
-      'description': activity.description,
-      'assignedDate': activity.assignedDate,
-      'dueDate': activity.dueDate != null
-          ? Timestamp.fromDate(activity.dueDate!)
-          : null,
-      'subjectId': activity.subjectId,
-      'professorId': activity.user.id,
+      'classes': data['classes'],
+      'description': data['description'],
+      'assignedDate': Timestamp.fromDate(DateTime.now()),
+      'dueDate': dueDateTime,
+      'subjectId': professor.classroom,
+      'professorId': professor.id,
     };
 
     await activityRef.set(activityData);
+    await loadActivity();
     notifyListeners();
   }
 
-  Future<void> updateActivity(Activity activity) async {
-    final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final subjectRef = firestore.collection('activities').doc(activity.id);
+  Future<void> updateActivity(Map<String, Object?> data) async {
+    DateTime? dueDateTime;
 
-    final subjectData = {
-      'classes': activity.classes,
-      'description': activity.description,
-      'dueDate': activity.dueDate != null
-          ? Timestamp.fromDate(activity.dueDate!)
-          : null,
+    if (data['dueDate'] != null) {
+      DateTime dueDate = data['dueDate'] as DateTime;
+      dueDateTime = DateTime(dueDate.year, dueDate.month, dueDate.day, 7, 30);
+    }
+
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final activityRef =
+        firestore.collection('activities').doc(data['id'] as String);
+
+    final activityData = {
+      'classes': data['classes'],
+      'description': data['description'],
+      'dueDate': dueDateTime,
     };
 
-    await subjectRef.update(subjectData);
+    await activityRef.update(activityData);
+    await loadActivity();
     notifyListeners();
   }
 
@@ -90,6 +79,7 @@ class ActivityList with ChangeNotifier {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
     final activityRef = firestore.collection('activities').doc(activityId);
     await activityRef.delete();
+    await loadActivity();
     notifyListeners();
   }
 

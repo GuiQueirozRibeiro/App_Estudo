@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    final authProvider = Provider.of<AuthViewModel>(context, listen: false);
+    final AuthViewModel authProvider = Provider.of(context, listen: false);
     currentUser = authProvider.currentUser;
   }
 
@@ -33,7 +33,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final subjectList = Provider.of<SubjectList>(context);
+    final SubjectList subjectProvider = Provider.of(context);
+    final subjectList = subjectProvider.subjects;
     final cardHeight = MediaQuery.of(context).size.height * 0.21;
 
     return RefreshIndicator(
@@ -41,7 +42,8 @@ class _HomePageState extends State<HomePage> {
       color: Theme.of(context).colorScheme.outlineVariant,
       child: Scaffold(
         body: SafeArea(
-          child: subjectList.subjects.isEmpty
+          minimum: const EdgeInsets.only(top: 35),
+          child: subjectList.isEmpty
               ? Container(
                   alignment: Alignment.center,
                   padding:
@@ -54,11 +56,11 @@ class _HomePageState extends State<HomePage> {
                 )
               : ListView.builder(
                   padding: const EdgeInsets.all(5),
-                  itemCount: subjectList.subjectsCount,
+                  itemCount: subjectList.length,
                   itemBuilder: (context, index) {
                     return SubjectCard(
                       cardHeight: cardHeight,
-                      subject: subjectList.subjects[index],
+                      subject: subjectList[index],
                       user: currentUser!,
                     );
                   },

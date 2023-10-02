@@ -13,11 +13,11 @@ class SubjectList with ChangeNotifier {
     this._subjects = const [],
   ]);
 
-  int get subjectsCount {
-    return _subjects.length;
-  }
-
   List<Subject> get subjects => [..._subjects];
+
+  List<Subject> subjectById(String subjecyId) {
+    return _subjects.where((subject) => subject.id == subjecyId).toList();
+  }
 
   Future<Map<String, List<String>>> loadSubjects() async {
     _subjects.clear();

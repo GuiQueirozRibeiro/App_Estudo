@@ -24,12 +24,13 @@ class ActivityFormPage extends StatefulWidget {
 }
 
 class _ActivityFormPageState extends State<ActivityFormPage> {
-  bool _isNew = true;
+  bool _isEdit = false;
   bool _isLoading = false;
   List _selectedClasses = [];
 
   final _formKey = GlobalKey<FormState>();
   final _formData = <String, Object?>{};
+  final _originalFormData = <String, Object?>{};
   final _descriptionController = TextEditingController();
   late final UserModel? currentUser;
   bool _isSnackBarVisible = false;
@@ -45,6 +46,7 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
   @override
   void dispose() {
     super.dispose();
+    _snackBarQueue.clear();
     _descriptionController.dispose();
   }
 
@@ -62,10 +64,20 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
       _formData['classes'] = activity.classes;
       _formData['assignedDate'] = activity.assignedDate;
       _formData['dueDate'] = activity.dueDate;
+      _formData['isEdit'] = activity.isEdit;
+
+      _originalFormData['id'] = activity.id;
+      _originalFormData['description'] = activity.description;
+      _originalFormData['subjectId'] = activity.subjectId;
+      _originalFormData['professorId'] = activity.user.id;
+      _originalFormData['classes'] = activity.classes;
+      _originalFormData['assignedDate'] = activity.assignedDate;
+      _originalFormData['dueDate'] = activity.dueDate;
+      _originalFormData['isEdit'] = activity.isEdit;
 
       _selectedClasses = activity.classes.toList();
       _descriptionController.text = _formData['description']?.toString() ?? '';
-      _isNew = false;
+      _isEdit = true;
     }
   }
 
@@ -86,9 +98,9 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
     });
   }
 
-  void _showStatusSnackBar() {
+  void _showStatusSnackBar({bool isEqual = false}) {
     final snackBar = SnackBar(
-      content: Text('classes_empty'.i18n()),
+      content: Text(isEqual ? 'no_change'.i18n() : 'classes_empty'.i18n()),
       backgroundColor: Theme.of(context).colorScheme.error,
       duration: const Duration(seconds: 2),
     );
@@ -136,7 +148,8 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
       return;
     }
 
-    if (!isValid) {
+    if (!isValid || _formData.toString() == _originalFormData.toString()) {
+      _showStatusSnackBar(isEqual: true);
       return;
     }
 
@@ -147,9 +160,9 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
     setState(() => _isLoading = true);
 
     try {
-      _isNew
-          ? await activityProvider.createActivity(_formData, currentUser!)
-          : await activityProvider.updateActivity(_formData);
+      _isEdit
+          ? await activityProvider.updateActivity(_formData)
+          : await activityProvider.createActivity(_formData, currentUser!);
     } catch (error) {
       await _showErrorDialog();
     } finally {
@@ -193,6 +206,8 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
                         subjectId: '',
                         classes: _selectedClasses,
                         description: _descriptionController.text,
+                        isEdit: _isEdit,
+                        editDate: Timestamp.fromDate(DateTime.now()),
                         assignedDate: Timestamp.fromDate(
                             _formData['assignedDate'] as DateTime? ??
                                 DateTime.now()),

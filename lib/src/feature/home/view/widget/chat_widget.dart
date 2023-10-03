@@ -62,11 +62,23 @@ class _ChatWidgetState extends State<ChatWidget> {
               height: 30,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                image: DecorationImage(
-                  image: _getImageProvider(),
-                  fit: BoxFit.cover,
-                ),
+                image: widget.chatIndex == 0
+                    ? null
+                    : DecorationImage(
+                        image: _getImageProvider(),
+                        fit: BoxFit.cover,
+                      ),
               ),
+              child: widget.chatIndex == 1
+                  ? null
+                  : ClipOval(
+                      child: FadeInImage(
+                        placeholder:
+                            const AssetImage("lib/assets/images/avatar.png"),
+                        image: _getImageProvider(),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
             ),
             const SizedBox(width: 16),
             Expanded(

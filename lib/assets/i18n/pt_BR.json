@@ -9,7 +9,7 @@
     "onboard_sub_title3": "O Professor IA está aqui para ajudar professores e alunos a estarem mais conectados do que nunca. Receba avisos, acompanhe atividades e envolva-se na sua educação",
 
     "terms_conditions_title": "Termos e Condições",
-    "terms_conditions_content": "Bem-vindo(a) ao Professor IA - Sua plataforma de Agenda Escolar Móvel Inteligente!\n\nO Professor IA foi desenvolvido por Guilherme Queiroz Ribeiro para simplificar a vida dos alunos e professores da Escola Madre Carmen Salles, ajudando a melhorar o desempenho acadêmico.\n\nAo utilizar nosso aplicativo, você concorda em seguir os termos e condições a seguir:\n\n1. Entidade Responsável: Este aplicativo é mantido e operado por Guilherme Queiroz Ribeiro. Você pode entrar em contato conosco pelo e-mail guilherme.q.r@hotmail.com ou pelo número de telefone (61)99630-1711.\n\n2. Requisitos de Elegibilidade: Para usar este aplicativo, você deve estar matriculado na Escola Madre Carmen Salles ou ser um professor contratado pela escola, para o qual forneceremos acesso.\n\n3. Coleta de Informações: Coletamos informações mínimas e necessárias, incluindo seu nome, sua classe ou matéria (no caso de professores) e sua imagem (opcional).\n\n4. Segurança das Informações: Suas informações serão armazenadas no banco de dados em nuvem do Firebase, com regras de acesso restritas apenas a usuários autenticados.\n\n5. Imagens de Perfil: Esteja ciente de que as imagens de perfil que você fornecer serão visíveis para professores e administradores do banco de dados.\n\n6. Política de Conteúdo Aceitável: Descreva aqui as políticas de conteúdo aceitável, se aplicável, para manter um ambiente seguro e respeitoso.\n\n7. Medidas para Comportamento Inadequado: Explicar como comportamentos inadequados serão tratados, incluindo o processo para retirar o acesso e contatar a instituição em casos graves.\n\n8. Atualizações de Software: Atualizações serão disponibilizadas primeiro no GitHub para testes antes de serem lançadas na Play Store.\n\n9. Encerramento da Conta: Não há termos de encerramento; no entanto, em caso de desmatrícula, todas as informações, imagens e dados relacionados serão excluídos.\n\n10. Coleta de Informações de Localização: Não coletamos informações de localização dos usuários.\n\nPrivacidade: Respeitamos sua privacidade e tratamos suas informações pessoais de acordo com nossa Política de Privacidade.\n\nAlterações nos Termos: Esteja ciente de que esses termos e condições podem ser atualizados sem aviso prévio. Recomendamos verificar periodicamente para se manter informado(a).\n\nAgradecemos por escolher o Professor IA para aprimorar sua experiência acadêmica!\n\nPara obter informações detalhadas sobre nossa política de privacidade, entre em contato conosco ou visite nosso site.\n\nData de vigência: 15/09/2023",
+    "terms_conditions_content": "Bem-vindo(a) ao Professor IA - Sua plataforma de Agenda Escolar Móvel Inteligente!\n\nO Professor IA foi desenvolvido por Guilherme Queiroz Ribeiro para simplificar a vida dos alunos e professores da Escola Madre Carmen Salles, ajudando a melhorar o desempenho acadêmico.\n\nAo utilizar nosso aplicativo, você concorda em seguir os termos e condições a seguir:\n\n1. Entidade Responsável: Este aplicativo é mantido e operado por Guilherme Queiroz Ribeiro. Você pode entrar em contato conosco pelo e-mail guilherme.q.r@hotmail.com ou pelo número de telefone (61)99630-1711.\n\n2. Requisitos de Elegibilidade: Para usar este aplicativo, você deve estar matriculado na Escola Madre Carmen Salles ou ser um professor contratado pela escola, para o qual forneceremos acesso.\n\n3. Coleta de Informações: Coletamos informações mínimas e necessárias, incluindo seu nome, sua classe ou matéria (no caso de professores) e sua imagem (opcional).\n\n4. Segurança das Informações: Suas informações serão armazenadas no banco de dados em nuvem do Firebase, com regras de acesso restritas apenas a usuários autenticados.\n\n5. Imagens de Perfil: Esteja ciente de que as imagens de perfil que você fornecer serão visíveis para professores e administradores do banco de dados.\n\n6. Atualizações de Software: Atualizações serão disponibilizadas primeiro no GitHub para testes antes de serem lançadas na Play Store.\n\n7. Encerramento da Conta: Não há termos de encerramento; no entanto, em caso de desmatrícula, todas as informações, imagens e dados relacionados serão excluídos.\n\n8. Coleta de Informações de Localização: Não coletamos informações de localização dos usuários.\n\nPrivacidade: Respeitamos sua privacidade e tratamos suas informações pessoais de acordo com nossa Política de Privacidade.\n\nAlterações nos Termos: Esteja ciente de que esses termos e condições podem ser atualizados sem aviso prévio. Recomendamos verificar periodicamente para se manter informado(a).\n\nAgradecemos por escolher o Professor IA para aprimorar sua experiência acadêmica!\n\nPara obter informações detalhadas sobre nossa política de privacidade, entre em contato conosco ou visite nosso site.\n\nData de vigência: 03/10/2023",
 
     "login": "Entrar",
     
@@ -48,9 +48,7 @@
     "ok": "Ok",
     "close": "Fechar",
     "are_you_sure": "Tem Certeza?",
-
-    "without_saving": "Sair sem salvar?",
-    "without_saving_content": "Você possui alterações não salvas. Deseja sair sem salvar?",
+    "no_change": "Sem Mudanças",
 
     "take_photo": "Tirar Foto",
     "gallery": "Galeria",
@@ -61,6 +59,13 @@
     "help_support": "Ajuda e Suporte",
     "students": "Meus Alunos",
     "teachers": "Meus Professores",
+    "no_students": "Não foi encontrado nenhum professor. Por favor, entre em contato com a administração da escola ou acesse a seção de Ajuda e Suporte",
+    "no_teachers": "Não foi encontrado nenhum aluno. Por favor, entre em contato com a administração da escola ou acesse a seção de Ajuda e Suporte",
+    
+    "subject_form": "Formulário da Matéria",
+    "upload_subject": "Atualizar a Matéria",
+    "no_image": "Clique para enviar uma imagem",
+    "name_field": "Nome",
 
     "activity_form": "Formulário da Atividade",
     "upload_activity": "Atualizar a Atividade",
@@ -71,11 +76,6 @@
     "delivery_date": "Data de Entrega:",
     "classes_empty": "Selecione alguma classe",
 
-    "subject_form": "Formulário da Matéria",
-    "upload_subject": "Atualizar a Matéria",
-    "no_image": "Clique para enviar uma imagem",
-    "name_field": "Nome",
-
     "no_activity": "O professor ainda não criou nenhuma atividade",
     "no_activity_prof": "Você ainda não criou nenhuma atividade",
     "no_message": "O aluno ainda não perguntou nada ao professor IA",
@@ -84,6 +84,10 @@
     "activity_done": "Atividade marcada como concluída!",
     "activity_not_done": "Atividade marcada como não concluída",
     "activity_finish": "Atividade fora do prazo",
+
+    "yesterday": "Ontem",
+    "edit": "editado:",
+    "whitout_deadline": "Sem Prazo",
 
     "profile_details": "Detalhes do Perfil",
     "history": "Histórico",

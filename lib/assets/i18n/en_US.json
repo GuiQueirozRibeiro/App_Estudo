@@ -9,7 +9,7 @@
     "onboard_sub_title3" : "AI Teacher is here to help teachers and students stay more connected than ever. Receive notifications, track activities, and engage in your education",
 
     "terms_conditions_title": "Terms and Conditions",
-    "terms_conditions_content": "Welcome to Professor AI - Your Smart Mobile School Agenda Platform!\n\nProfessor AI was developed by Guilherme Queiroz Ribeiro to simplify the lives of students and teachers at Escola Madre Carmen Salles, helping to improve academic performance.\n\nBy using our app, you agree to follow the following terms and conditions:\n\n1. Responsible Entity: This app is maintained and operated by Guilherme Queiroz Ribeiro. You can contact us at guilherme.q.r@hotmail.com or at the phone number (61)99630-1711.\n\n2. Eligibility Requirements: To use this app, you must be enrolled at Escola Madre Carmen Salles or be a teacher hired by the school, for which we will provide access.\n\n3. Information Collection: We collect minimal and necessary information, including your name, your class or subject (in the case of teachers), and your image (optional).\n\n4. Information Security: Your information will be stored in the Firebase cloud database, with access rules restricted to authenticated users only.\n\n5. Profile Pictures: Please be aware that the profile pictures you provide will be visible to teachers and database administrators.\n\n6. Acceptable Content Policy: Describe here the acceptable content policies, if applicable, to maintain a safe and respectful environment.\n\n7. Measures for Inappropriate Behavior: Explain how inappropriate behaviors will be addressed, including the process for revoking access and contacting the institution in serious cases.\n\n8. Software Updates: Updates will be made available first on GitHub for testing before being released on the Play Store.\n\n9. Account Termination: There are no termination terms; however, in case of unenrollment, all related information, images, and data will be deleted.\n\n10. Location Information Collection: We do not collect user location information.\n\nPrivacy: We respect your privacy and treat your personal information in accordance with our Privacy Policy.\n\nChanges to the Terms: Please be aware that these terms and conditions may be updated without prior notice. We recommend checking periodically to stay informed.\n\nThank you for choosing Professor AI to enhance your academic experience!\n\nFor detailed information about our privacy policy, please contact us or visit our website.\n\nEffective Date: 09/15/2023",
+    "terms_conditions_content": "Welcome to Professor AI - Your Smart Mobile School Agenda Platform!\n\nProfessor AI was developed by Guilherme Queiroz Ribeiro to simplify the lives of students and teachers at Escola Madre Carmen Salles, helping to improve academic performance.\n\nBy using our app, you agree to follow the following terms and conditions:\n\n1. Responsible Entity: This app is maintained and operated by Guilherme Queiroz Ribeiro. You can contact us at guilherme.q.r@hotmail.com or at the phone number (61)99630-1711.\n\n2. Eligibility Requirements: To use this app, you must be enrolled at Escola Madre Carmen Salles or be a teacher hired by the school, for which we will provide access.\n\n3. Information Collection: We collect minimal and necessary information, including your name, your class or subject (in the case of teachers), and your image (optional).\n\n4. Information Security: Your information will be stored in the Firebase cloud database, with access rules restricted to authenticated users only.\n\n5. Profile Pictures: Please be aware that the profile pictures you provide will be visible to teachers and database administrators.\n\n6. Software Updates: Updates will be made available first on GitHub for testing before being released on the Play Store.\n\n7. Account Termination: There are no termination terms; however, in case of unenrollment, all related information, images, and data will be deleted.\n\n8. Location Information Collection: We do not collect user location information.\n\nPrivacy: We respect your privacy and treat your personal information in accordance with our Privacy Policy.\n\nChanges to the Terms: Please be aware that these terms and conditions may be updated without prior notice. We recommend checking periodically to stay informed.\n\nThank you for choosing Professor AI to enhance your academic experience!\n\nFor detailed information about our privacy policy, please contact us or visit our website.\n\nEffective Date: 10/03/2023",
     
     "login": "Login",
     
@@ -48,9 +48,7 @@
     "ok": "Ok",
     "close": "Close",
     "are_you_sure": "Are you sure?",
-
-    "without_saving": "Exit without saving?",
-    "without_saving_content": "You have unsaved changes. Do you want to exit without saving?",
+    "no_change": "No Changes",
 
     "take_photo": "Take Photo",
     "gallery": "Gallery",
@@ -61,6 +59,13 @@
     "help_support": "Help and Support",
     "students": "My Studants",
     "teachers": "My Teachers",
+    "no_students": "My Studants",
+    "no_teachers": "My Teachers",
+    
+    "subject_form": "Subject Form",
+    "upload_subject": "Upload Subject",
+    "no_image": "Click to upload an image",
+    "name_field": "Name",
 
     "activity_form": "Activity Form",
     "upload_activity": "Upload Activity",
@@ -71,11 +76,6 @@
     "delivery_date": "Delivery Date:",
     "classes_empty": "Select some class",
 
-    "subject_form": "Subject Form",
-    "upload_subject": "Upload Subject",
-    "no_image": "Click to upload an image",
-    "name_field": "Name",
-
     "no_activity": "The teacher has not created any activities yet",
     "no_activity_prof": "You haven't created any activities yet",
     "no_message": "The student has not asked anything to the AI teacher yet",
@@ -84,6 +84,10 @@
     "activity_done": "Activity marked as done!",
     "activity_not_done": "Activity marked as not done",
     "activity_finish": "Activity outside the deadline",
+
+    "yesterday": "Yesterday",
+    "edit": "edit:",
+    "whitout_deadline": "Without Deadline",
 
     "profile_details": "Profile Details",
     "history": "History",

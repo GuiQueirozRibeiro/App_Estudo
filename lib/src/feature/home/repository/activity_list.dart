@@ -43,8 +43,10 @@ class ActivityList with ChangeNotifier {
       'description': data['description'],
       'assignedDate': Timestamp.fromDate(DateTime.now()),
       'dueDate': dueDateTime,
+      'editDate': null,
       'subjectId': professor.classroom,
       'professorId': professor.id,
+      'isEdit': false,
     };
 
     await activityRef.set(activityData);
@@ -67,7 +69,9 @@ class ActivityList with ChangeNotifier {
     final activityData = {
       'classes': data['classes'],
       'description': data['description'],
+      'editDate': Timestamp.fromDate(DateTime.now()),
       'dueDate': dueDateTime,
+      'isEdit': true,
     };
 
     await activityRef.update(activityData);
@@ -110,6 +114,8 @@ class ActivityList with ChangeNotifier {
         description: doc['description'],
         assignedDate: doc['assignedDate'],
         dueDate: doc['dueDate'],
+        editDate: doc['editDate'],
+        isEdit: doc['isEdit'],
       );
 
       _activities.add(activity);

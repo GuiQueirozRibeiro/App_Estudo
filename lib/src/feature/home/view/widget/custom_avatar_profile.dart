@@ -151,15 +151,11 @@ class CustomAvatarProfileState extends State<CustomAvatarProfile> {
                   shape: BoxShape.circle,
                 ),
                 child: ClipOval(
-                  child: SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: FadeInImage(
-                      placeholder:
-                          const AssetImage("lib/assets/images/avatar.png"),
-                      image: _getImageProvider(),
-                      fit: BoxFit.cover,
-                    ),
+                  child: FadeInImage(
+                    placeholder:
+                        const AssetImage("lib/assets/images/avatar.png"),
+                    image: _getImageProvider(),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),

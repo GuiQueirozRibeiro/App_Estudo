@@ -180,6 +180,8 @@ class _ActivityCardState extends State<ActivityCard> {
 
   @override
   Widget build(BuildContext context) {
+    Locale currentLocale = Localizations.localeOf(context);
+    String currentLanguage = currentLocale.languageCode;
     return Card(
       elevation: 5,
       shape: RoundedRectangleBorder(
@@ -221,7 +223,13 @@ class _ActivityCardState extends State<ActivityCard> {
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              widget.activity.formattedAssignedDate(),
+                              widget.activity.isEdit
+                                  ? widget.activity.formattedAssignedDate(
+                                          currentLanguage) +
+                                      widget.activity
+                                          .formattedEditDate(currentLanguage)
+                                  : widget.activity
+                                      .formattedAssignedDate(currentLanguage),
                               style: TextStyle(
                                   fontSize: 14,
                                   color: Theme.of(context)
@@ -256,19 +264,27 @@ class _ActivityCardState extends State<ActivityCard> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: () => setState(
-                        () => _showFullDescription = !_showFullDescription),
-                    child: Text(
-                      widget.activity.description,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).colorScheme.outline,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() =>
+                              _showFullDescription = !_showFullDescription),
+                          child: Text(
+                            widget.activity.description,
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                            textAlign: _showFullDescription
+                                ? TextAlign.justify
+                                : TextAlign.left,
+                            maxLines: _showFullDescription ? null : 4,
+                            overflow: TextOverflow.fade,
+                          ),
+                        ),
                       ),
-                      textAlign: TextAlign.justify,
-                      maxLines: _showFullDescription ? null : 4,
-                      overflow: TextOverflow.fade,
-                    ),
+                    ],
                   ),
                   if (widget.activity.dueDate != null)
                     const SizedBox(height: 8),
@@ -277,7 +293,7 @@ class _ActivityCardState extends State<ActivityCard> {
                     children: [
                       if (widget.activity.dueDate != null)
                         Text(
-                          widget.activity.formattedDueDate(),
+                          widget.activity.formattedDueDate(currentLanguage),
                           style: TextStyle(
                             fontSize: 14,
                             color: _isDone

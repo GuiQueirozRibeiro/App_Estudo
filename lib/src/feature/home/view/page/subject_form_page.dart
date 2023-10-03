@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:localization/localization.dart';
@@ -34,6 +35,8 @@ class SubjectFormPageState extends State<SubjectFormPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController imageUrlController = TextEditingController();
   List selectedClasses = [];
+  bool _isSnackBarVisible = false;
+  final List<SnackBar> _snackBarQueue = [];
 
   @override
   void initState() {
@@ -47,6 +50,7 @@ class SubjectFormPageState extends State<SubjectFormPage> {
 
   @override
   void dispose() {
+    _snackBarQueue.clear();
     super.dispose();
   }
 
@@ -78,9 +82,45 @@ class SubjectFormPageState extends State<SubjectFormPage> {
     });
   }
 
+  void _showStatusSnackBar() {
+    final snackBar = SnackBar(
+      content: Text('no_change'.i18n()),
+      backgroundColor: Theme.of(context).colorScheme.error,
+      duration: const Duration(seconds: 2),
+    );
+    _snackBarQueue.clear();
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+    _snackBarQueue.add(snackBar);
+    _showNextSnackBar();
+  }
+
+  void _showNextSnackBar() {
+    if (!_isSnackBarVisible && _snackBarQueue.isNotEmpty) {
+      final snackBar = _snackBarQueue.removeAt(0);
+
+      setState(() {
+        _isSnackBarVisible = true;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar).closed.then((_) {
+        setState(() {
+          _isSnackBarVisible = false;
+        });
+        _showNextSnackBar();
+      });
+    }
+  }
+
   Future<void> _submitForm() async {
     final SubjectList subjectProvider = Provider.of(context, listen: false);
 
+    if (_image == null &&
+        widget.subject.name == nameController.text &&
+        const ListEquality().equals(widget.subject.classes, selectedClasses)) {
+      _showStatusSnackBar();
+      return;
+    }
     setState(() => _isLoading = true);
 
     try {

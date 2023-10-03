@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    final AuthViewModel authProvider = Provider.of(context, listen: false);
+    authProvider = Provider.of(context, listen: false);
     currentUser = authProvider.currentUser;
   }
 
@@ -139,51 +139,66 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 20),
               Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: userList.showUserList ? userList.usersCount : 0,
-                  itemBuilder: (context, index) {
-                    final user = userList.users[index];
-                    return GestureDetector(
-                      onTap: () => Modular.to
-                          .pushNamed('profileDetails', arguments: user),
-                      child: Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+                child: userList.showUserList && userList.users.isEmpty
+                    ? Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          currentUser!.isProfessor
+                              ? 'no_students'.i18n()
+                              : 'no_teachers'.i18n(),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 16),
                         ),
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16),
-                        child: ListTile(
-                          title: Text(
-                            user.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            user.classroom,
-                          ),
-                          leading: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 1,
-                                color: Theme.of(context).colorScheme.outline,
+                      )
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount:
+                            userList.showUserList ? userList.usersCount : 0,
+                        itemBuilder: (context, index) {
+                          final user = userList.users[index];
+                          return GestureDetector(
+                            onTap: () => Modular.to
+                                .pushNamed('profileDetails', arguments: user),
+                            child: Card(
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
                               ),
-                              shape: BoxShape.circle,
-                            ),
-                            child: ClipOval(
-                              child: Image.network(
-                                user.imageUrl,
-                                fit: BoxFit.cover,
+                              margin: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
+                              child: ListTile(
+                                title: Text(
+                                  user.name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(
+                                  user.classroom,
+                                ),
+                                leading: Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1,
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: ClipOval(
+                                    child: Image.network(
+                                      user.imageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
               TextButton(
                 onPressed: () {

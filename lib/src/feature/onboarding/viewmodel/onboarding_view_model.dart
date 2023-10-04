@@ -31,13 +31,13 @@ class OnboardingViewModel extends ChangeNotifier {
     OnBoardingDetails(
       title: 'onboard_title2'.i18n(),
       subtitle: 'onboard_sub_title2'.i18n(),
-      imagePath: 'lib/assets/images/onboarding1.gif',
+      imagePath: 'lib/assets/images/onboarding2.gif',
       isTitle: false,
     ),
     OnBoardingDetails(
       title: 'onboard_title3'.i18n(),
       subtitle: 'onboard_sub_title3'.i18n(),
-      imagePath: 'lib/assets/images/onboarding2.gif',
+      imagePath: 'lib/assets/images/onboarding3.gif',
       isTitle: false,
     ),
   ];

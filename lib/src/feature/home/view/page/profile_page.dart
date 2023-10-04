@@ -68,13 +68,16 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final UserList userList = Provider.of(context, listen: false);
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       body: SafeArea(
-        minimum: const EdgeInsets.only(top: 40),
+        minimum: EdgeInsets.only(top: screenHeight * 0.06, bottom: 70),
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 70),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CustomAvatarProfile(
                 onImageChanged: (newImage) {
@@ -82,11 +85,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 user: currentUser!,
               ),
-              const SizedBox(height: 60),
+              SizedBox(height: screenHeight * 0.03),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _launchUrl,
@@ -94,22 +95,23 @@ class _ProfilePageState extends State<ProfilePage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding:
+                        EdgeInsets.symmetric(vertical: screenHeight * 0.014),
                     elevation: 4,
                   ),
                   child: Text(
                     'help_support'.i18n(),
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: screenHeight * 0.025,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: screenHeight * 0.025),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
@@ -121,7 +123,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding:
+                        EdgeInsets.symmetric(vertical: screenHeight * 0.014),
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     elevation: 4,
                   ),
@@ -130,14 +133,14 @@ class _ProfilePageState extends State<ProfilePage> {
                         ? 'students'.i18n()
                         : 'teachers'.i18n(),
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: screenHeight * 0.025,
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: screenHeight * 0.025),
               Expanded(
                 child: userList.showUserList && userList.users.isEmpty
                     ? Container(
@@ -148,11 +151,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               ? 'no_students'.i18n()
                               : 'no_teachers'.i18n(),
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: screenHeight * 0.02),
                         ),
                       )
                     : ListView.builder(
-                        shrinkWrap: true,
                         itemCount:
                             userList.showUserList ? userList.usersCount : 0,
                         itemBuilder: (context, index) {
@@ -165,20 +167,20 @@ class _ProfilePageState extends State<ProfilePage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              margin: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 16),
+                              margin: EdgeInsets.symmetric(
+                                vertical: screenHeight * 0.01,
+                                horizontal: 16,
+                              ),
                               child: ListTile(
                                 title: Text(
                                   user.name,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
-                                subtitle: Text(
-                                  user.classroom,
-                                ),
+                                subtitle: Text(user.classroom),
                                 leading: Container(
-                                  width: 50,
-                                  height: 50,
+                                  width: screenHeight * 0.061,
+                                  height: screenHeight * 0.061,
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       width: 1,
@@ -208,9 +210,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       return AlertDialog(
                         title: Text(
                           "terms_conditions_title".i18n(),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
+                            fontSize: screenHeight * 0.025,
                           ),
                         ),
                         content: SingleChildScrollView(
@@ -218,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Text(
                                 'terms_conditions_content'.i18n(),
-                                style: const TextStyle(fontSize: 16.0),
+                                style: TextStyle(fontSize: screenHeight * 0.02),
                               ),
                             ],
                           ),
@@ -229,9 +231,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 child: Text(
                   'terms_conditions_title'.i18n(),
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                  ),
+                  style: TextStyle(fontSize: screenHeight * 0.02),
                 ),
               ),
             ],

@@ -41,6 +41,7 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
     final Size screenSize = MediaQuery.of(context).size;
     final double screenWidth = screenSize.width;
     final double screenHeight = screenSize.height;
+    debugPrint(widget.imagePath);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -87,15 +88,19 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
                 placeholder: (context) => Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.outline,
+                    color: Theme.of(context).colorScheme.outlineVariant,
                   ),
                 ),
                 onFetchCompleted: () {
                   _controller.reset();
                   _controller.forward();
                 },
-                width: screenWidth * 0.6,
-                height: screenHeight * 0.35,
+                width: widget.imagePath == 'lib/assets/images/onboarding3.gif'
+                    ? screenWidth * 0.6
+                    : screenWidth,
+                height: widget.imagePath == 'lib/assets/images/onboarding3.gif'
+                    ? screenHeight * 0.35
+                    : screenHeight * 0.3,
                 fit: BoxFit.cover,
               ),
         SizedBox(height: screenHeight * 0.04),

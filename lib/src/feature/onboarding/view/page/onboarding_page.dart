@@ -45,7 +45,6 @@ class OnBoardingPage extends StatelessWidget {
                     if (viewModel.currentPage != 2)
                       CustomButton(
                         onPressed: () {
-                          viewModel.prefs.setBool('onboardingCompleted', true);
                           Modular.to.navigate('/auth/');
                         },
                         buttonText: 'skip'.i18n(),

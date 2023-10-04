@@ -103,6 +103,8 @@ class CustomAvatarProfileState extends State<CustomAvatarProfile> {
   @override
   Widget build(BuildContext context) {
     final SubjectList subjectList = Provider.of(context, listen: false);
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -141,8 +143,8 @@ class CustomAvatarProfileState extends State<CustomAvatarProfile> {
             alignment: Alignment.topRight,
             children: [
               Container(
-                width: 120,
-                height: 120,
+                width: screenWidth * 0.3,
+                height: screenWidth * 0.3,
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
@@ -184,8 +186,8 @@ class CustomAvatarProfileState extends State<CustomAvatarProfile> {
               Text(
                 widget.user.name,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 30,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.08,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -193,7 +195,7 @@ class CustomAvatarProfileState extends State<CustomAvatarProfile> {
                 widget.user.isProfessor
                     ? subjectList.subjects.first.name
                     : widget.user.classroom,
-                style: const TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: screenWidth * 0.05),
               ),
             ],
           ),

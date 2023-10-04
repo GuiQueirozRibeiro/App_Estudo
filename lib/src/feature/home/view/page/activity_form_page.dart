@@ -148,7 +148,9 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
       return;
     }
 
-    if (!isValid || _formData.toString() == _originalFormData.toString()) {
+    if (!isValid ||
+        (_formData.toString() == _originalFormData.toString() &&
+            _descriptionController.text == _originalFormData['description'])) {
       _showStatusSnackBar(isEqual: true);
       return;
     }

@@ -41,7 +41,6 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
     final Size screenSize = MediaQuery.of(context).size;
     final double screenWidth = screenSize.width;
     final double screenHeight = screenSize.height;
-    debugPrint(widget.imagePath);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,

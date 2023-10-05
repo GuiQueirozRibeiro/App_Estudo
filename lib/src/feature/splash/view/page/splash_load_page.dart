@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../viewmodel/onboarding_view_model.dart';
+import '../../viewmodel/splash_view_model.dart';
 
-class SplashPage extends StatefulWidget {
-  const SplashPage({super.key});
+class SplashLoadPage extends StatefulWidget {
+  const SplashLoadPage({super.key});
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  State<SplashLoadPage> createState() => _SplashLoadPageState();
 }
 
-class _SplashPageState extends State<SplashPage> {
-  late OnboardingViewModel _viewModel;
+class _SplashLoadPageState extends State<SplashLoadPage> {
+  late SplashViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = Provider.of<OnboardingViewModel>(context, listen: false);
-    _viewModel.checkOnboardingStatus(context);
+    _viewModel = Provider.of<SplashViewModel>(context, listen: false);
+
+    Future.delayed(Duration.zero, () {
+      _loadData();
+    });
+  }
+
+  Future<void> _loadData() async {
+    await _viewModel.loadData(context);
   }
 
   @override

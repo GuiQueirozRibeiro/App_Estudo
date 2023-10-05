@@ -11,6 +11,7 @@ class OnBoardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
     return Scaffold(
       body: Consumer<OnboardingViewModel>(builder: (context, viewModel, child) {
         return Container(
@@ -26,17 +27,17 @@ class OnBoardingPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: viewModel.buildPageIndicators(context),
               ),
-              SizedBox(height: viewModel.screen.height * 0.03),
+              SizedBox(height: screen.height * 0.03),
               Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: viewModel.screen.width * 0.04,
-                  vertical: viewModel.screen.height * 0.02,
+                  horizontal: screen.width * 0.04,
+                  vertical: screen.height * 0.02,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CustomButton(
-                      size: viewModel.screen,
+                      size: screen,
                       buttonText: 'back'.i18n(),
                       onPressed: () {
                         viewModel.goToPreviousPage();
@@ -48,10 +49,10 @@ class OnBoardingPage extends StatelessWidget {
                           Modular.to.navigate('/auth/');
                         },
                         buttonText: 'skip'.i18n(),
-                        size: viewModel.screen,
+                        size: screen,
                       ),
                     CustomButton(
-                      size: viewModel.screen,
+                      size: screen,
                       buttonText:
                           viewModel.currentPage == viewModel.pages.length - 1
                               ? 'done'.i18n()

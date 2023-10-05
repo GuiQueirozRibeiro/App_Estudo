@@ -44,9 +44,9 @@ class AuthViewModel extends ChangeNotifier {
       await _loadCurrentUser();
     } on FirebaseAuthException catch (error) {
       final authException = AuthException.fromFirebaseAuthException(error);
-      return authException.toString();
+      throw authException;
     } catch (error) {
-      return error.toString();
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();

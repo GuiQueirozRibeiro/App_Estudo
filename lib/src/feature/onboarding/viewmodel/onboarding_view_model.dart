@@ -6,10 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../auth/viewmodel/auth_view_model.dart';
 import '../../auth/repository/user_model.dart';
-import '../../home/repository/activity_list.dart';
-import '../../home/repository/subject_list.dart';
-import '../../home/repository/user_list.dart';
-import '../../home/viewmodel/chat_view_model.dart';
 import '../view/widget/onboarding_details.dart';
 
 class OnboardingViewModel extends ChangeNotifier {
@@ -17,7 +13,6 @@ class OnboardingViewModel extends ChangeNotifier {
   late SharedPreferences prefs;
 
   int currentPage = 0;
-  late Size screen;
 
   final PageController pageController = PageController(initialPage: 0);
 
@@ -41,12 +36,6 @@ class OnboardingViewModel extends ChangeNotifier {
       isTitle: false,
     ),
   ];
-
-  void init(BuildContext context) async {
-    await checkOnboardingStatus(context);
-    // ignore: use_build_context_synchronously
-    screen = MediaQuery.of(context).size;
-  }
 
   Widget buildPageView(BuildContext context) {
     return Expanded(
@@ -72,28 +61,7 @@ class OnboardingViewModel extends ChangeNotifier {
     if (onboardingCompleted) {
       auth.userChanges.listen((UserModel? user) async {
         if (user != null) {
-          Map<String, List<String>> classroomSubjects = {};
-          Provider.of<ChatViewModel>(context, listen: false).clearMessages();
-          classroomSubjects =
-              await Provider.of<SubjectList>(context, listen: false)
-                  .loadSubjects();
-          // ignore: use_build_context_synchronously
-          Provider.of<UserList>(context, listen: false)
-              .loadUsers(classroomSubjects)
-              .then((_) => {
-                    Provider.of<ActivityList>(
-                      context,
-                      listen: false,
-                    )
-                        .loadActivity()
-                        .then((_) => {
-                              Provider.of<ChatViewModel>(
-                                context,
-                                listen: false,
-                              ).loadMessages()
-                            })
-                        .then((value) => Modular.to.navigate('/home/'))
-                  });
+          Modular.to.navigate('/splash/');
         } else {
           Modular.to.navigate('/auth/');
         }

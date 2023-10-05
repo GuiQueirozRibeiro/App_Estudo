@@ -24,7 +24,7 @@ class AuthPage extends StatelessWidget {
                   width: 200,
                   child: RoundedButton(
                     color: Theme.of(context).colorScheme.tertiary,
-                    text: 'studant'.i18n(),
+                    text: 'student'.i18n(),
                     icon: Icons.school,
                     onPressed: () {
                       Modular.to.pushNamed('login', arguments: true);

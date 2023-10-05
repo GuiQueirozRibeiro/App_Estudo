@@ -11,6 +11,7 @@ import 'feature/home/repository/subject_list.dart';
 import 'feature/home/repository/user_list.dart';
 import 'feature/home/viewmodel/chat_view_model.dart';
 import 'feature/onboarding/viewmodel/onboarding_view_model.dart';
+import 'feature/splash/viewmodel/splash_view_model.dart';
 
 class AppWidget extends StatelessWidget {
   const AppWidget({Key? key}) : super(key: key);
@@ -26,6 +27,9 @@ class AppWidget extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => AuthViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => SplashViewModel(),
         ),
         ChangeNotifierProxyProvider<AuthViewModel, ChatViewModel>(
           create: (_) => ChatViewModel(),

@@ -10,9 +10,9 @@ import '../../repository/auth_form_data.dart';
 import '../../viewmodel/auth_view_model.dart';
 
 class LoginPage extends StatefulWidget {
-  final bool isStudant;
+  final bool isProfessor;
   const LoginPage({
-    this.isStudant = true,
+    this.isProfessor = false,
     Key? key,
   }) : super(key: key);
 
@@ -36,19 +36,16 @@ class LoginPageState extends State<LoginPage> {
     AuthViewModel authViewModel =
         Provider.of<AuthViewModel>(context, listen: false);
 
-    final errorMessage = await authViewModel.login(
-      widget.isStudant
-          ? _formData.id + _formData.emailSt
-          : _formData.id + _formData.emailTc,
-      _formData.password,
-    );
-
-    if (errorMessage != null) {
-      _showErrorDialog(errorMessage);
-    } else {
-      Future.delayed(Duration.zero, () {
-        Modular.to.pushReplacementNamed('/');
-      });
+    try {
+      await authViewModel.login(
+        widget.isProfessor
+            ? _formData.id + _formData.emailSt
+            : _formData.id + _formData.emailTc,
+        _formData.password,
+      );
+      Modular.to.navigate('/splash/');
+    } catch (error) {
+      _showErrorDialog(error.toString());
     }
   }
 
@@ -89,7 +86,7 @@ class LoginPageState extends State<LoginPage> {
                   ),
                   SizedBox(height: screenSize.height * 0.02),
                   Text(
-                    widget.isStudant
+                    widget.isProfessor
                         ? 'student_title'.i18n()
                         : 'teacher_title'.i18n(),
                     style: TextStyle(
@@ -114,14 +111,14 @@ class LoginPageState extends State<LoginPage> {
                             key: const ValueKey('id'),
                             initialValue: _formData.id,
                             onChanged: (id) => _formData.id = id!,
-                            text: widget.isStudant
+                            text: widget.isProfessor
                                 ? 'student_field'.i18n()
                                 : 'teacher_field'.i18n(),
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
                             validator: (id) {
                               if (id!.isEmpty) {
-                                return widget.isStudant
+                                return widget.isProfessor
                                     ? 'student_required'.i18n()
                                     : 'teacher_required'.i18n();
                               }

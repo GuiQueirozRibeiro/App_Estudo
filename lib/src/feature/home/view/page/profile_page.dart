@@ -29,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _showConfirmationDialog() async {
-    bool confirmed = await showDialog(
+    bool? confirmed = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -53,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
 
-    if (confirmed) {
+    if (confirmed != null && confirmed) {
       authProvider.logout();
       Modular.to.navigate('/auth/');
     }

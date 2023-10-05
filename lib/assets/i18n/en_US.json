@@ -13,7 +13,7 @@
     
     "login": "Login",
     
-    "studant": "I am a Student",
+    "student": "I am a Student",
     "teacher": "I am a Teacher",
 
     "student_title": "Student Center",
@@ -57,9 +57,9 @@
     "upload_photo": "Image Change",
 
     "help_support": "Help and Support",
-    "students": "My Studants",
+    "students": "My Students",
     "teachers": "My Teachers",
-    "no_students": "My Studants",
+    "no_students": "My Students",
     "no_teachers": "My Teachers",
     
     "subject_form": "Subject Form",

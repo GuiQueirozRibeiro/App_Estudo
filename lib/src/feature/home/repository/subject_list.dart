@@ -19,6 +19,10 @@ class SubjectList with ChangeNotifier {
     return _subjects.where((subject) => subject.id == subjecyId).toList();
   }
 
+  List<Subject> subjectByTeacherIdId(String teacherId) {
+    return _subjects.where((subject) => subject.teacher == teacherId).toList();
+  }
+
   Future<Map<String, List<String>>> loadSubjects() async {
     _subjects.clear();
 

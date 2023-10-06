@@ -18,8 +18,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final Uri _url = Uri.parse('https://github.com/GuiQueirozRibeiro');
-  late UserModel? currentUser;
-  late AuthViewModel authProvider;
+  late final AuthViewModel authProvider;
+  late final UserModel? currentUser;
 
   @override
   void initState() {

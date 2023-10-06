@@ -14,26 +14,27 @@ class ApiService {
     List<Chat> chatList = [];
     try {
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
-      final QuerySnapshot querySnapshot =
-          await firestore.collection('chat').get();
+      final QuerySnapshot querySnapshot = await firestore
+          .collection('chats')
+          .doc(user.id)
+          .collection('userChats')
+          .get();
 
       for (final doc in querySnapshot.docs) {
+        final uid = user.id;
         final msg = doc["msg"];
-        final uid = doc["uid"];
         final response = doc["response"];
 
-        if (user.id == uid) {
-          chatList.addAll(
-            List.generate(
-              2,
-              (index) => Chat(
-                msg: index == 0 ? msg : response,
-                chatIndex: index == 0 ? 0 : 1,
-                uid: uid,
-              ),
+        chatList.addAll(
+          List.generate(
+            2,
+            (index) => Chat(
+              msg: index == 0 ? msg : response,
+              chatIndex: index == 0 ? 0 : 1,
+              uid: uid,
             ),
-          );
-        }
+          ),
+        );
       }
 
       return chatList;
@@ -49,11 +50,14 @@ class ApiService {
   ) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-    final chatRef = firestore.collection('chat').doc();
+    final chatRef = firestore
+        .collection('chats')
+        .doc(user.id)
+        .collection('userChats')
+        .doc();
 
     final chatData = {
       'msg': chatList[chatList.length - 2].msg,
-      'uid': user.id,
       'response': chatList.last.msg,
     };
 
@@ -65,6 +69,7 @@ class ApiService {
     String modelId,
     UserModel user,
   ) async {
+    List<Chat> chatList = [];
     try {
       log("modelId $modelId");
       var response = await http.post(
@@ -90,7 +95,6 @@ class ApiService {
       if (jsonResponse['error'] != null) {
         throw HttpException(jsonResponse['error']["message"]);
       }
-      List<Chat> chatList = [];
       if (jsonResponse["choices"].length > 0) {
         chatList = List.generate(
           jsonResponse["choices"].length,

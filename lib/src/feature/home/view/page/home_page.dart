@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late UserModel? currentUser;
+  late final UserModel? currentUser;
 
   @override
   void initState() {

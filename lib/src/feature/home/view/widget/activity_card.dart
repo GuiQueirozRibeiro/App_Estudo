@@ -6,17 +6,22 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../repository/activity.dart';
 import '../../repository/activity_list.dart';
+import '../../repository/subject.dart';
 
 class ActivityCard extends StatefulWidget {
+  final Subject? subject;
   final Activity activity;
   final bool isProfessor;
   final bool isForm;
+  final bool isEdit;
 
   const ActivityCard({
     super.key,
     required this.activity,
+    this.subject,
     this.isProfessor = false,
     this.isForm = false,
+    this.isEdit = false,
   });
 
   @override
@@ -171,7 +176,8 @@ class _ActivityCardState extends State<ActivityCard> {
     final ActivityList activityProvider = Provider.of(context, listen: false);
 
     try {
-      await activityProvider.deleteActivity(widget.activity.id);
+      await activityProvider.deleteActivity(
+          widget.subject!.id, widget.activity.id);
     } catch (error) {
       _showErrorDialog('unexpected_error'.i18n());
     }
@@ -223,7 +229,7 @@ class _ActivityCardState extends State<ActivityCard> {
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              widget.activity.isEdit
+                              widget.isEdit
                                   ? widget.activity.formattedAssignedDate(
                                           currentLanguage) +
                                       widget.activity

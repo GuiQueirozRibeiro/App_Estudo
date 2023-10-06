@@ -15,8 +15,8 @@ class NavegationPage extends StatefulWidget {
 class NavegationPageState extends State<NavegationPage>
     with TickerProviderStateMixin {
   int currentPageIndex = 1;
-  late PageController _pageViewController;
-  late AnimationController _animationController;
+  late final PageController _pageViewController;
+  late final AnimationController _animationController;
 
   final List<Widget> _pages = const [
     ChatPage(),

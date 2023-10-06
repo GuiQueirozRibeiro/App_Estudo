@@ -22,7 +22,7 @@ class SubjectDetailsPage extends StatefulWidget {
 }
 
 class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
-  late UserModel? user;
+  late final UserModel? user;
 
   @override
   void initState() {
@@ -106,6 +106,7 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
                       child: ActivityCard(
                         activity: activityGroup[index],
                         isProfessor: user!.isProfessor,
+                        subject: widget.subject,
                       ),
                     );
                   }

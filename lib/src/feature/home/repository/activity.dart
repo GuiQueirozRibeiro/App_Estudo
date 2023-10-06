@@ -13,7 +13,6 @@ class Activity {
   DateTime assignedDate;
   DateTime? dueDate;
   DateTime? editDate;
-  bool isEdit;
 
   Activity({
     required this.id,
@@ -21,7 +20,6 @@ class Activity {
     required this.subjectId,
     required this.classes,
     required this.description,
-    required this.isEdit,
     required Timestamp assignedDate,
     Timestamp? editDate,
     Timestamp? dueDate,

@@ -27,7 +27,7 @@ class ActivityList with ChangeNotifier {
   }
 
   Future<void> createActivity(
-      Map<String, Object?> data, UserModel professor) async {
+      Map<String, Object?> data, UserModel professor, String subjectId) async {
     DateTime? dueDateTime;
 
     if (data['dueDate'] != null) {
@@ -36,7 +36,11 @@ class ActivityList with ChangeNotifier {
     }
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final activityRef = firestore.collection('activities').doc();
+    final activityRef = firestore
+        .collection('activities')
+        .doc(subjectId)
+        .collection('subjectActivities')
+        .doc();
 
     final activityData = {
       'classes': data['classes'],
@@ -44,9 +48,7 @@ class ActivityList with ChangeNotifier {
       'assignedDate': Timestamp.fromDate(DateTime.now()),
       'dueDate': dueDateTime,
       'editDate': null,
-      'subjectId': professor.classroom,
       'professorId': professor.id,
-      'isEdit': false,
     };
 
     await activityRef.set(activityData);
@@ -54,7 +56,8 @@ class ActivityList with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateActivity(Map<String, Object?> data) async {
+  Future<void> updateActivity(
+      Map<String, Object?> data, String subjectId) async {
     DateTime? dueDateTime;
 
     if (data['dueDate'] != null) {
@@ -63,15 +66,17 @@ class ActivityList with ChangeNotifier {
     }
 
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final activityRef =
-        firestore.collection('activities').doc(data['id'] as String);
+    final activityRef = firestore
+        .collection('activities')
+        .doc(subjectId)
+        .collection('subjectActivities')
+        .doc(data['id'] as String);
 
     final activityData = {
       'classes': data['classes'],
       'description': data['description'],
       'editDate': Timestamp.fromDate(DateTime.now()),
       'dueDate': dueDateTime,
-      'isEdit': true,
     };
 
     await activityRef.update(activityData);
@@ -79,9 +84,13 @@ class ActivityList with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteActivity(String activityId) async {
+  Future<void> deleteActivity(String subjectId, String activityId) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final activityRef = firestore.collection('activities').doc(activityId);
+    final activityRef = firestore
+        .collection('activities')
+        .doc(subjectId)
+        .collection('subjectActivities')
+        .doc(activityId);
     await activityRef.delete();
     await loadActivity();
     notifyListeners();
@@ -95,31 +104,40 @@ class ActivityList with ChangeNotifier {
         await firestore.collection('activities').get();
 
     for (final doc in querySnapshot.docs) {
-      final professorId = doc['professorId'];
-      final professorDoc =
-          await firestore.collection('users').doc(professorId).get();
-      final professor = UserModel(
-        id: professorDoc.id,
-        name: professorDoc['name'],
-        imageUrl: professorDoc['imageUrl'],
-        classroom: professorDoc['classroom'],
-        isProfessor: professorDoc['isProfessor'],
-      );
+      QuerySnapshot subCollectionSnapshot =
+          await doc.reference.collection('subjectActivities').get();
 
-      final activity = Activity(
-        id: doc.id,
-        user: professor,
-        subjectId: doc['subjectId'],
-        classes: doc['classes'],
-        description: doc['description'],
-        assignedDate: doc['assignedDate'],
-        dueDate: doc['dueDate'],
-        editDate: doc['editDate'],
-        isEdit: doc['isEdit'],
-      );
-
-      _activities.add(activity);
+      for (final subDoc in subCollectionSnapshot.docs) {
+        final activity =
+            await buildActivityFromDocument(subDoc, firestore, doc.id);
+        _activities.add(activity);
+      }
     }
     notifyListeners();
+  }
+
+  Future<Activity> buildActivityFromDocument(QueryDocumentSnapshot subDoc,
+      FirebaseFirestore firestore, String subjectId) async {
+    final professorId = subDoc['professorId'];
+    final professorDoc =
+        await firestore.collection('users').doc(professorId).get();
+    final professor = UserModel(
+      id: professorDoc.id,
+      name: professorDoc['name'],
+      imageUrl: professorDoc['imageUrl'],
+      classroom: professorDoc['classroom'],
+      isProfessor: professorDoc['isProfessor'],
+    );
+
+    return Activity(
+      id: subDoc.id,
+      user: professor,
+      subjectId: subjectId,
+      classes: subDoc['classes'],
+      description: subDoc['description'],
+      assignedDate: subDoc['assignedDate'],
+      dueDate: subDoc['dueDate'],
+      editDate: subDoc['editDate'],
+    );
   }
 }

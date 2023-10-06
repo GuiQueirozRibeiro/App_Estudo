@@ -18,7 +18,6 @@ class ChatPage extends StatefulWidget {
 class ChatPageState extends State<ChatPage> {
   bool _isTyping = false;
   bool _isAnimating = false;
-
   final TextEditingController _inputController = TextEditingController();
   final ScrollController _listScrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();

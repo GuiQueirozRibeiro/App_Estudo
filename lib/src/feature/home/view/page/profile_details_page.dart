@@ -20,10 +20,10 @@ class ProfileDetailsPage extends StatefulWidget {
 }
 
 class _ProfileDetailsPageState extends State<ProfileDetailsPage> {
-  late List<Activity> activityGroup;
-  late List<Chat> chatList;
-  final ScrollController _listScrollController = ScrollController();
   bool dataLoaded = false;
+  late List<Chat> chatList;
+  late List<Activity> activityGroup;
+  final ScrollController _listScrollController = ScrollController();
 
   @override
   void dispose() {

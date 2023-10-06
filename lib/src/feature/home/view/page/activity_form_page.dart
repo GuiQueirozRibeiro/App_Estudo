@@ -10,6 +10,7 @@ import '../../../auth/repository/user_model.dart';
 import '../../../auth/viewmodel/auth_view_model.dart';
 import '../../repository/activity.dart';
 import '../../repository/activity_list.dart';
+import '../../repository/subject.dart';
 import '../widget/activity_card.dart';
 import '../widget/class_list_view.dart';
 import '../widget/date_picker.dart';
@@ -33,6 +34,7 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
   final _originalFormData = <String, Object?>{};
   final _descriptionController = TextEditingController();
   late final UserModel? currentUser;
+  late List<Subject> subject;
   bool _isSnackBarVisible = false;
   final List<SnackBar> _snackBarQueue = [];
 
@@ -64,7 +66,6 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
       _formData['classes'] = activity.classes;
       _formData['assignedDate'] = activity.assignedDate;
       _formData['dueDate'] = activity.dueDate;
-      _formData['isEdit'] = activity.isEdit;
 
       _originalFormData['id'] = activity.id;
       _originalFormData['description'] = activity.description;
@@ -73,7 +74,6 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
       _originalFormData['classes'] = activity.classes;
       _originalFormData['assignedDate'] = activity.assignedDate;
       _originalFormData['dueDate'] = activity.dueDate;
-      _originalFormData['isEdit'] = activity.isEdit;
 
       _selectedClasses = activity.classes.toList();
       _descriptionController.text = _formData['description']?.toString() ?? '';
@@ -163,8 +163,9 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
 
     try {
       _isEdit
-          ? await activityProvider.updateActivity(_formData)
-          : await activityProvider.createActivity(_formData, currentUser!);
+          ? await activityProvider.updateActivity(_formData, subject.first.id)
+          : await activityProvider.createActivity(
+              _formData, currentUser!, subject.first.id);
     } catch (error) {
       await _showErrorDialog();
     } finally {
@@ -176,7 +177,7 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
   @override
   Widget build(BuildContext context) {
     final SubjectList subjectProvider = Provider.of(context);
-    final subject = subjectProvider.subjectById(currentUser!.classroom);
+    subject = subjectProvider.subjectById(currentUser!.classroom);
     return Scaffold(
       appBar: AppBar(
         title: Text('activity_form'.i18n()),
@@ -202,19 +203,20 @@ class _ActivityFormPageState extends State<ActivityFormPage> {
                   children: [
                     const SizedBox(height: 10),
                     ActivityCard(
+                      subject: subject.first,
                       activity: Activity(
                         id: '',
                         user: currentUser!,
                         subjectId: '',
                         classes: _selectedClasses,
                         description: _descriptionController.text,
-                        isEdit: _isEdit,
                         editDate: Timestamp.fromDate(DateTime.now()),
                         assignedDate: Timestamp.fromDate(
                             _formData['assignedDate'] as DateTime? ??
                                 DateTime.now()),
                       ),
                       isForm: true,
+                      isEdit: _isEdit,
                     ),
                     const SizedBox(height: 10),
                     Card(

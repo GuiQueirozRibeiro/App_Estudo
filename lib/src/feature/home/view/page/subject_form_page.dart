@@ -29,14 +29,14 @@ class SubjectFormPage extends StatefulWidget {
 
 class SubjectFormPageState extends State<SubjectFormPage> {
   File? _image;
-  late AuthViewModel authProvider;
-  late UserModel? currentUser;
+  List selectedClasses = [];
   bool _isLoading = false;
+  bool _isSnackBarVisible = false;
+  late final UserModel? currentUser;
+  late final AuthViewModel authProvider;
+  final List<SnackBar> _snackBarQueue = [];
   final TextEditingController nameController = TextEditingController();
   final TextEditingController imageUrlController = TextEditingController();
-  List selectedClasses = [];
-  bool _isSnackBarVisible = false;
-  final List<SnackBar> _snackBarQueue = [];
 
   @override
   void initState() {

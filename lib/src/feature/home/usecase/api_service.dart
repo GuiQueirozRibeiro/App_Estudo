@@ -45,7 +45,8 @@ class ApiService {
   }
 
   static Future<void> saveMessage(
-    List<Chat> chatList,
+    String message,
+    List<Chat> response,
     UserModel user,
   ) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -57,8 +58,8 @@ class ApiService {
         .doc();
 
     final chatData = {
-      'msg': chatList[chatList.length - 2].msg,
-      'response': chatList.last.msg,
+      'msg': message,
+      'response': response.last.msg,
     };
 
     chatRef.set(chatData);
@@ -104,7 +105,7 @@ class ApiService {
           ),
         );
       }
-      ApiService.saveMessage(chatList, user);
+      saveMessage(message, chatList, user);
       return chatList;
     } catch (error) {
       log("error $error");

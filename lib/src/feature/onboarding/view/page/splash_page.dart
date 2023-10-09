@@ -30,7 +30,7 @@ class _SplashPageState extends State<SplashPage> {
             Image.asset("lib/assets/images/cmcs_icon.png"),
             const SizedBox(height: 50),
             CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.outlineVariant,
+              color: Theme.of(context).colorScheme.tertiary,
             ),
           ],
         ),

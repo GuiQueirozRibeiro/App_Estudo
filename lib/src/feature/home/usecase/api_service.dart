@@ -18,6 +18,7 @@ class ApiService {
           .collection('chats')
           .doc(user.id)
           .collection('userChats')
+          .orderBy('date')
           .get();
 
       for (final doc in querySnapshot.docs) {
@@ -60,6 +61,7 @@ class ApiService {
     final chatData = {
       'msg': message,
       'response': response.last.msg,
+      'date': Timestamp.fromDate(DateTime.now()),
     };
 
     chatRef.set(chatData);

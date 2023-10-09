@@ -45,6 +45,7 @@ class _SubjectDetailsPageState extends State<SubjectDetailsPage> {
 
     return RefreshIndicator(
       onRefresh: () => _refreshActivities(context),
+      color: Theme.of(context).colorScheme.outlineVariant,
       child: Scaffold(
         body: CustomScrollView(
           slivers: [

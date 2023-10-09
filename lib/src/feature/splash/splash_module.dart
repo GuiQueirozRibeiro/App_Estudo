@@ -5,9 +5,6 @@ import '../home/home_module.dart';
 
 class SplashModule extends Module {
   @override
-  void binds(i) {}
-
-  @override
   void routes(r) {
     r.child('/', child: (_) => const SplashLoadPage());
     r.module('/home/', module: HomeModule());

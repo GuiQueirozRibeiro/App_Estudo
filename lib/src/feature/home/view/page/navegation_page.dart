@@ -54,11 +54,7 @@ class NavegationPageState extends State<NavegationPage>
 
   void _onTap(int index) {
     if (currentPageIndex != index) {
-      _pageViewController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+      _pageViewController.jumpToPage(index);
     }
   }
 

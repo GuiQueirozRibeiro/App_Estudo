@@ -6,9 +6,6 @@ import 'view/page/login_page.dart';
 
 class AuthModule extends Module {
   @override
-  void binds(i) {}
-
-  @override
   void routes(r) {
     r.child('/', child: (_) => const AuthPage());
     r.child(

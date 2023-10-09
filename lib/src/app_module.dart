@@ -7,9 +7,6 @@ import 'feature/splash/splash_module.dart';
 
 class AppModule extends Module {
   @override
-  void binds(i) {}
-
-  @override
   void routes(r) {
     r.module('/', module: OnBoardingModule());
     r.module('/auth/', module: AuthModule());

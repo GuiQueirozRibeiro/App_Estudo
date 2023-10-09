@@ -8,9 +8,6 @@ import 'view/page/splash_page.dart';
 
 class OnBoardingModule extends Module {
   @override
-  void binds(i) {}
-
-  @override
   void routes(r) {
     r.child('/', child: (_) => const SplashPage());
     r.child('/onboarding', child: (_) => const OnBoardingPage());

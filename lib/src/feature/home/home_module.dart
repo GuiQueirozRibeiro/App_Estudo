@@ -8,9 +8,6 @@ import 'view/page/subject_form_page.dart';
 
 class HomeModule extends Module {
   @override
-  void binds(i) {}
-
-  @override
   void routes(r) {
     r.child('/', child: (_) => const NavegationPage());
     r.child(

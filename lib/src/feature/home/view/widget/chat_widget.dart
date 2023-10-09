@@ -4,18 +4,20 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import '../../../auth/repository/user_model.dart';
 
 class ChatWidget extends StatefulWidget {
-  const ChatWidget({
-    super.key,
-    required this.msg,
-    required this.chatIndex,
-    required this.user,
-    this.shouldAnimate = false,
-  });
-
   final String msg;
   final int chatIndex;
   final UserModel? user;
   final bool shouldAnimate;
+  final void Function(int)? scrollListToIndex;
+
+  const ChatWidget({
+    Key? key,
+    required this.msg,
+    required this.chatIndex,
+    required this.user,
+    this.scrollListToIndex,
+    this.shouldAnimate = false,
+  }) : super(key: key);
 
   @override
   State<ChatWidget> createState() => _ChatWidgetState();
@@ -50,8 +52,8 @@ class _ChatWidgetState extends State<ChatWidget> {
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
           color: widget.chatIndex == 0
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.shadow,
+              ? Theme.of(context).colorScheme.tertiary
+              : Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: Row(

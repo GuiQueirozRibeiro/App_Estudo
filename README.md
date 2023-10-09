@@ -1,6 +1,6 @@
 Professor IA
 ====
-## A Flutter Project for FECC
+## Um projeto Flutter para a FECC
 
 <table>
   <tr>
@@ -16,78 +16,72 @@ Professor IA
   </tr>
 </table>
 
-# Index
+# Índice
 
-* [Index](#index)
-* [Project Status](#project-status)
-* [Project Description](#project-description)
-* [Access the Project](#-access-the-project)
-* [Requirements](#-requirements)
-* [Project Features](#-project-features)
-* [Run the Project](#-run-the-project)
-* [Authors](#-authors)
+* [Índice](#índice)
+* [Status do Projeto](#status-do-projeto)
+* [Descrição do Projeto](#descrição-do-projeto)
+* [Acesso ao Projeto](#-acesso-ao-projeto)
+* [Requisitos](#-requisitos)
+* [Funcionalidades do Projeto](#-funcionalidades-do-projeto)
+* [Executar o Projeto](#-executar-o-projeto)
+* [Autores](#-autores)
 
-# Project Status
+# Status do Projeto
 
-![Badge Success](https://img.shields.io/badge/State-Success-brightgreen?style=for-the-badge)
+![Badge Success](https://img.shields.io/badge/Status-Sucesso-brightgreen?style=for-the-badge)
 
-# Project Description
+# Descrição do Projeto
 
 The global pandemic ignited the spark for "Professor IA," a revolutionary Flutter project aimed at bridging the communication gap between educators and students. In these challenging times, swift and efficient communication is vital, and "Professor IA" steps up to the plate.
 
-# 📁 Access the Project
+# 📁 Acesso ao Projeto
 
-**Is found in Github: "https://github.com/GuiQueirozRibeiro/App_Estudo"**
+**Está disponível no Github: "https://github.com/GuiQueirozRibeiro/App_Estudo"**
 
-# 📝 Requirements
+# 📝 Requisitos
 
-- ## Install the DartSDK in your machine
-
-**https://dart.dev/get-dart**
-
-- ## Install the FlutterSDK in your machine
+- ## Instale o FlutterSDK em sua máquina
 
 **https://docs.flutter.dev/get-started/install**
- 
-- ## Install and configure AndroidStudio in your machine
 
 **https://developer.android.com/studio**
 
-- ## Create a firebase account
+- ## Crie uma conta no Firebase
 
 **https://firebase.google.com/?hl=pt**
 
-- ## Create a ChatGPT account
+- ## Cria uma conta na OpenAI
 
 **https://platform.openai.com/**
 
-# 🔨 Project Features
+# 🔨 Funcionalidades do Projeto
 
-- `Feature 1`: icon image
-- `Feature 2`: splash screen
-- `Feature 3`: compatible for both devices IOS and Android
-- `Feature 4`: integration with ChatGPT
-- `Feature 5`: control the history of chats
-- `Feature 6`: separation between studens and teachers
-- `Feature 7`: upload photos
-- `Feature 8`: integration with firebase
-- `Feature 9`: control your activities
+- `Funcionalidade 1`: imagem do ícone
+- `Funcionalidade 2`: tela de splash
+- `Funcionalidade 3`: compatível com dispositivos IOS e Android
+- `Funcionalidade 4`: integração com ChatGPT
+- `Funcionalidade 5`: controle do histórico de chats
+- `Funcionalidade 6`: separação entre professores e estudantes
+- `Funcionalidade 7`: upload de fotos
+- `Funcionalidade 8`: integração com firebase
+- `Funcionalidade 9`: controle das atividades
 
-# ▶ Run the Project
+# ▶ Executar o Projeto
 
-- `To execute the programm, use:`
+- `Para executar o programa, use:`
 
 ```console
-flutter run lib/src/main.dart
+flutter run lib/src/main.dart --dart-define=OPENAI_KEY=sua-chave-da-api-openai
 ```
 
-# 👨‍💻 Authors
+# 👨‍💻 Autores
 
 | [<img src="https://avatars.githubusercontent.com/u/70274921?s=400&u=c1688d6fcd13223bfe1093c6d16b3b6b646545fe&v=4" width=115><br><sub>Guilherme Queiroz Ribeiro</sub>](https://github.com/GuiQueirozRibeiro)
 | :---: |
 
-### End
+### Fim
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference
+Para obter ajuda para começar a desenvolver com o Flutter, consulte a
+[documentação online](https://docs.flutter.dev/), que oferece tutoriais,
+exemplos, orientações sobre desenvolvimento móvel e uma referência completa da API.

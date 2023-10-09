@@ -45,8 +45,6 @@ A pandemia global foi o ponto de partida para o "Professor IA", um projeto revol
 
 **https://docs.flutter.dev/get-started/install**
 
-**https://developer.android.com/studio**
-
 - ## Crie uma conta no Firebase
 
 **https://firebase.google.com/?hl=pt**

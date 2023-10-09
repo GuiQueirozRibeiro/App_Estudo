@@ -33,7 +33,7 @@ Professor IA
 
 # Descrição do Projeto
 
-The global pandemic ignited the spark for "Professor IA," a revolutionary Flutter project aimed at bridging the communication gap between educators and students. In these challenging times, swift and efficient communication is vital, and "Professor IA" steps up to the plate.
+A pandemia global foi o ponto de partida para o "Professor IA", um projeto revolucionário em Flutter com o objetivo de diminuir a lacuna de comunicação entre educadores e estudantes. Em tempos desafiadores como estes, a comunicação rápida e eficiente é crucial, e o "Professor IA" está pronto para isso.
 
 # 📁 Acesso ao Projeto
 

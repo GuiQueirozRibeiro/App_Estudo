@@ -52,7 +52,17 @@ class ActivityList with ChangeNotifier {
     };
 
     await activityRef.set(activityData);
-    await loadActivity();
+
+    _activities.add(
+      Activity(
+        id: activityRef.id,
+        user: professor,
+        subjectId: subjectId,
+        classes: activityData['classes'] as List,
+        description: activityData['description'] as String,
+        assignedDate: activityData['assignedDate'] as Timestamp,
+      ),
+    );
     notifyListeners();
   }
 
@@ -80,7 +90,12 @@ class ActivityList with ChangeNotifier {
     };
 
     await activityRef.update(activityData);
-    await loadActivity();
+    final updatedActivity =
+        activities.firstWhere((activity) => activity.id == data['id']);
+    updatedActivity.classes = data['classes'] as List;
+    updatedActivity.description = data['description'] as String;
+    updatedActivity.editDate = DateTime.now();
+    updatedActivity.dueDate = dueDateTime;
     notifyListeners();
   }
 
@@ -92,7 +107,7 @@ class ActivityList with ChangeNotifier {
         .collection('subjectActivities')
         .doc(activityId);
     await activityRef.delete();
-    await loadActivity();
+    activities.removeWhere((activity) => activity.id == activityId);
     notifyListeners();
   }
 

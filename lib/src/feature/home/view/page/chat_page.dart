@@ -44,10 +44,9 @@ class ChatPageState extends State<ChatPage> {
       setState(() {
         _isTyping = true;
         _isAnimating = true;
-        chatProvider.addUserMessage(msg: msg);
-        scrollListToEnd();
         _inputController.clear();
         _focusNode.unfocus();
+        chatProvider.addUserMessage(msg: msg);
       });
       await chatProvider.sendMessageAndGetAnswers(msg);
     } catch (error) {
@@ -63,6 +62,7 @@ class ChatPageState extends State<ChatPage> {
     } finally {
       setState(() {
         _isTyping = false;
+        scrollListToEnd();
       });
     }
   }

@@ -84,12 +84,7 @@ class OnBoardingDetailsState extends State<OnBoardingDetails>
                 image: AssetImage(widget.imagePath),
                 controller: _controller,
                 autostart: Autostart.loop,
-                placeholder: (context) => Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                ),
+                placeholder: (context) => Image.asset(widget.imagePath),
                 onFetchCompleted: () {
                   _controller.reset();
                   _controller.forward();

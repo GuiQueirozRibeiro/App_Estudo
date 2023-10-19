@@ -23,6 +23,7 @@ class CustomAvatarProfile extends StatefulWidget {
 }
 
 class CustomAvatarProfileState extends State<CustomAvatarProfile> {
+  final _placeholder = "lib/assets/images/avatar.png";
   File? _image;
 
   Future<bool?> showConfirmationDialog() async {
@@ -95,8 +96,10 @@ class CustomAvatarProfileState extends State<CustomAvatarProfile> {
   ImageProvider _getImageProvider() {
     if (_image != null) {
       return FileImage(_image!);
-    } else {
+    } else if (widget.user.imageUrl.isNotEmpty) {
       return NetworkImage(widget.user.imageUrl);
+    } else {
+      return AssetImage(_placeholder);
     }
   }
 
@@ -154,8 +157,7 @@ class CustomAvatarProfileState extends State<CustomAvatarProfile> {
                 ),
                 child: ClipOval(
                   child: FadeInImage(
-                    placeholder:
-                        const AssetImage("lib/assets/images/avatar.png"),
+                    placeholder: AssetImage(_placeholder),
                     image: _getImageProvider(),
                     fit: BoxFit.cover,
                   ),

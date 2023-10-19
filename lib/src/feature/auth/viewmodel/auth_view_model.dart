@@ -87,7 +87,7 @@ class AuthViewModel extends ChangeNotifier {
     _isLoading = true;
 
     try {
-      String imageName = _currentUser?.id ?? '';
+      String imageName = _currentUser!.id;
       String? imageUrl =
           await uploadImage(newImage, imageName, _currentUser!.imageUrl);
 
@@ -114,9 +114,12 @@ class AuthViewModel extends ChangeNotifier {
       File? image, String imageName, String oldImage) async {
     if (image == null) return null;
 
+    if (oldImage.isNotEmpty) {
+      await _deleteOldImage(_currentUser!.imageUrl);
+    }
+
     final storage = FirebaseStorage.instance;
     try {
-      await _deleteOldImage(oldImage);
       final imageRef = storage.ref().child('user_images/$imageName.jpeg');
 
       await imageRef.putFile(image);
